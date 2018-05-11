@@ -1,0 +1,175 @@
+\begin{figure}[!h]
+ \centering
+  \captionsetup{justification=centering}
+  \begin{tikzpicture}[scale=0.7,every node/.style={scale=0.7}]
+  
+  \node [markplace] (w1) {$w_1^1$};
+  \node [markplace,right=4cm of w1] (w2) {$w_2^1$};
+  \node [markplace,right=4cm of w2] (w3) {$w_4^1$};
+  \node [transition,below=7.5mm of w1](o11) {} ;
+  \node [transition,below=7.5mm of w2](o21) {};
+  \node [transition,below=7.5mm of w3](o31) {};
+  \node [left=1mm of o11] {$o_1$} ;
+  \node [left=1mm of o21] {$o_2$} ;
+  \node [left=1mm of o31] {$o_4$} ;
+  \node[place,below=15mm of w1] (r1){$r_1^1$}; 
+  \node[place,below=15mm of w2] (r2){$r_2^1$}; 
+  \node[place,below=15mm of w3] (r3){$r_4^1$}; 
+  \node [transition,below=7.5mm of r1,xshift=1.75cm](a1) {};
+  \node [transition,below=7.5mm of r2,xshift=-1.75cm](a3) {};
+  \node [transition,below=7.5mm of r2,xshift=1.75cm](a5) {};
+  \node [transition,below=7.5mm of r3,xshift=-1.75cm](a7) {};
+  \node [left=1mm of a1] {$rsv_{\alpha_1}$} ;
+  \node [left=1mm of a3] {$rsv_{\alpha_3}$} ;
+  \node [right=1mm of a5] {$rsv_{\alpha_5}$} ;
+  \node [right=1mm of a7] {$rsv_{\alpha_7}$} ;
+  \node[place,below=7.5mm of a1] (t1){$t_{\alpha_1}$}; 
+  \node[place,below=7.5mm of a3] (t3){$t_{\alpha_3}$}; 
+  \node[place,below=7.5mm of a5] (t5){$t_{\alpha_5}$}; 
+  \node[place,below=7.5mm of a7] (t7){$t_{\alpha_7}$}; 
+  \node [transition,below=7.5mm of t1](a11) {};
+  \node [transition,below=7.5mm of t3](a33) {};
+  \node [transition,below=7.5mm of t5](a55) {};
+  \node [transition,below=7.5mm of t7](a77) {};
+  \node [left=1mm of a11] {$ok_{\alpha_1}$} ;
+  \node [left=1mm of a33] {$ok_{\alpha_3}$} ;
+  \node [right=1mm of a55] {$ok_{\alpha_5}$} ;
+  \node [right=1mm of a77] {$ok_{\alpha_7}$} ;
+  \node[place,below=7.5mm of a11,xshift=-3.8cm] (s1){$s_{init_0}$}; 
+  \node[place,right=1cm of s1] (s2){$s_{\substack{sta-\\rt_0}}$}; 
+  \node[place,right=1cm of s2] (s3){$s_{init_1}$}; 
+  \node[place,right=1cm of s3] (s4){$s_{\substack{sta-\\rt_1}}$}; 
+  \node[place,right=1cm of s4,align=center] (s5){$s_{\substack{pro-\\cess_1}}$}; 
+  \node[place,right=1cm of s5] (s6){$s_{end_1}$}; 
+  \node[place,right=1cm of s6] (s7){$s_{take}$}; 
+  \node[place,right=1cm of s7] (s8){$s_{free}$}; 
+  \node [transition,below=7.5mm of s1](s11) {};
+  \node [transition,below=7.5mm of s2](s22) {};
+  \node [transition,below=7.5mm of s3](s33) {};
+  \node [transition,below=7.5mm of s4](s44) {};
+  \node [transition,below=7.5mm of s5](s55) {};
+  \node [transition,below=7.5mm of s6](s66) {};
+  \node [transition,below=7.5mm of s7](s77) {};
+  \node [transition,below=7.5mm of s8](s88) {};
+  \node [left=1mm of s11] {$init_0$} ;
+  \node [left=1mm of s22] {$start_0$} ;
+  \node [left=1mm of s33] {$init_1$} ;
+  \node [left=1mm of s44] {$start_1$} ;
+  \node [right=1mm of s55] {$process_1$} ;
+  \node [right=1mm of s66] {$end_1$} ;
+  \node [right=1mm of s77] {$take$} ;
+  \node [right=1mm of s88] {$free$} ;
+  \node [place,below=8.5cm of w1,dashed] (w11) {$w_1^1$};
+  \node [place,right=4cm of w11,dashed] (w22) {$w_2^1$};
+  \node [place,right=4cm of w22,dashed] (w33) {$w_4^1$};
+  \node[transition, left=2cm of t1] (f1){};
+  \node[transition, right=2mm of t3] (f3){};
+  \node[transition, left=2mm of t5] (f5){};
+  \node[transition, right=2cm of t7] (f7){};
+  \node[left=1mm of f1]{$fail_{\alpha_1}$};
+  \node[below=5mm of f3]{$fail_{\alpha_3}$};
+  \node[below=5mm of f5]{$fail_{\alpha_5}$};
+  \node[right=1mm of f7]{$fail_{\alpha_7}$};
+  \node[above=8mm of w1](ff1){};
+  \node[above=8mm of w3](ff7){};
+  
+  \path (w1) edge (o11)
+        (w2) edge (o21)
+        (w3) edge (o31)
+        (o11) edge (r1)
+        (o21) edge (r2)
+        (o31) edge (r3)
+        (r1) edge (a1)
+        (r1) edge (a3)
+        (r2) edge (a1)
+        (r2) edge (a3)
+        (r2) edge (a5)
+        (r2) edge (a7)
+        (r3) edge (a5)
+        (r3) edge (a7)
+        (a1) edge (t1)
+        (a3) edge (t3)
+        (a5) edge (t5)
+        (a7) edge (t7)
+        (t1) edge (a11)
+        (t3) edge (a33)
+        (t5) edge (a55)
+        (t7) edge (a77)
+        (a11) edge (s1)
+        (a11) edge (s3)
+        (a33) edge (s2)
+        (a33) edge (s4)
+        (a55) edge (s5)
+        (a55) edge (s7)
+        (a77) edge (s6)
+        (a77) edge (s8)
+        (s1) edge (s11)
+        (s2) edge (s22)
+        (s3) edge (s33)
+        (s4) edge (s44)
+        (s5) edge (s55)
+        (s6) edge (s66)
+        (s7) edge (s77)
+        (s8) edge (s88)
+        (s11) edge (w11)
+        (s22) edge (w11)
+        (s33) edge (w22)
+        (s44) edge (w22)
+        (s55) edge (w22)
+        (s66) edge (w22)
+        (s77) edge (w33)
+        (s88) edge (w33)
+        (r1) edge [loop,in=180,out=120,looseness=4] node[left]{$o_1$} (r1)
+        (r2) edge [loop,in=180,out=120,looseness=4] node[left]{$o_2$} (r2)
+        (r3) edge [loop,in=70,out=10,looseness=4] node[right]{$o_4$} (r3)
+        (t1) edge [loop,in=180,out=120,looseness=4] node[left,align=center]{$o_1$\\$o_2$} (t1)
+        (t3) edge [loop,in=180,out=120,looseness=4] node[left,align=center]{$o_1$\\$o_2$} (t3)
+        (t5) edge [loop,in=70,out=10,looseness=4] node[right,align=center]{$o_2$\\$o_4$} (t5)
+        (t7) edge [loop,in=70,out=10,looseness=4] node[right,align=center]{$o_2$\\$o_4$} (t7)
+        (t1) edge [in=-90,out=-120] (f1)
+        (t3) edge [in=-90,out=-60] (f3)
+        (t5) edge [in=-90,out=-120] (f5)
+        (t7) edge [in=-90,out=-60] (f7)
+        (f1) edge [in=-150,out=90] (r1)
+        (f1) edge [-,in=-180,out=90] (ff1.center)
+        (ff1.center) edge [in=100,out=0] (r2)
+        (f7) edge [in=10,out=90] (r3)
+        (f7) edge [-,in=0,out=90] (ff7.center)
+        (ff7.center) edge [in=80,out=180] (r2)
+        (f3) edge [in=-100,out=90] (r2)
+        (f5) edge [in=-80,out=90] (r2)
+        (f3) edge [in=0,out=90,looseness=1.5] (r1)
+        (f5) edge [in=180,out=90,looseness=1.5] (r3);
+ 
+  
+  \node [rounded corners,inner xsep=60mm,inner ysep=40mm,draw,fit=(w1)(w11)(ff7)(ff1)] (rec1) {};
+  \node [dots,label=90:$o_1$] (i1) at ($(rec1.south west)!0.15!(rec1.south east)$) {};
+  \node [triangle,rotate=180,label=-90:$init_0$] (i1) at ($(rec1.south west)!0.20!(rec1.south east)$) {};
+  \node [triangle,rotate=180,label=-90:$start_0$] (i1) at ($(rec1.south west)!0.25!(rec1.south east)$) {};
+  \node [dots,label=90:$o_2$] (i1) at ($(rec1.south west)!0.40!(rec1.south east)$) {};
+  \node [triangle,rotate=180,label=-90:$init_1$] (i1) at ($(rec1.south west)!0.45!(rec1.south east)$) {};
+  \node [triangle,rotate=180,label=-90:$start_1$] (i1) at ($(rec1.south west)!0.50!(rec1.south east)$) {};
+  \node [triangle,rotate=180,label=-90:$process_1$] (i1) at ($(rec1.south west)!0.575!(rec1.south east)$) {};
+  \node [triangle,rotate=180,label=-90:$end_1$] (i1) at ($(rec1.south west)!0.65!(rec1.south east)$) {};
+  \node [dots,label=90:$o_4$] (i1) at ($(rec1.south west)!0.75!(rec1.south east)$) {};
+  \node [triangle,rotate=180,label=-90:$take$] (i1) at ($(rec1.south west)!0.80!(rec1.south east)$) {};
+  \node [triangle,rotate=180,label=-90:$free$] (i1) at ($(rec1.south west)!0.85!(rec1.south east)$) {};
+      
+  \node [triangle,label=-90:$rsv_{\alpha_1}$] (i1) at ($(rec1.north west)!0.15!(rec1.north east)$) {};
+  \node [dots,label=-90:$ok_{\alpha_1}$] (i1) at ($(rec1.north west)!0.20!(rec1.north east)$) {};
+  \node [dots,label=-90:$fail_{\alpha_1}$] (i1) at ($(rec1.north west)!0.25!(rec1.north east)$) {};
+  \node [triangle,label=-90:$rsv_{\alpha_3}$] (i1) at ($(rec1.north west)!0.35!(rec1.north east)$) {};
+  \node [dots,label=-90:$ok_{\alpha_3}$] (i1) at ($(rec1.north west)!0.4!(rec1.north east)$) {};
+  \node [dots,label=-90:$fail_{\alpha_3}$] (i1) at ($(rec1.north west)!0.45!(rec1.north east)$) {};
+  \node [triangle,label=-90:$rsv_{\alpha_5}$] (i1) at ($(rec1.north west)!0.55!(rec1.north east)$) {};
+  \node [dots,label=-90:$ok_{\alpha_5}$] (i1) at ($(rec1.north west)!0.6!(rec1.north east)$) {};
+  \node [dots,label=-90:$fail_{\alpha_5}$] (i1) at ($(rec1.north west)!0.65!(rec1.north east)$) {};
+  \node [triangle,label=-90:$rsv_{\alpha_7}$] (i1) at ($(rec1.north west)!0.75!(rec1.north east)$) {};
+  \node [dots,label=-90:$ok_{\alpha_7}$] (i1) at ($(rec1.north west)!0.8!(rec1.north east)$) {};
+  \node [dots,label=-90:$fail_{\alpha_7}$] (i1) at ($(rec1.north west)!0.85!(rec1.north east)$) {};
+  \end{tikzpicture}
+ \caption{Internal Representation of Scheduler $Sch_1$ from Figure~\ref{fig:sr}}
+ \label{fig:schSR}
+\end{figure}  
+
+

@@ -1,0 +1,52 @@
+\begin{figure}[h!]
+\centering
+  \begin{tikzpicture}
+
+  \node [rectnode={1.1,1.1},label={[shift={(0,-1.1)}]$T_1^{SR}$}] (t1) {};
+  \node [rectnode={1.1,1.1},right=7.5mm of t1,label={[shift={(0,-1.1)}]$C^{SR}$}] (c) {};
+  \node [rectnode={1.1,1.1},right=7.5mm of c,label={[shift={(0,-1.1)}]$R^{SR}$}] (r) {};
+  \node [rectnode={1.1,1.1},right=7.5mm of r,label={[shift={(0,-1.1)}]$T_2^{SR}$}] (t2) {};
+
+  \node [rectnode={7,2},above=1cm of c,xshift=8.75mm] (sch) {$Scheduling$ $Layer$};
+  
+  
+  \node [triangle,label=-90:$o_1$] (ot1) at ($(t1.north west)!0.25!(t1.north east)$) {};
+  \node [dots,label=-90:$n_1$] (nt1) at ($(t1.north west)!0.75!(t1.north east)$) {};
+  
+  \node [triangle,label=-90:$o_2$] (oc) at ($(c.north west)!0.25!(c.north east)$) {};
+  \node [dots,label=-90:$n_2$] (nc) at ($(c.north west)!0.75!(c.north east)$) {};
+  
+  \node [triangle,label=-90:$o_3$] (or) at ($(r.north west)!0.25!(r.north east)$) {};
+  \node [dots,label=-90:$n_3$] (nr) at ($(r.north west)!0.75!(r.north east)$) {};
+  
+  \node [triangle,label=-90:$o_4$] (ot2) at ($(t2.north west)!0.25!(t2.north east)$) {};
+  \node [dots,label=-90:$n_4$] (nt2) at ($(t2.north west)!0.75!(t2.north east)$) {};
+
+
+  \node [dots,label=90:$o_1$,above=7.5mm of ot1] (sot1) {};
+  \node [triangle,label=-90:$n_1$,above=10mm of nt1,rotate=180] (snt1) {};
+
+  \node [dots,label=90:$o_3$,above=7.5mm of oc] (soc) {};
+  \node [triangle,label=-90:$n_3$,above=10mm of nc,rotate=180] (snc) {};
+
+  \node [dots,label=90:$o_3$,above=7.5mm of or] (sor) {};
+  \node [triangle,label=-90:$n_3$,above=10mm of nr,rotate=180] (snr) {};
+
+  \node [dots,label=90:$o_4$,above=7.5mm of ot2] (sot2) {};
+  \node [triangle,label=-90:$n_4$,above=10mm of nt2,rotate=180] (snt2) {};
+
+  \draw [thick,red,-] (ot1) -- (sot1);
+  \draw [thick,dgreen,-] (nt1) -- (snt1);
+
+  \draw [thick,red,-] (oc) -- (soc);
+  \draw [thick,dgreen,-] (nc) -- (snc);
+ 
+  \draw [thick,red,-] (or) -- (sor);
+  \draw [thick,dgreen,-] (nr) -- (snr);
+  
+  \draw [thick,red,-] (ot2) -- (sot2);
+  \draw [thick,dgreen,-] (nt2) -- (snt2);
+\end{tikzpicture} 
+\caption{High Level Representation of the Target Architecture}
+\label{fig:ta}
+\end{figure}

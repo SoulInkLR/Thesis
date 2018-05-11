@@ -1,0 +1,19 @@
+\begin{figure}[!h]
+ \centering
+  \begin{tikzpicture}[every node/.style={scale=0.8},scale=0.8]
+
+  \node [place](l0) {$\loc_1$};
+  \node [place,below=1.3cm of l0] (l1) {$\loc_2$};
+
+  \path (l0) edge node[right,align=center]{$a$}(l1);
+  
+  \node [place,right=5cm of l0](l0) {$\loc_1$};
+  \node [place,below=1.3cm of l0] (l1) {$\loc_2$};
+
+  \path (l0) edge node[right,align=center]{$a$\\$h_a:=0$}(l1);
+\end{tikzpicture}
+  \caption{Example of a History Clock for Action a}
+ \label{fig:hca}
+\end{figure}  
+
+

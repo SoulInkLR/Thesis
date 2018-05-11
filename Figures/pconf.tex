@@ -1,0 +1,39 @@
+\begin{figure}[h]
+ \centering
+\begin{tikzpicture}[->,node distance=1cm,>=stealth',bend angle=20,auto,
+  place/.style={circle,thick,draw=black,minimum size=5mm},
+  dots/.style={fill=black,circle,inner sep=1.5pt},
+  initial text={}]
+
+  \node [place] (l0) {};
+  \node [place,below=1cm of l0,xshift=-5mm] (l1) {};
+  \node [place,below=1cm of l0,xshift=5mm] (l2) {};
+  \path (l0) edge  node[left]{$a_1$} (l1)
+             edge  node[right]{$a_2$} (l2);
+  \node [rounded corners,inner xsep=5mm,fit=(l0)(l1)(l2),draw,thick] (rec1) {};
+  \node [rectnodes={2.6,2.3}, right=2cm of rec1] (rec2) {};
+  
+  \node [dots,label=-90:$a_1$] (a) at ($(rec1.north west)!0.25!(rec1.north east)$) {};
+  \node [dots,label=-90:$a_2$] (b) at ($(rec1.north west)!0.75!(rec1.north east)$) {};
+  
+  \node [dots,label=-90:$a$] (c) at ($(rec2.north west)!0.5!(rec2.north east)$) {};
+
+  \path (a) +(0,5mm) coordinate (a2) +(-5mm,5mm) coordinate(a3);
+  \path (b) +(0,5mm) coordinate (b2) +(5mm,5mm) coordinate(b3);
+
+  \path (c) +(5mm,5mm) coordinate (c2) +(-5mm,5mm) coordinate(c3) +(10mm,5mm) coordinate(c4)
++(-10mm,5mm) coordinate(c5);
+
+  \draw[thick,-] (a) -- (a2); 
+  \draw[thick,-] (a2) -- node[above]{$\alpha_1$}(a3); 
+  \draw[thick,-] (b) -- (b2); 
+  \draw[thick,-] (b2) -- node[above]{$\alpha_2$}(b3); 
+  \draw[thick,-] (c) -- (c2); 
+  \draw[thick,-] (c) -- (c3); 
+  \draw[thick,-] (c2) -- node [above]{$\alpha_2$}(c4); 
+  \draw[thick,-] (c3) -- node [above]{$\alpha_1$} (c5); 
+
+\end{tikzpicture}
+\caption{Potential Conflict Between Interactions $\alpha_1$ and $\alpha_2$}
+\label{fig:pconf}
+\end{figure}

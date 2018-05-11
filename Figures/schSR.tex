@@ -1,0 +1,66 @@
+\begin{figure}[!h]
+ \centering
+  \captionsetup{justification=centering}
+\subfloat[Scheduling Mechanism for Internally or not Conflicting Interactions]{\label{fig:sch1}
+  \begin{tikzpicture}[scale=0.7,every node/.style={scale=0.7}]
+  
+  \node [markplace] (w1) {$w_i$};
+  \node [transition,below=1cm of w1](o1) {};
+  \node [place,below=1cm of o1] (r1){$r_i$};
+  \node [right=2cm of r1] (r2){};
+  \node [transition,below=1cm of r1,xshift=1.5cm](a) {};
+  \node [place,below=2cm of r1](sp){$s_{i_p}$};
+  \node [right=2cm of sp](spp){};
+  \node [transition,left=5mm of r1](s1) {};
+
+  \path (w1) edge node[right,yshift=-3mm]{receive offer}  (o1)
+        (o1) edge node[right,yshift=3mm]{from component $B_i$}(r1)
+        (r1) edge node[right,xshift=1.2cm,yshift=-4mm]{execute interaction}(a)
+        (a) edge node[right,xshift=1.7cm,yshift=4mm]{involving $B_i$}(sp);
+
+  \draw[->,dashed] (r2) -- (a);
+  \draw[->,dashed] (a) -- (spp);
+  \draw[->,rounded corners=4mm] (sp)--([sh2sw2]sp.center) -- (s1);
+  \draw[->,rounded corners=4mm] (s1) --([sh2w2]w1.center)--(w1);
+  \node[left=0cm of s1,align=center]{send notification\\to $B_i$ on port $p$};
+\end{tikzpicture}}
+\subfloat[Scheduling Mechanism for Externally Conflicting Interactions]{\label{fig:sch2}
+  \begin{tikzpicture}[scale=0.7,every node/.style={scale=0.7}]
+  
+  \node [markplace] (w1) {$w_i$};
+  \node [transition,below=5mm of w1](o1) {};
+  \node [place,below=5mm of o1] (r1){$r_i$};
+  \node [right=2cm of r1] (r2){};
+  \node [transition,below=5mm of r1,xshift=1.5cm](a) {};
+  \node [transition,right=30mm of a](f) {};
+  \node [place,below=5mm of a](t){$t_a$};  
+  \node [transition,below=5mm of t](aa) {};
+  \node [place,below=5mm of aa,xshift=-1.5cm](sp){$s_{p_i}$};
+  \node [right=2cm of sp](spp){};
+  \node [left=2mm of f,yshift=11mm](r3){};
+  \node [transition,left=18mm of a](s1) {};
+
+  \path (w1) edge (o1)
+        (o1) edge (r1)
+        (r1) edge node[right,align=center,xshift=1cm,yshift=-5mm]{sending request\\ to the CRP}(a)
+        (r1) edge [loop,in=50,out=0,looseness=5] node[right]{new offer} (r1)
+        (a) edge (t)
+        (t) edge node[right,align=center,xshift=5mm,yshift=-10mm]
+{CRP grants the execution\\ of the interaction \\involving $B_i$}(aa)
+        (t) edge [loop,looseness=5, out=-100, in=-140 ](t)
+        (t) edge [loop left,dashed] node[left,yshift=-3mm,xshift=3mm]{new offers} (t)
+        (t) edge[bend right=50] (f)
+        (f) edge[bend right=80] node[above,align=center,xshift=1cm]
+{CRP denies the execution\\ of the interaction \\involving $B_i$} (r1)
+        (f) edge[dashed,-,bend right=40] (r3)
+        (aa) edge (sp);
+
+  \draw[->,dashed] (r2) -- (a);
+  \draw[->,dashed] (aa) -- (spp);
+  \draw[->,rounded corners=4mm] (sp)--([sh2sw2]sp.center) -- (s1);
+  \draw[->,rounded corners=4mm] (s1) --([sh2w2]w1.center)--(w1);
+\end{tikzpicture}}
+ \caption{Scheduling Mechanism}
+ \label{fig:schSR}
+\end{figure}  
+

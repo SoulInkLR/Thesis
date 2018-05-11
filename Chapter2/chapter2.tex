@@ -1,0 +1,736 @@
+\chapter{Timed Systems and Semantics}\label{chap:2} 
+\minitoc
+\section{Timed Transition Systems}
+Transition systems provide a general and convenient method for modeling 
+systems and have been used frequently to model the behavior of 
+software and hardware systems. They define graphs where nodes
+represent the possible \emph{states} of the system, and edges model 
+\emph{transitions}, that is, state changes. A state encode all the relevant 
+information at certain instant, whereas a transition describes how the system
+evolve between two states. 
+
+Nowadays, several variants of transition systems formalism have been 
+proposed. For instance, a labeled transition system is a transition system
+where the set of transition is labeled by \emph{actions}.
+In this thesis, we use \emph{Timed Transition Systems} (TTS)
+to explicitly model the effect of time passage (besides the actions)
+on the states of the system. Formally, it is defined as follows:  
+
+\begin{definition}[Timed Transition System]
+  A timed transition system is a tuple $\TTS$ such that $\mc{Q}$ is 
+  a set of states, $q_0\in\mc{Q}$ is the initial state, $\Sigma$ is a set of
+  labeled actions, $\mb{K}$ is a time domain and $\to\subseteq\mc{Q}\times
+  (\Sigma\cup\mb{K})\times\mc{Q}$ is the transition relation.
+\end{definition}
+Consequently, we distinguish two types of transition:
+\begin{itemize}
+  \item \emph{action step} $\transit{\sigma}$ for $\sigma\in\Sigma$ 
+  \item \emph{time step} $\transit{d}$ for $d\in\mb{K}$
+\end{itemize}
+We write $q\transit{d,\sigma}q''$ if there exists $q'\in\mc{Q}$
+such that $q\transit{d}q'\transit{\sigma}q''$. We say that $q'$ is
+a time successor of $q$.
+
+Given a TTS $\TTS$, a \emph{run} $\exec$ of $\mc{T}$ (also called 
+\emph{execution sequence}), is a path that alternates action steps and 
+time steps, that is:
+\begin{displaymath}
+  \exec=s_0\sigma_0 s_1\sigma_1 s_2\cdots \text{ such that } 
+  s_i\in\mc{Q}, \  s_i\transit{\sigma_{i}}s_{i+1},\text{ and } 
+  i\in\integerpoz,\sigma_i\in\Sigma\cup\mb{K}
+\end{displaymath}
+We denote by $\texec$ the sum of all the time steps along this run,
+that is, $\texec=\Sigma_{\sigma_i\in\mb{K}}\sigma_i$. 
+A run $\exec$ is said to be an \emph{initial run} if $s_0=q_0$. 
+
+A state $q\in\mc{Q}$ is called reachable if there exists an initial run
+that leads to state $q$. We put $Reach(\mc{T})$ to denote the set of all 
+reachable states of $\mc{T}$.
+\subsection{Comparing Timed Transition Systems}
+In this thesis, we use the concept of (bi)simulation~\cite{} 
+in order to attest the similarity of timed transition systems.
+\begin{definition}[Simulation]
+  Given two TTS $\TTSb{1}$ and $\TTSb{2}$, a simulation relation from 
+  $\mc{T}_1$ to $\mc{T}_2$ is a binary relation $\mc{R}\subseteq\mc{Q}_1
+  \times\mc{Q}_2$ such that:
+  \begin{itemize}
+    \item $\forall(q_1,q_2)\in\mc{R},\forall\sigma\in\Sigma,\ 
+      q_1\transitb{\sigma}{1}q_1'\Rightarrow\exists q'_2\in\mc{Q}_2 
+      \text{ such that } q_2\transitb{\sigma}{2}q_2'\wedge
+      (q_1',q_2')\in\mc{R}$
+    \item $\forall(q_1,q_2)\in\mc{R},\forall d\in\mb{K},\ 
+      q_1\transitb{d}{1}q_1'\Rightarrow\exists q'_2\in\mc{Q}_2 
+      \text{ such that } q_2\transitb{d}{2}q_2'\wedge
+      (q_1',q_2')\in\mc{R}$
+  \end{itemize}
+\end{definition}
+  $\mc{T}_2$ simulates $\mc{T}_1$, denoted by $\mc{T}_1\simu{\mc{R}}\mc{T}_2$
+  means that $\mc{T}_2$ can do everything $\mc{T}_1$ does. Notice that if
+  $\mc{T}_1\simu{\mc{R}}\mc{T}_2$ and $\mc{T}_2\simu{\mc{R}}\mc{T}_1$,
+  we say that $\mc{T}_1$ and $\mc{T}_2$ are bisimilar, denoted by
+  $\mc{T}_1\eqv{\mc{R}}\mc{T}_2$   
+
+In some cases, this notion of simulation is refined in order consider only
+a part of a system behavior. This is usually the case when a system
+performs \emph{internal} (or \emph{silent}) actions not visible by external
+observers. This variant of simulation is called \emph{weak simulation}
+~\cite{}.
+
+\begin{definition}[Weak Simulation]
+  Given two TTS $\TTSbw{1}$ and $\TTSbw{2}$, where $\tau$ actions 
+  represent silent (unobservable) actions, a weak simulation relation from 
+  $\mc{T}_1$ to $\mc{T}_2$, denoted $\mc{T}_1\simuw{\mc{R}}\mc{T}_2$, 
+  is a binary relation $\mc{R}\subseteq\mc{Q}_1
+  \times\mc{Q}_2$ such that:
+  \begin{itemize}
+    \item $\forall(q_1,q_2)\in\mc{R},\ 
+      q_1\transitb{\tau}{1}q_1'\Rightarrow\exists q'_2\in\mc{Q}_2 
+      \text{ such that } q_2\transitb{\tau*}{2}q_2'\wedge
+      (q_1',q_2')\in\mc{R}$
+    \item $\forall(q_1,q_2)\in\mc{R},\forall\sigma\in\Sigma,\ 
+      q_1\transitb{\sigma}{1}q_1'\Rightarrow\exists q'_2\in\mc{Q}_2 
+      \text{ such that } q_2\transitb{\tau*\sigma\tau*}{2}q_2'\wedge
+      (q_1',q_2')\in\mc{R}$
+    \item $\forall(q_1,q_2)\in\mc{R},\forall d\in\mb{K},\ 
+      q_1\transitb{d}{1}q_1'\Rightarrow\exists q'_2\in\mc{Q}_2 
+      \text{ such that } q_2\transitb{\tau*d\tau*}{2}q_2'\wedge
+      (q_1',q_2')\in\mc{R}$
+  \end{itemize}
+\end{definition}
+  we say that $\mc{T}_1$ and $\mc{T}_2$ are observationally equivalent,
+  denoted $\mc{T}_1\eqvw{\mc{R}}\mc{T}_2$ , if it exists a weak simulation 
+  from $\mc{T}_1$ to $\mc{T}_2$ and vice versa.
+  
+  In chapter~\ref{chap:6}, we will introduce a weaker notion of simulation 
+  that characterize the degree of closeness (in term of delays)
+  between two timed systems. 
+
+\subsection{Reactive Timed Systems}
+Reactive systems are supposed to execute forever, that is,
+they are supposed to act infinitely often. We refer to this characteristic as 
+the \emph{requirement of progress}. 
+Particularly, timed systems evolves either through an action step or 
+by letting the time pass (time step).
+This evolution imposes thus two requirements of progress
+discrete progress (resp. time progress) meaning that a timed system
+should be able to perform action steps (resp. time steps) infinitely
+often. In the physical world however, no matter how fast a system can
+evolve, it cannot be infinitely fast. This induces the following constraints
+on the progress of time:
+\begin{enumerate}
+  \item Finite number of actions can happen in a certain amount of time
+  \item Infinite number of actions cannot occur in zero time
+\end{enumerate}
+
+\subsubsection{Time Progress (Zeno runs \& Timelocks)} 
+We distinguish two types of anomalies that infringe the time progress of in
+a timed system namely \emph{zeno} runs and \emph{timelocks}.
+A run $\exec$ is called \emph{zeno} if it is 
+an infinite run and if $\texec\neq\infty$. Such a run transgresses the 
+first point of the time progress presented above.
+Timelocks are states from which all infinite runs starting from these states
+are zeno.
+\subsubsection{Discrete Progress (Deadlocks)}
+States violating the discrete progress are called \emph{deadlock} states.
+Formally, a state is said to be deadlock if no action can be executed from 
+that state nor from any of it time successor. 
+
+Any model of a reactive timed system should properly capture the behavior 
+of the latter. Particularly, the corresponding model must react infinitely often,
+that is, it must not block time or execute a bounded number of actions in zero 
+time. In that sens, we can say that deadlocks and timelocks are modeling errors
+that needs to be cleared, either during the modeling process (which is tedious 
+for large scale systems) or by providing verification methods that guarantee
+their absence. 
+
+
+\section{Timed Automata Syntax and Semantics}
+\subsection{Preliminary Definitions}
+\subsubsection{Clocks}
+In order to represent the dense time domain, we rely on positive 
+real valued variables, the \emph{clocks}. Clocks are 
+positive real variable increasing synchronously (with the same rate) in a 
+given system. They are used to express the progress of time and impose 
+a certain dynamic on the execution of a timed system.
+
+Given a finite set of clocks $\mc{X}$, we define the valuation function
+$\val:\mc{X}\to\realpoz$ assigning to each clock $x$ a positive real value 
+$\val(x)$. We put $\Val$ to denote the set of all valuations.
+For a valuation $\val\in\Val$ and $d\in\realpoz$, $\val+d$ is the valuation
+satisfying $(\val+d)(x)=\val(x)+d$, while for a subset of clocks 
+$r\subseteq\mc{X}$, $\val[r]$ is the valuation obtained from $\val$ by 
+resetting clocks of $r$, that is, $\val[r](x)=0$ for $x\in r$ and
+$\val[r](x)=\val(x)$ otherwise. We write {\bf 0} for the valuation 
+that assigns 0 to every clock.
+
+An \emph{atomic clock constraint} is an expression of the form:
+\begin{displaymath}
+  c:=\true \ | \ x\#k \ |\ x-y\#k \
+\end{displaymath}
+where $x$ and $y$ are clocks in $\mc{X}$, $\#\in\{<,\le,=,\ge,>\}$,
+and $k\in\integer$. A clock constraint is a conjunction of atomic clock 
+constraint, that is:
+\begin{equation}\label{eq:cc}
+  c:=\true \ | \ x\#k \ |\ x-y\#k \ | \ c_1\wedge c_2 
+\end{equation}
+with $c_1$ and $c_2$ being atomic clock constraints. We write $\mc{C(X)}$
+for the set of clock constraints over $\mc{X}$.
+Given a clock constraint $c$ and a valuation $\val$, we say that $\val$
+satisfies $c$, denoted $\val\models c$, if all constraints are satisfied
+when each $x\in\mc{X}$ is replaced by $\val(x)$. 
+We also consider for a clock constraint $c$ the classical \emph{backward} 
+and \emph{forward} operators~\cite{} on
+clock constraints:
+\begin{align*}
+  &\text{ \bf Backward } &:& \backward c\models\val\Leftrightarrow 
+  \exists d\in\realpoz.\ \val+d\models c\\ 
+  &\text{ \bf Forward } &:& \forward c\models\val\Leftrightarrow 
+  \exists d\in\realpoz.\ \val-d\models c\\ 
+\end{align*}
+
+Additionally, we also use two variants of the backward operator considering
+lower bounds $l\in\integerpoz$ and upper bounds $u\in\integerpoz\cup
+\{+\infty\}$:
+
+\begin{displaymath}
+  \backwardp{l}{u} c\models\val\Leftrightarrow 
+  \exists d\in\realpoz, l\le d\le u. \ \val+d\models c\\ 
+\end{displaymath}
+
+\subsection{Standard Semantics for Timed Automata}
+
+\begin{definition}[Timed Component]\label{def:tc}
+  A component is a tuple $B=(\Loc,\loc_0,\mc{X},\mc{A},\mc{E},\mc{I})$, where
+  \begin{itemize}
+    \item $\Loc$ is a finite set of locations, with $\loc_0\in\Loc$ is the 
+      initial location,
+    \item $\mc{X}$ is a finite set of clocks,
+    \item $\mc{A}$ is a finite set of actions
+    \item $\mc{E}\subseteq\Loc\times(\mc{A}\times\mc{C(X)}\times2^{\mc{X}})
+      \times\Loc$ is a finite set of transitions labeled with an action, 
+      a clock constraint (guard), and a set of clocks to be reset,
+    \item $\mc{I}:\Loc\to\mc{C(X)}$ is the function assigning an invariant
+      to each location. Notice that invariants are restricted to conjunction
+      of atomic clock constraints of the form $x\le k$. 
+  \end{itemize}
+\end{definition}
+
+Through this thesis, we consider 
+\emph{deterministic} timed components, that is, at a given location
+$\loc$ and for a given action $a$, there is up to one outgoing transition
+from $\loc$ labeled by a. 
+A transition $e=(\loc,(a,g,r),\loc')\in\mc{E}$ is also denoted by
+$\loc\transit{a,g,r}\loc'$. We write $\source{e}$, $\target(e)$, $\action(e)$, $\guard(e)$
+and $\reset(e)$ for $\loc$, $\loc'$, $a$, $g$ and $r$, respectively.
+We also denote by $\Phi(a,\loc)$ the guard 
+of the transition labeled by $a$ and outgoing from $\loc$
+if it exists, and $\false$ otherwise. It is formalized as follows:
+\[\Phi(a,\loc)=\begin{cases}
+  g,& \text{ if } \exists e=(\loc,a,g,r,\loc')\in\mc{E}  \\
+  \false,& otherwise
+\end{cases}\]
+
+\begin{example}
+  Figure~\ref{fig:tc} depicts a timed component $B$ where locations
+  are represented by circles and transitions are the directed arrows
+  from a location to another. The initial location ($\loc_0$ here) is
+  represented by a double circle. The component 
+  $B=(\Loc,\loc_0,\mc{X},\mc{A},\mc{E},\mc{I})$ is defined such that:
+  \begin{itemize}
+    \item $\Loc=\{\loc_0,\loc_1\}$,
+    \item $\mc{X}=\{x\}$,
+    \item $\mc{A}=\{a,b\}$,
+    \item $\mc{E}=\{e_1,e_2\}$ where
+      \begin{itemize}
+        \item $e_1=(\loc_0,a,2\le x\le4,\emptyset,\loc_1)$
+        \item $e_2=(\loc_1,b,\true,\{x\},\loc_0)$
+      \end{itemize}
+    \item $\mc{I}$ assigns the following invariants for locations: 
+      $\Inv{\loc_0}=x\le4$ and $\Inv{\loc_1}=\true$
+  \end{itemize}
+  Notice that when a clock constraint (respectively an invariant is not
+  shown on a transition (respectively location) it is interpreted as $\true$.
+  This is the case for transition $e_2$ and location $\loc_2$.
+\end{example}
+\input{Figures/tc.tex}
+
+\begin{definition}[Standard Semantics]
+The semantics of a timed component $\tc$ is given by the timed transition
+  system $\TTSs$ where $\mc{Q}\subseteq\Loc\times\Val$ denotes the states
+  of $B$ with $q_0=(\loc_0,0)$ being the initial state, 
+  and $\to\subseteq\mc{Q}\times(\mc{A}\cup\realpos)\times\mc{Q}$
+  denotes the set of transitions between states according to the rules:
+  \begin{itemize}
+    \item $(\loc,\val)\transit{a}(\loc',\val[r])$ if $\loc\transit{a,g,r}
+      \loc'$ and $\val\models g\wedge\val[r]\models\Inv{\loc'}$
+      (action step) 
+    \item $(\loc,\val)\transit{d}(\loc,\val+d)$ if $\forall d'\in[0,d]$,
+      $\val+d'\models \Inv{\loc}$ (time step) 
+  \end{itemize}
+\end{definition}
+Notice that since the invariants are restricted to conjunction of upper bound
+atomic constraints, the time step can be simplified to:
+\begin{displaymath}
+  (\loc,\val)\transit{d}(\loc,\val+d)\text{ if }\val+d\models \Inv{\loc} 
+\end{displaymath}
+
+In this thesis, we always assume components with $\emph{well formed}$
+guard, that is, for a transition $\loc\transit{a,g,r}\loc'$,
+$\val\models g\Rightarrow\val\models\Inv{\loc}\wedge\val[r]\models
+\Inv{\loc'}$ for any $\val\in\Val$. This ensures that the reachable states
+always satisfy the location invariant. The rule on action step becomes then:
+\begin{displaymath}
+  (\loc,\val)\transit{a}(\loc',\val[r])\text{ if } \loc\transit{a,g,r}
+      \loc'\text{ and } \val\models g 
+\end{displaymath}
+\begin{remark}
+  When used in predicate definition, clock constraints are straightforwardly 
+  applied to clock valuation functions of states and thus interpreted as $\true$
+  or $\false$.
+\end{remark}
+We define the predicate $\enabled{a}$ characterizing states $(\loc,\val)$
+from which an action $a$ is enabled, that is, such that $(\loc,\val)
+\transit{a}(\loc',\val')$. It is formalized as follows:
+\begin{displaymath}
+  \enabled{a}=\bigvee_{\loc\in\Loc}\al{\loc}\wedge\Phi(a,\loc)
+\end{displaymath}
+where $\al{\loc}$ is $\true$ on states whose location is $\loc$.
+In the same way, we define the predicates $\enabledbackward{a}$,
+$\enabledbackwardb{a}{l}{u}$ and $\enabledforward{a}$ describing, respectively,
+states from which an action $a$ can be executed after some time step,
+some bounded time step or states with clocks valuations greater or equal than those
+of $\enabled{a}$ (~\ref{fig:zones}). These predicates can be formally written 
+as follows:
+\begin{align*}
+  &\enabledbackward{a}\hspace{1.8mm}=\bigvee_{\loc\in\Loc}\al{\loc}\wedge
+  \backward\Phi(a,\loc)  \\
+  &\enabledbackwardb{a}{l}{u}=\bigvee_{\loc\in\Loc}\al{\loc}\wedge
+  \backwardp{l}{u}\Phi(a,\loc)\\
+  &\enabledforward{a}\hspace{1.9mm}=\bigvee_{\loc\in\Loc}\al{\loc}\wedge
+  \forward\Phi(a,\loc)
+\end{align*}
+\input{Figures/zone.tex}
+A state $(\loc,\val)$ is said \emph{urgent} if time cannot progress from
+this state, that is, $\nexists d\in\realpos$ such that $(\loc,\val)\transit{d}
+(\loc,\val+d)$. Urgent states are characterized by the predicate:
+\begin{equation}\label{eq:urg}
+  \urgent=\bigvee_{\loc\in\Loc}\al{\loc}\wedge urg(\loc)
+\end{equation}
+where $urg(\loc)$ is a clock constraint characterizing the valuations from
+which time cannot progress with respect to the location invariant 
+$\Inv{\loc}$, that is, assuming that 
+$\Inv{\loc}=\bigwedge_{i=1}^m x_i\le k_i$ then 
+$urg(\loc)=\bigwedge_{i=1}^m x_i\ge k_i$. Notice that due to well formed
+guards, an urgent reachable state satisfies also~\ref{eq:urg} if inequalities
+$x_i\ge k_i$ on clocks are replaced by equalities $x+i=k_i$ in the expression
+of $urg(\loc)$.
+
+\begin{definition}[Strongly Non-Zeno Timed Component]
+  Given a timed component $B$. A \emph{structural loop} of $B$ is a sequence 
+  of distinct transition $e_1\cdots e_m$ such that $\forall i\in\{1,\cdots,m
+  \},\target{e_i}= \source{e_{i+1}}$. $B$ is called \emph{strongly non-zeno} 
+  if for every structural loop there exists a clock $x$ and some $0\le i,j
+  \le m$ such that:
+  \begin{itemize}
+    \item $x$ is reset in step $i$, that is, $x\in\reset(e_i)$
+    \item $x$ is bounded from below in step j, that is, $(x<1)\cap\guard(e_j)
+      =\false$
+  \end{itemize}
+\end{definition}
+Intuitively, this definition implies that at least 1 time unit is elapsed 
+at each loop of $B$.
+
+\begin{lemma}[\cite{}]\label{lm:snz}
+  If $B$ is strongly non-zeno then every infinite run of $B$ is non-zeno
+\end{lemma}
+
+The following corollary is an immediate consequence of lemma~\ref{lm:snz}. 
+\begin{corollary}\label{cr:snz}
+Given a timed component $B$. If B is strongly non-zeno then it is 
+  timelock-free.
+\end{corollary}
+
+Corollary~\ref{cr:snz} highlights an interesting fact of strong non-zenoness.
+It discharges from the trouble of checking time progress. In particular, checking
+the progress of a timed system is reduced to checking deadlock freedom.
+
+\begin{definition}[Deadlocks]
+  Given a timed component $B$. We say that a state $(\loc,\val)$ of $B$ is 
+  \emph{deadlock} if and only if no action can be executed from this state
+  or any of its time succesors, that is:
+  \begin{displaymath}
+    \nexists a\in\mc{A}, \ (\loc,\val)\transit{a}(\loc',\val')\wedge
+    \forall d>0, \ (\loc,\val)\transit{d}(\loc,\val+d)\transit{a}(\loc',\val')
+  \end{displaymath}
+  Deadlock states are characterized by the following predicate:
+  \begin{displaymath}
+    \bigvee_{\loc\in\Loc}\al{\loc}\wedge\Big(\bigwedge_{a\in\mc{A}}
+    \neg \backward\big(\enabled{a}\wedge\Inv{\loc}\big)\Big)
+  \end{displaymath}
+  Because of well formed guards, the above can be simplified into:
+  \begin{displaymath}
+    \bigwedge_{a\in\mc{A}}\neg\enabledbackward{a}
+  \end{displaymath}
+\end{definition}
+A deadlock $(\loc,\val)$ is called an \emph{action-time-lock} when no action can
+execute nor time can progress from $(\loc,\val)$, that is:
+  \begin{displaymath}
+    \nexists a\in\mc{A}, \ (\loc,\val)\transit{a}(\loc',\val')\wedge
+    \nexists d>0, \ (\loc,\val)\transit{d}(\loc,\val+d)
+  \end{displaymath}
+  Action-time-locks verifies the following predicate:
+  \begin{displaymath}
+    \bigwedge_{a\in\mc{A}}\neg\enabled{a}\wedge\bigvee_{\loc\in\Loc}
+    \big(\al{\loc}\wedge urg(\loc)\big)
+  \end{displaymath}
+
+The common practice in component-based timed systems is to have several components
+executing in parallel while their clocks increase synchronously. Moreover,
+it is often mandatory to restrict the components behaviors so as to achieve 
+a given global property. In what follows, components communicate by means
+of \emph{multiparty interactions}. A multiparty interaction is a rendez-vous 
+synchronization between actions of a fixed subset of components. It takes place 
+only if all the participants agree to execute the corresponding actions. Given 
+$n$ components $B_i$, with disjoint sets of actions $\mc{A}_i$, an interaction
+is a subset of actions $\alpha\subseteq\cup_{1\le i\le n}A_i$ containing at most
+one action per component, that is, $\alpha\cap\mc{A}_i$ is either empty or a 
+singleton $\{a_i\}$. Thus, an interaction $\alpha$ can be put in the form
+$\alpha=\{a_i\}_i{\in{I}}$ with $I\subseteq\{1,\cdots,n\}$ and $a_i\in\mc{A}_i$
+for all $i\in{I}$. We denote by $\p{\alpha}$, the set of components \emph{participating}
+in $\alpha$, that is, $\p{\alpha}=\{B_i\}_{i\in{I}}$.
+
+\begin{definition}[Timed System]\label{def:comp}
+  Given $n$ components $\tci{i}$ with $\Loc_i\cap\Loc_j=\emptyset, \ \mc{A}_i\cap
+  \mc{A}_j=\emptyset,\text{ and }\mc{X}_i\cap\mc{X}_j=\emptyset$ for any $i\neq j$,
+  the composition $S=\gamma(B_1,\cdots,B_n)$ with respect to the interaction set 
+  $\gamma$ is defined by the timed component $(\Loc,\loc_0,\mc{X},\gamma,
+  \mc{E}_{\gamma},\mc{I})$ where:
+  \begin{itemize}
+    \item $\Loc=\Loc_1\times\cdots\times\Loc_n$
+    \item $\loc_0=(\loc_{0_1},\cdots,\loc_{0_n})$,
+    \item $\mc{X}=\mc{X}_1\cup\cdots\cup\mc{X}_n$,
+    \item $\Inv{\loc}=\Inv{\loc_1}\wedge\cdots\wedge\Inv{\loc_n}$, for $\loc=
+      (\loc_1,\cdots,\loc_n)$,
+    \item $\mc{E}_{\gamma}$ is defined by:
+  \end{itemize}
+      \begin{myequation}
+        \mc{E}_{\gamma}=\left\{
+          \substack{\loc\transit{\alpha,g,r}\loc'\\
+            \text{ for } \alpha=\{a_i\}_{i\in{I}}}\Big\lvert
+        \substack{\loc=(\loc_1,\cdots,\loc_n)\in\Loc, 
+        \loc'=(\loc_1',\cdots,\loc_n')\in\Loc \\
+        \text{ if } i\not\in{I},\ \loc_i'=\loc_i,\text{ and for }i\in{I},\
+        \loc_i\transit{a_i,g_i,r_i}\loc_i'\text{ and } \\ 
+        g=\bigwedge_{i\in{I}}g_i,\  r=\cup_{i\in{I}}r_i} \right\} 
+      \end{myequation}
+      
+\end{definition}
+
+In practice, we do not explicitly build compositions of timed components as 
+presented in Definition~\ref{def:comp}. We rather interpret their semantics by 
+evaluating enabled interactions based on current states of components. In a 
+composition $S$ of $n$ components $B_i$, an action $a_i$ can execute only as part
+of an interaction $\alpha$ such that $a_i\in\alpha$,that is, along with the 
+execution of all other actions $a_j\in\alpha$, which corresponds to the usual 
+notion of multiparty interactions.
+
+\begin{property}[Semantics of a Composition]\label{pr:sem_comp}
+  Given a set of components $\{B_1,\cdots,B_n\}$ and an interaction set $\gamma$,
+  the semantics of the composite component $S=\gamma(B_1,\cdots,B_n)$
+  with respect to the set of interaction $\gamma$, is defined by 
+  the timed transition system $\TTSg$ where:
+  \begin{itemize}
+    \item $\mc{Q}_g=\Loc\times\Val$ is the set of global states, where
+      $\Loc=\Loc_1\times\cdots\times\Loc_n$ and $\mc{X}=\bigcup_{i=1}^n\mc{X}$.
+      We write a state $q=(\loc,\val)$ where $\loc=(\loc_1,\cdots,\loc_n)\in\Loc$
+      is a global location and $\val=(\val_1,\cdots,\val_n)\in\Val$ is a global 
+      clocks valuation. The initial state is $q_0=(\loc_0,0)$,
+    \item $\gamma$ is the set of interactions,
+    \item $\to_{\gamma}$ is the set of transitions defined by the rules:
+    \begin{itemize}
+      \item Interaction step: \\
+      \end{itemize}
+  \end{itemize}
+  \vspace*{-1cm}
+  \begin{align*}
+    & \alpha=\{a_i\}_{i\in I}\in\gamma,\quad\forall i\in{I}.(\loc_i,\val_i)
+    \transitb{\alpha}{\gamma}(\loc'_i,\val'_i),\quad\forall i\notin{I}.
+    (\loc_i,\val_i)=(\loc'_i,\val'_i)\\
+    \cline{1-2}
+   &\hspace{4.5cm}(\loc,\val)\transitb{\alpha}{\gamma}(\loc',\val')
+ \end{align*}
+  \vspace*{-1.5cm}
+  \begin{itemize}
+    \item[] 
+      \begin{itemize}
+      \item Time step:
+    \end{itemize}
+  \end{itemize}
+  \vspace*{-5mm}
+  \begin{align*}
+    & d\in\realpos,\quad\forall i\in\{1,\cdots,n\}
+    .\val_i+d\models\Inv{\loc_i}\\
+    \cline{1-2}
+   &\hspace{2cm}(\loc,\val)\transitb{d}{\gamma}(\loc,\val+d)
+ \end{align*}
+\end{property}
+
+To simplify notations, predicates defined on individual components $B_i$ are
+straightforwardly interpreted on global states $(\loc,\val)$ of the composition
+by considering the projection $(\loc,\val_i)$ of $(\loc,\val)$ on $B_i$.
+For instance, $\al{\loc_i}$ evaluates to true on $(\loc,\val)$ iff
+$\loc\in\Loc_1,\times\cdots\times\Loc_{i-1}\times\{\loc_i\}\times\Loc{i+1}\times
+\cdots\times\Loc_n$. Similarly, clock constraints of component $B_i$ are applied
+to clocks $\mc{X}_i$ are applied to clock valuation functions of the composition
+by restricting $\val$ to clock of $\mc{X}_i$ of $B_i$. This allows to write
+the predicate $\enabled{\alpha}$, characterizing states $(\loc,\val)$ from which 
+an interaction $\alpha=\{a_i\}_{i\in{I}}\in\gamma$ can be executed, as:
+
+\begin{align*}
+  \enabled{\alpha}&=\bigwedge_{i\in{I}}\enabled{a_i},\\
+                  &=\bigwedge_{i\in{I}}\bigvee_{\loc_i\in\Loc_i}\al{\loc_i}\wedge
+                  \Phi(a_i,\loc_i),\\
+                  &=\bigwedge_{\substack{\loc\in\Loc\\ 
+                  \loc=(\loc_1,\cdots,\loc_n)}}\al{\loc}\wedge
+                  \bigwedge_{\substack{i\in I\\ a_i\in\alpha }}\Phi(a_i,\loc_i)
+\end{align*}
+
+Notice that the above formulation of $\enabled{\alpha}$ corresponds to locations 
+enumeration of all components participating in interaction $\alpha$. In practice,
+we rather consider only a subset of locations $\Loc_{\alpha}\subseteq\Loc$, from
+which the execution of $\alpha$ is possible. This corresponds to $\Pi_{i\in{I}}
+|\Loc_{a_i}|$ possible configuration, where $\Loc_{a_i}\subseteq\Loc_i$ is a subset
+of locations from which there exists a transition labeled by action $a_i\in\alpha$,
+and $|\Loc_{a_i}|$ denotes the cardinality of $\Loc_{a_i}$, which is reasonably
+small in practical examples bu can be (at the worst case) equal to $\Pi_{i\in{I}}
+|\Loc|$. The predicates $\enabledbackward{\alpha}$, 
+$\enabledbackwardb{\alpha}{l}{u}$ and $\enabledforward{\alpha}$ becomes:
+
+\begin{align*}
+  &\enabledbackward{\alpha}\hspace{1.8mm}=\bigvee_{\substack{\loc\in\Loc\\
+  \loc=(\loc_1,\cdots,\loc_n)}}\al{\loc}\wedge \backward\big(\bigwedge_{\substack{
+    i\in{I}\\a_i\in\alpha}}\Phi(a_i,\loc_i)\big) \\
+  &\enabledbackwardb{\alpha}{l}{u}=\bigvee_{\substack{\loc\in\Loc\\
+  \loc=(\loc_1,\cdots,\loc_n)}}\al{\loc}\wedge \backwardp{l}{u}\big(\bigwedge_{
+    \substack{i\in{I}\\a_i\in\alpha}}\Phi(a_i,\loc_i)\big) \\
+  &\enabledforward{\alpha}\hspace{1.9mm}=\bigvee_{\substack{\loc\in\Loc\\
+  \loc=(\loc_1,\cdots,\loc_n)}}\al{\loc}\wedge \forward\big(\bigwedge_{\substack{
+    i\in{I}\\a_i\in\alpha}}\Phi(a_i,\loc_i)\big) \\
+\end{align*}
+
+Notice that for a clock constraint $c=c_1\wedge c_2$, we have:
+\begin{displaymath}
+  \diamond c = \diamond (c_1\wedge c_2) \neq \diamond c_1\wedge \diamond c_2
+\end{displaymath}
+with $\diamond\in\{\backward,\forward\}$.
+
+The definitions of deadlocks an action-time-locks are also trivially extended
+to composition of timed components. Deadlocks can be characterized as follows:
+\begin{displaymath}
+  \bigvee_{\loc=(\loc_1,\cdots,\loc_i)\in\Loc}\al{\loc}\wedge
+  \big[\bigwedge_{\alpha\in\gamma}\neg\backward\big(\enabled{\alpha}\wedge
+  \bigwedge_{1\le i\le n}\Invb{i}{\loc_i}\big)\big]
+\end{displaymath}
+and action-time-locks by:
+\begin{displaymath}
+  \big(\bigwedge_{\alpha\in\gamma}\neg\enabled{\alpha}\big)\wedge\big(
+  \bigvee_{1\le i\le n}\bigvee_{\loc_i\in\Loc_i}\al{\loc_i}\wedge urg(\loc_i)\big)
+\end{displaymath}
+
+\subsection{Example}\label{exp:run}
+\input{Figures/taskManager.tex}
+Figure~\ref{fig:tm} depicts a timed system composed of four components $C$, $T_1$, $T_2$, 
+and $R$.
+Component $C$ represents a  controller that initializes then releases tasks $T_1$ and $T_2$
+Tasks use the shared resource $R$ during their execution.
+To implement such behavior, we consider the following interactions between $C$, $R$, and 
+$T_1$: $\alpha_1=\{init_0, init_1\}$,
+$\alpha_3=\{start_0, start_1\}$, $\alpha_5=\{ take, process_1\}$, $\alpha_7 = 
+\{free, end_1 \}$, 
+and similar interactions $\alpha_2$, $\alpha_4$, $\alpha_6$, $\alpha_8$ for task $T_2$, 
+as shown by connections on Figure~\ref{fig:tm}.
+The controller is responsible for firing
+the execution of each task. First, it non-deterministically initializes one
+of the two tasks, i.e. executes $\alpha_1$ or $\alpha_2$, and then
+releases it through interaction $\alpha_3$ or $\alpha_4$.
+Tasks perform their processing independently of the controller, after being granted an access 
+to the shared resource ($\alpha_5$ or $\alpha_6$).
+When finished, a task releases the resource (interactions $\alpha_7$ or $\alpha_8$) and goes 
+back to its initial location.
+An example of execution sequence of this system is given below. Valuations $v$ of clocks $x$, 
+$y$, and $z$ are represented as a tuples 
+$(\val(x),\val(y),\val(z))$:
+\begin{displaymath}
+\small{
+\begin{split}
+&((\loc_0^1,\loc_0^2,\loc_0^3,\loc_0^4),(0,0,0))\transit{26}_{\gamma}
+((\loc_0^1,\loc_0^2,\loc_0^3,\loc_0^4),(26,26,26))\transit{\alpha_1}_{\gamma}
+((\loc_1^1,\loc_1^2,\loc_0^3,\loc_0^4),(26,26,26))\transit{\alpha_3}_{\gamma}\\
+&((\loc_0^1,\loc_2^2,\loc_0^3,\loc_0^4),(0,26,0))\transit{10}_{\gamma}
+((\loc_0^1,\loc_2^2,\loc_0^3,\loc_0^4),(10,36,10))\transit{\alpha_5}_{\gamma}
+((\loc_0^1,\loc_3^2,\loc_0^3,\loc_1^4),(0,36,10))\transit{2}_{\gamma}\\&
+((\loc_0^1,\loc_3^2,\loc_0^3,\loc_1^4),(2,38,12))\transit{\alpha_2}_{\gamma}
+((\loc_1^1,\loc_3^2,\loc_1^3,\loc_1^4),(2,38,12))
+\end{split}
+}
+\end{displaymath}
+
+\section{Timed Systems with Data}
+Timed models introduced in the previous section focuses on the timing behavior of a given system.
+In order to achieve a higher degree of expressiveness, we extend these models wit data variables.
+Data allows additional representation of complex behavior. Similarly to clock variables, they may
+appear in the guard of transitions as additional conditions and may be updated when transitions
+fire.
+
+\begin{definition}[Guards on clocks and Data]
+  Let $\mc{X}$ be a set of clock variables and $\mc{D}$ be a set of
+  data variables. We denote by $\mc{G(X,D)}$ the set of guards induced
+  by the following grammar:
+  \begin{displaymath}
+    g:=g_x \ | \ g_d \ | \ g_1\wedge g_2
+  \end{displaymath}
+  where $g_x\in\mc{C(X)}$, $g_d$ is a predicate on a set of data variables
+  of $\mc{D}$, and $g_1$, $g_2$ are guards over clocks and/or data variables.
+\end{definition}
+
+We extend the notion of valuation to data variable in the following manner:
+\begin{itemize}
+  \item Valuations assign values to data variable (in addition to clocks)
+  \item The satisfaction of a valuation to a constraint is straightforwardly 
+    extended to data variables
+  \item Data variables are insensitive to the progress of time
+  \item Update operations are also defined for data variables 
+\end{itemize}
+We put $R$ to denote the set of update operations, thatis, 
+all reset operations over clocks of $\mc{X}$ and 
+assignment operations over data variables of $\mc{D}$. 
+
+\begin{definition}[Timed Component with Data]\label{def:tce}
+  A timed component with data is a tuple 
+  $B_d=(\Loc,\loc_0,\mc{X},\mc{D},\mc{A},\mc{E},\mc{I})$ such that:
+  \begin{itemize}
+    \item $\Loc$, $\loc_0$, $\mc{X}$, $\mc{A}$ and $\mc{I}$ are defined as
+      in Definition~\ref{def:tc},
+    \item $\mc{D}$ is a finite set of data variables,
+    \item $\mc{E}\subseteq\Loc\times(\mc{A}\times\mc{G(X,D)}\times2^{R})\times\Loc$
+    is a finite set of labeled transitions with an action, an extended guard, 
+      and a set of clocks to be reset and assignement operations over elements
+      of $\mc{D}$. 
+  \end{itemize}
+\end{definition}
+
+\input{Figures/tcd.tex}
+\begin{example}
+  Component of Figure~\ref{fig:tcd} is an extended timed component with actions $a$, $b$ and $c$.
+  The set of data is $\mc{D}=\{k\}$. It is used on the guards of the transitions labeled by
+  $a$ and $c$ ($k\le 5$ and $k>5$ respectively). The update operations for both transitions
+  are respectively $\{k:k+10\}$ and $\{k:=k-3\wedge x:=0\}$.
+\end{example}
+\begin{remark}
+  Notice that extending a timed component with data will result in a restriction
+  of the behavior of the initial timed components since extending guards to data
+  variables will only constrain the execution of transitions.
+\end{remark}
+
+\begin{definition}[Timed System with Data]
+  Given $n$ components $B_{d_i}=(\Loc_i,\loc_{0_i},$\\$\mc{X}_i,\mc{D}_i,\mc{A}_i,
+  \mc{E}_i,\mc{I}_i)$ and an interaction set $\gamma$,
+  the composition $S_d=\gamma(B_{d_1},\cdots,B_{d_n})$ with respect to 
+  the interaction set $\gamma$ is defined by the timed component 
+  $(\Loc,\loc_0,\mc{X},\mc{D},\gamma,\mc{E}_{\gamma},\mc{I})$ where:
+  \begin{itemize}
+    \item $\Loc$, $\loc_0$, $\mc{X}$, $\gamma$ and $\mc{I}$ are defined as
+      in Definition~\ref{def:comp}.
+    \item $\mc{D}=\mc{D}_1\cup\cdots\cup\mc{D}_n$
+    \item $\mc{E}_{\gamma}$ is straightforwardly extended by considering guards
+      on data variables and assignment operations on execution of interactions
+  \end{itemize}
+\end{definition}
+The semantics of an extend timed system extends the semantics of Property~\ref{pr:sem_comp}
+in the sense that an interaction takes place if the guards on data variables also evaluates
+to $\true$ and that interaction execution applies the underlying update operations of the
+corresponding components transition.
+
+In what follows, when referring to timed component or timed system we imply by that 
+extended timed component or extend timed systems, unless explicitly stated. 
+
+\section{Verification of Timed Systems}\label{sec:2.4}
+\subsection{Symbolic Reachability}
+
+The semantics of timed systems as presented in Property~\ref{pr:sem_comp} 
+defines states as pairs of locations configurations and clocks
+valuations. By considering a continuous time domain ($\realpoz$ here), the 
+resulting timed transition system yields an infinity of states.
+Consequently, the usual practice is to rely on a symbolic representation~\cite{}
+of states to make this state space finite.
+A symbolic state is defined by a pair $(\loc,\xi)$ where $\loc$ is a location
+and $\xi$ is a zone, a set of clocks valuations defined by clocks constraints
+(as defined in~\ref{eq:cc}). Consequently, the set of reachable states of a 
+timed component B (system) can be put on the form:
+\begin{displaymath}
+  Reach(B)=\bigvee_{j\in{J}}\al{\loc_j}\wedge\xi_j
+\end{displaymath}
+
+\subsection{Compositional Verification}
+
+Standard verification techniques such as model checking are based on explicit 
+exploration and exhaustive enumeration of all the reachable symbolic states 
+of a given system. The main issue with this 
+method is the combinatorial explosion when considering large scale systems.
+Compositional verification have been introduced to cope with state explosion
+problem, and thus achieve scalability when verifying large scale systems.
+This approach is based on the concept of divide-and-conquer in order to 
+break up the verification
+problems into smaller subsequent problems. Compositional verification have been 
+extensively studied under different manners e.g., assume-guarantee 
+reasoning~\cite{}, 
+contract-based verification~\cite{}, compositional generation~\cite{}, 
+deductive verification
+~\cite{}, etc.  
+In this thesis, we choose to use a deductive compositional verification 
+method that exploits compositionality for analysis of timed systems 
+using \emph{invariants}. Invariants are symbolic approximations of the set 
+of reachable states of the system as opposed to the exact 
+reachability analysis in model-checking. The key principle of this 
+approach is the computation of a global invariant as the conjunction of
+other invariants (components invariants, interaction invariants, etc.).
+
+
+
+%:\emph{(i)} local invariants of 
+%the underlying components, \emph{(ii)} an interaction 
+%invariant deduced from the synchronizations 
+%(interactions) between components, and \emph{(iii)} an additional invariant 
+%capturing the 
+%global timing aspects and relating clocks of different 
+%components.
+
+Let $S=\gamma(B_1,\cdots,B_n)$ be a system composed of $n$ timed components $B_i$ 
+synchronizing through the interaction 
+set $\gamma$, and let $\psi$ be a property of interest. Assuming that 
+$GI(S)$ is the global invariant for this system, 
+the verification rule of $\psi$ can be intuitively
+written as follows:
+
+\begin{align*}
+  &\hspace{1cm}GI(S)\Rightarrow\psi\\
+    \cline{1-2}
+   &\gamma(B_1,\cdots,B_n)\models\square\psi
+\end{align*}
+where the notation \enquote{$\gamma(B_1,\cdots,B_n)\models\square\psi$} is to 
+be read as \enquote{$\psi$ holds in every reachable state of the
+composition $\gamma(B_1,\cdots,B_n)$}.
+
+Usually when verifying timed system, the common practice is to verify the system 
+against some \emph{safety property}, that is a property 
+describing that \enquote{some bad states are never reached}. This property 
+formulation allows to assert that nothing bad happens.
+We use satisfiability checking~\cite{} to verify that the global 
+invariant of a system 
+implies the property of interest. Particularly, for a system S characterized 
+by the global invariant $GI(S)$, and 
+given a safety property $\psi$, we check the unsatisfiability of 
+$GI(S)\wedge\neg\psi$. 
+
+
+

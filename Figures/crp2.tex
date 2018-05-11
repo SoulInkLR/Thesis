@@ -1,0 +1,44 @@
+\begin{figure}[!h]
+ \centering
+  \captionsetup{justification=centering}
+  \begin{tikzpicture}[scale=0.7,every node/.style={scale=0.7}]
+  
+  \node[accepting,place] (w1){$w_{\alpha_1}$}; 
+  \node[place,below=2.5cm of w1] (r1){$r_{\alpha_1}$}; 
+  \draw [-] ($(r1) + (180:4mm)$) arc (180:360:4mm);
+  \path (w1) edge node[left]{$rsv_{\alpha_1}$}(r1)
+        (r1) edge [out=180,in=180] node[left,align=center]{$n_1^{\alpha_1}>N_1$\\
+                                                      $n_2^{\alpha_1}>N_2$\\
+                                                      $ok_{\alpha_1}$\\
+                                                      $N_1:=n_1^{\alpha_1}$\\
+                                                      $N_2:=n_2^{\alpha_1}$} (w1)
+        (r1) edge [out=0,in=0] node[right,align=center]{$n_1^{\alpha_1}\le N_1$\\
+                                                      $n_2^{\alpha_1}\le N_2$\\
+                                                      $fail_{\alpha_1}$} (w1);
+  
+
+  \node[accepting,place,right=5cm of w1] (w2){$w_{\alpha_2}$}; 
+  \node[place,below=2.5cm of w2] (r2){$r_{\alpha_2}$}; 
+  \draw [-] ($(r2) + (180:4mm)$) arc (180:360:4mm);
+  \path (w2) edge node[left]{$rsv_{\alpha_2}$}(r2)
+        (r2) edge [out=180,in=180] node[left,align=center]{$n_1^{\alpha_2}>N_1$\\
+                                                      $n_3^{\alpha_2}>N_3$\\
+                                                      $ok_{\alpha_2}$\\
+                                                      $N_1:=n_1^{\alpha_2}$\\
+                                                      $N_3:=n_3^{\alpha_2}$} (w2)
+        (r2) edge [out=0,in=0] node[right,align=center]{$n_1^{\alpha_2}\le N_1$\\
+                                                      $n_3^{\alpha_2}\le N_3$\\
+                                                      $fail_{\alpha_2}$} (w2);
+  \node [rounded corners,inner xsep=60mm,inner ysep=30mm,draw,fit=(w1)(r2)] (rec1) {};
+  \node [dots,label=90:$rsv_{\alpha_1}$] (i1) at ($(rec1.south west)!0.175!(rec1.south east)$) {};
+  \node [triangle,rotate=180,label=-90:$ok_{\alpha_1}$] (i1) at ($(rec1.south west)!0.25!(rec1.south east)$) {};
+  \node [triangle,rotate=180,label=-90:$fail_{\alpha_1}$] (i1) at ($(rec1.south west)!0.325!(rec1.south east)$) {};
+  \node [dots,label=90:$rsv_{\alpha_2}$] (i1) at ($(rec1.south west)!0.675!(rec1.south east)$) {};
+  \node [triangle,rotate=180,label=-90:$ok_{\alpha_2}$] (i1) at ($(rec1.south west)!0.75!(rec1.south east)$) {};
+  \node [triangle,rotate=180,label=-90:$fail_{\alpha_2}$] (i1) at ($(rec1.south west)!0.825!(rec1.south east)$) {};
+  
+ \end{tikzpicture}
+ \caption{Refined Version of the Conflict Resolution Layer from Figure~\ref{fig:crp}}
+ \label{fig:crp}
+\end{figure}  
+

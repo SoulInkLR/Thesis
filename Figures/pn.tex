@@ -1,0 +1,46 @@
+\begin{figure}[!h]
+ \centering
+  \begin{tikzpicture}[scale=0.8,every node/.style={scale=0.8}]
+
+  \node [markplace](l0) {$\loc_0$};
+  \node [place,right=1.5cm of l0,yshift=1.5cm] (l1) {$\loc_1$};
+  \node [place,right=1.5cm of l0,yshift=-1.5cm] (l2) {$\loc_2$};
+  \node [transition,right=7.5mm of l0,yshift=-4mm,rotate=-90,label=below:$\tau_2$] (t1) {};
+  \node [transition,right=7.5mm of l0,yshift=4mm,rotate=90,label=above:$\tau_1$] (t2) {};
+  \node [transition,above=5mm of l0,label=left:$\tau_3$] (t3) {};
+  \node [transition,below=5mm of l0,label=left:$\tau_4$] (t4) {};
+
+  \path (l0) edge (t1)
+             edge (t2)
+        (t2) edge (l1)
+        (t1) edge (l2)
+        (t3) edge (l0)
+        (t4) edge (l0);
+    \draw[-stealth,rc] (l1) -- ([h2n]t3.center) --(t3);
+    \draw[-stealth,rc] (l2) -- ([h2s]t4.center) --(t4);
+   % (l1) [bend right]edge (t3)
+   %     (l2) [bend left]edge (t4);
+
+  \node [place,right=5cm of l0](l0) {$\loc_0$};
+  \node [markplace,right=1.5cm of l0,yshift=1.5cm] (l1) {$\loc_1$};
+  \node [place,right=1.5cm of l0,yshift=-1.5cm] (l2) {$\loc_2$};
+  \node [transition,right=7.5mm of l0,yshift=-4mm,rotate=-90,label=below:$\tau_2$] (t1) {};
+  \node [transition,right=7.5mm of l0,yshift=4mm,rotate=90,label=above:$\tau_1$] (t2) {};
+  \node [transition,above=5mm of l0,label=left:$\tau_3$] (t3) {};
+  \node [transition,below=5mm of l0,label=left:$\tau_4$] (t4) {};
+  \path (l0) edge (t1)
+             edge (t2)
+        (t2) edge (l1)
+        (t1) edge (l2)
+        (t3) edge (l0)
+        (t4) edge (l0);
+    \draw[-stealth,rc] (l1) -- ([h2n]t3.center) --(t3);
+    \draw[-stealth,rc] (l2) -- ([h2s]t4.center) --(t4);
+
+\end{tikzpicture}
+ \caption{A Simple Petri Net with Two Succesive Markins}
+ \label{fig:pn}
+\end{figure}  
+
+
+

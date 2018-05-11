@@ -1,0 +1,37 @@
+\begin{figure}[!h]
+ \centering
+  \shorthandoff{:!}
+\begin{tikzpicture}[scale=0.8,every node/.style={scale=0.8}]
+
+  \node [accepting, place] (l0b)  {$\locpb{0}{1}$};
+  \draw [-] ($(l0b) + (180:4mm)$) arc (180:360:4mm);
+  \node [place,right=1.5cm of l0b] (l0)  {$\loc_0^1$};
+  \node [place,below=2cm of l0] (l1b)  {$\locpb{1}{1}$};
+  \draw [-] ($(l1b) + (180:4mm)$) arc (180:360:4mm);
+  \node [place,left=1.5cm of l1b] (l1)  {$\loc_1^1$};
+  
+  \path (l0b) edge node[above,align=center]{$o$}(l0)
+        (l0) edge node[right,align=center,xshift=1.4cm,yshift=1cm](init){$init_0$}(l1b)
+        (l1b) edge node[below,align=center]{$o$}(l1)
+        (l1) edge node[left,align=center,xshift=-1.4cm,yshift=1cm](start){$start_0$}(l0b);
+  \node [align=center,below=0cm of start,rectangle,fill=gray!30](u1) {$g_{init_0}:=[z>25]$\\
+                        $g_{start_0}:=\false$\\
+                        $r_z:=\true$\\
+                        $\mc{I}_{C^{SR}}=\true$};
+  \node [align=center,below=0cm of init,rectangle,fill=gray!30](u2) {$g_{init_0}:=\false$\\
+                        $g_{start_0}:=\true$\\
+                        $r_z:=\false$\\
+                        $\mc{I}_{C^{SR}}=\true$};
+
+  \node [rounded corners,inner xsep=11mm,inner ysep=11mm,draw, fit=(l0)(l1)(l0b)(l1b)(u1)(u2)] (rec1) {};
+  \node [triangle,label=-90:$o$] (o) at ($(rec1.north west)!0.25!(rec1.north east)$) {};
+  \node [dots,label=-90:$init_0$] (n1) at ($(rec1.north west)!0.75!(rec1.north east)$) {};
+  \node [dots,label=-90:$start_0$] (n2) at ($(rec1.north west)!0.85!(rec1.north east)$) {};
+\end{tikzpicture}
+  \caption{Send/Receive Transformation of the Controller Component From Figure~\ref{fig:tm}}
+ \label{fig:tcSR}
+\end{figure}  
+
+
+
+

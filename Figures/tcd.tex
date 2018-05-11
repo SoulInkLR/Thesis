@@ -1,0 +1,18 @@
+\begin{figure}[!h]
+ \centering
+  \begin{tikzpicture}[scale=0.8,every node/.style={scale=0.8}]
+
+  \node [accepting, place,label=below:\textcolor{red}{$x\le4$},label={[shift={(-.9,.3)}]$B$}](l0) {$\loc_0$};
+  \node [place,right=2cm of l0] (l1) {$\loc_1$};
+
+  \path (l0) edge [bend left] node[above,align=center]{$a$\\$2\le x\le4\wedge k<=5$\\$k:=k+10$}(l1)
+        (l1) edge [bend left] node[below,align=center]{$b$\\$x:=0$} (l0)
+        (l0) edge [loop left] node[left,align=center]{$c$\\$k>5\wedge1<x\le4$\\$k:=k-3\wedge x:=0$}(l0);
+  \node [rounded corners,inner xsep=26mm,inner ysep=15mm,draw, fit=(l0)(l1),xshift=-2.1cm] (rec1) {};
+\end{tikzpicture}
+  \caption{Example of an Extended Timed Component}
+ \label{fig:tcd}
+\end{figure}  
+
+
+

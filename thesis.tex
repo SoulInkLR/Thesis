@@ -1,0 +1,237 @@
+% ******************************* PhD Thesis Template **************************
+% Please have a look at the README.md file for info on how to use the template
+
+\documentclass[a4paper,12pt,Times,twoside,numbered,index]{Classes/PhDThesisPSnPDF}
+
+% ******************************************************************************
+% ******************************* Class Options ********************************
+% *********************** See README for more details **************************
+% ******************************************************************************
+
+% `a4paper'(The University of Cambridge PhD thesis guidelines recommends a page
+% size a4 - default option) or `a5paper': A5 Paper size is also allowed as per
+% the Cambridge University Engineering Deparment guidelines for PhD thesis
+%
+% `11pt' or `12pt'(default): Font Size 10pt is NOT recommended by the University
+% guidelines
+%
+% `oneside' or `twoside'(default): Printing double side (twoside) or single
+% side.
+%
+% `print': Use `print' for print version with appropriate margins and page
+% layout. Leaving the options field blank will activate Online version.
+%
+% `index': For index at the end of the thesis
+%
+% `draft': For draft mode without loading any images (same as draft in book)
+%
+% `draftmode': Special draft mode with line numbers, images, and water mark with
+% timestamp and custom text. Position of the text can also be modified.
+%
+% `abstract': To generate only the title page and abstract page with
+% dissertation title and name, to submit to the Student Registry
+%
+% `chapter`: This option enables only the specified chapter and it's references
+%  Useful for review and corrections.
+%
+% ************************* Custom Page Margins ********************************
+%
+% `custommargin`: Use `custommargin' in options to activate custom page margins,
+% which can be defined in the preamble.tex. Custom margin will override
+% print/online margin setup.
+%
+% *********************** Choosing the Fonts in Class Options ******************
+%
+% `times' : Times font with math support. (The Cambridge University guidelines
+% recommend using times)
+%
+% `fourier': Utopia Font with Fourier Math font (Font has to be installed)
+%            It's a free font.
+%
+% `customfont': Use `customfont' option in the document class and load the
+% package in the preamble.tex
+%
+% default or leave empty: `Latin Modern' font will be loaded.
+%
+% ********************** Choosing the Bibliography style ***********************
+%
+% `authoryear': For author-year citation eg., Krishna (2013)
+%
+% `numbered': (Default Option) For numbered and sorted citation e.g., [1,5,2]
+%
+% `custombib': Define your own bibliography style in the `preamble.tex' file.
+%              `\RequirePackage[square, sort, numbers, authoryear]{natbib}'.
+%              This can be also used to load biblatex instead of natbib
+%              (See Preamble)
+%
+% **************************** Choosing the Page Style *************************
+%
+% `default (leave empty)': For Page Numbers in Header (Left Even, Right Odd) and
+% Chapter Name in Header (Right Even) and Section Name (Left Odd). Blank Footer.
+%
+% `PageStyleI': Chapter Name next & Page Number on Even Side (Left Even).
+% Section Name & Page Number in Header on Odd Side (Right Odd). Footer is empty.
+%
+% `PageStyleII': Chapter Name on Even Side (Left Even) in Header. Section Number
+% and Section Name in Header on Odd Side (Right Odd). Page numbering in footer
+
+
+% ********************************** Preamble **********************************
+% Preamble: Contains packages and user-defined commands and settings
+\input{Preamble/packages}
+\input{Preamble/commands}
+
+% ************************ Thesis Information & Meta-data **********************
+% Thesis title and author information, refernce file for biblatex
+\input{thesis-info}
+
+% ***************************** Abstract Separate ******************************
+% To printout only the titlepage and the abstract with the PhD title and the
+% author name for submission to the Student Registry, use the `abstract' option in
+% the document class.
+
+\ifdefineAbstract
+ \pagestyle{empty}
+ \includeonly{Declaration/declaration, Abstract/abstract}
+\fi
+
+% ***************************** Chapter Mode ***********************************
+% The chapter mode allows user to only print particular chapters with references
+% Title, Contents, Frontmatter are disabled by default
+% Useful option to review a particular chapter or to send it to supervisior.
+% To use choose `chapter' option in the document class
+
+\ifdefineChapter
+ \includeonly{Chapter3/chapter3}
+\fi
+
+
+% ***************************** Minitoc Settings ********************************
+
+\setcounter{minitocdepth}{2} 
+\setlength{\mtcindent}{24pt} 
+\renewcommand{\mtcfont}{\small\rm} 
+\renewcommand{\mtcSfont}{\small\bf} 
+
+
+% ******************************** Front Matter ********************************
+\begin{document}
+
+\frontmatter
+
+\includepdf[pages=-]{cover.pdf}
+
+
+\begin{titlepage}
+  \maketitle
+\end{titlepage}
+
+
+%\include{Dedication/dedication}
+%\include{Declaration/declaration}
+\include{Acknowledgement/acknowledgement}
+\include{Abstract/abstract}
+
+% *********************** Adding TOC and List of Figures ***********************
+
+\dominitoc
+\dominilof
+\dominilot
+\renewcommand{\baselinestretch}{0.9}\normalsize
+\tableofcontents
+\renewcommand{\baselinestretch}{1.0}\normalsize
+
+%\tableofcontents
+
+%\listoffigures\mtcaddchapter 
+
+%\listoftables\mtcaddchapter 
+\adjustmtc
+% \printnomencl[space] space can be set as 2em between symbol and description
+%\printnomencl[3em]
+
+\printnomencl
+
+% ******************************** Main Matter *********************************
+\mainmatter
+\include{Chapter1/chapter1}
+\part{Preliminaries}
+{In this part, we give formal definition and present results that will be used in subsequent
+chapters. Chapter~\ref{chap:2} provides formal definition of timed transition systems,
+timed automata, their semantics and properties, as well as a variant of the latter.
+It also discusses the verification technique used in this thesis. Chapter~\ref{chap:3}
+first explains how an intermediate representation based on the timed automata formalism
+can be used to model a realistic view of a distributed real-time systems. It also tackles
+two important constraints that an application can incur when being deployed in a distributed
+environment under real-time restriction.} 
+\include{Chapter2/chapter2}
+\include{Chapter3/chapter3}
+\part{Contribution}
+{This part includes our contributions to the field of modeling and validating
+distributed real-time systems. First, Chapter~\ref{chap:4} proposes a knowledge based
+optimization of the Send/Receive transformation. It aims at reducing the interaction between
+the scheduling layer and the conflict resolution layer through a reduction of the potentially
+conflicting interactions set. Thereafter, Chapter~\ref{chap:5} and~\ref{chap:6} studies the 
+behavior of a given model when subject to constraints inherent to the distributed context.
+Chapter~\ref{chap:5} tackles the problem of communication delays by proposing a strategy based
+on anticipating the execution of components beforehand. It provides sufficient conditions
+that allow to check whether a given system is robust or not (in the sense not guaranteed) 
+to communication delays. We also propose an alternative method based on real-time controller
+synthesis and explain how it differs from our approach. 
+In the same way Chapter~\ref{chap:6} investigates the clock drift problem and proposes a strategy
+that ensure that executions of the drifted system stay close enough from similar executions
+of the latter with perfect clocks.
+}
+\include{Chapter4/chapter4}
+%\include{Chapter5/chapter5}
+\include{Chapter6/chapter6}
+\include{Chapter7/chapter7}
+\include{Chapter8/chapter8}
+\part{Conclusion}
+\include{Chapter9/chapter9}
+
+\listoffigures 
+
+\listoftables 
+
+
+% ********************************** Back Matter *******************************
+% Backmatter should be commented out, if you are using appendices after References
+%\backmatter
+
+% ********************************** Bibliography ******************************
+\begin{spacing}{0.9}
+
+% To use the conventional natbib style referencing
+% Bibliography style previews: http://nodonn.tipido.net/bibstyle.php
+% Reference styles: http://sites.stat.psu.edu/~surajit/present/bib.htm
+
+\bibliographystyle{apalike}
+%\bibliographystyle{plainnat} % use this to have URLs listed in References
+\cleardoublepage
+\bibliography{References/references} % Path to your References.bib file
+
+
+% If you would like to use BibLaTeX for your references, pass `custombib' as
+% an option in the document class. The location of 'reference.bib' should be
+% specified in the preamble.tex file in the custombib section.
+% Comment out the lines related to natbib above and uncomment the following line.
+
+%\printbibliography[heading=bibintoc, title={References}]
+
+
+\end{spacing}
+
+% ********************************** Appendices ********************************
+
+\begin{appendices} % Using appendices environment for more functunality
+
+\include{Appendix1/appendix1}
+%\include{Appendix2/appendix2}
+
+\end{appendices}
+
+% *************************************** Index ********************************
+\printthesisindex % If index is present
+
+\end{document}

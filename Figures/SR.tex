@@ -1,0 +1,132 @@
+\begin{figure*}[h!]
+\centering
+  \captionsetup{justification=centering}
+  \shorthandoff{:!}
+\begin{tikzpicture}
+  \node [rectnode={1.1,1.1},label={[shift={(0,-1.1)}]$T_1^{SR}$}] (t1) {};
+  \node [rectnode={1.1,1.1},right=10mm of t1,label={[shift={(0,-1.1)}]$C^{SR}$}] (c) {};
+  \node [rectnode={1.1,1.1},right=7.5mm of c,label={[shift={(0,-1.1)}]$R^{SR}$}] (r) {};
+  \node [rectnode={1.1,1.1},right=10mm of r,label={[shift={(0,-1.1)}]$T_2^{SR}$}] (t2) {};
+
+  \node [rectnode={4,2},above=1.5cm of t1,xshift=8mm] (sch1) {$Sch_1\{\small{\alpha_1,\alpha_3,\alpha_5,\alpha_7}\}$};
+  \node [rectnode={4,2},above=1.5cm of t2,xshift=-8mm] (sch2) {$Sch_2\{\small{\alpha_2,\alpha_4,\alpha_6,\alpha_8}\}$};
+  \node [rectnode={8.5,2},above=5mm of sch1,xshift=22.5mm,label={[shift={(0,-10mm)}]$Conflict$ $Resolution$}] (crp) {};
+  
+  
+  \node [triangle,label=-90:\small{$o_1$}] (ot1) at ($(t1.north west)!0.25!(t1.north east)$) {};
+    \node [dots,label=-90:\small{$n_1$}] (nt1) at ($(t1.north west)!0.75!(t1.north east)$) {};
+  
+    \node [triangle,label=-90:\small{$o_2$}] (oc) at ($(c.north west)!0.25!(c.north east)$) {};
+    \node [dots,label=-90:\small{$n_2$}] (nc) at ($(c.north west)!0.75!(c.north east)$) {};
+  
+    \node [triangle,label=-90:\small{$o_3$}] (or) at ($(r.north west)!0.25!(r.north east)$) {};
+    \node [dots,label=-90:\small{$n_3$}] (nr) at ($(r.north west)!0.75!(r.north east)$) {};
+  
+    \node [triangle,label=-90:\small{$o_4$}] (ot2) at ($(t2.north west)!0.25!(t2.north east)$) {};
+    \node [dots,label=-90:\small{$n_4$}] (nt2) at ($(t2.north west)!0.75!(t2.north east)$) {};
+
+  %sch1
+    %\node [dots,label=90:\small{$o_1$}] (s1ot1) at ($(sch1.south west)!0.15!(sch1.south east)$) {};
+    %\node [triangle,label=-90:\small{$n_1$},rotate=180] (s1nt1) at ($(sch1.south west)!0.25!(sch1.south east)$) {};
+    \node [dots,label=90:\small{$o_1$},above=1.25cm of ot1] (s1ot1)  {};
+    \node [triangle,label=-90:\small{$n_1$},rotate=180,above=1.5cm of nt1] (s1nt1) {};
+  
+    \node [dots,label=90:\small{$o_2$}] (s1oc) at ($(sch1.south west)!0.5!(sch1.south east)$) {};
+    \node [triangle,label=-90:\small{$n_2$},rotate=180] (s1nc) at ($(sch1.south west)!0.6!(sch1.south east)$) {};
+  
+    \node [dots,label=90:\small{$o_3$}] (s1or) at ($(sch1.south west)!0.75!(sch1.south east)$) {};
+    \node [triangle,label=-90:\small{$n_3$},rotate=180] (s1nr) at ($(sch1.south west)!0.85!(sch1.south east)$) {};
+  
+  \node [dots,label=-90:\small{$ok_1$}] (ok1) at ($(sch1.north west)!0.25!(sch1.north east)$) {};
+  \node [dots,label=-90:\small{$fail_1$}] (fail1) at ($(sch1.north west)!0.5!(sch1.north east)$) {};
+  \node [triangle,label=-90:\small{$req_1$}] (res1) at ($(sch1.north west)!0.75!(sch1.north east)$) {};
+  %crp1
+  \node [triangle,label=-90:\small{$ok_1$},rotate=180,above=5mm of ok1] (ok1')  {};
+  \node [triangle,label=-90:\small{$fail_1$},rotate=180,above=5mm of fail1] (fail1') {};
+  \node [dots,label=90:\small{$req_1$},above=2.5mm of res1] (res1') {};
+  %sch2
+  \node [dots,label=90:\small{$o_2$}] (s2oc) at ($(sch2.south west)!0.15!(sch2.south east)$) {};
+    \node [triangle,label=-90:\small{$n_2$},rotate=180] (s2nc) at ($(sch2.south west)!0.25!(sch2.south east)$) {};
+  
+    \node [dots,label=90:\small{$o_3$}] (s2or) at ($(sch2.south west)!0.4!(sch2.south east)$) {};
+    \node [triangle,label=-90:\small{$n_3$},rotate=180] (s2nr) at ($(sch2.south west)!0.5!(sch2.south east)$) {};
+  
+    \node [dots,label=90:\small{$o_4$},above=1.25cm of ot2] (s2ot2)  {};
+    \node [triangle,label=-90:\small{$n_4$},rotate=180,above=1.5cm of nt2] (s2nt2) {};
+    %\node [dots,label=90:\small{$o_4$}] (s2ot2) at ($(sch2.south west)!0.75!(sch2.south east)$) {};
+    %\node [triangle,label=-90:\small{$n_4$},rotate=180] (s2nt2) at ($(sch2.south west)!0.85!(sch2.south east)$) {};
+
+  \node [dots,label=-90:\small{$ok_2$}] (ok2) at ($(sch2.north west)!0.25!(sch2.north east)$) {};
+  \node [dots,label=-90:\small{$fail_2$}] (fail2) at ($(sch2.north west)!0.5!(sch2.north east)$) {};
+  \node [triangle,label=-90:\small{$res_2$}] (res2) at ($(sch2.north west)!0.75!(sch2.north east)$) {};
+  %crp2
+  \node [triangle,label=-90:\small{$ok_2$},rotate=180,above=5mm of ok2] (ok2')  {};
+  \node [triangle,label=-90:\small{$fail_2$},rotate=180,above=5mm of fail2] (fail2') {};
+  \node [dots,label=90:\small{$res_2$},above=2.5mm of res2] (res2') {};
+  
+  
+  %connection
+  \draw[thick,-,red] (res1) -- (res1');
+  \draw[thick,-,dgreen] (ok1) -- (ok1');
+  \draw[thick,-,dgreen] (fail1) -- (fail1');
+  
+  \draw[thick,-,red] (res2) -- (res2');
+  \draw[thick,-,dgreen] (ok2) -- (ok2');
+  \draw[thick,-,dgreen] (fail2) -- (fail2');
+  
+  
+  \draw[thick,-,red] (ot1) -- (s1ot1);
+  \draw[thick,-,dgreen] (s1nt1) -- (nt1);
+  \draw[thick,-,red] (ot2) -- (s2ot2);
+  \draw[thick,-,dgreen] (s2nt2) -- (nt2);
+
+  
+  \path (oc) +(0,3.5mm) coordinate (c0);
+  \draw[-,red,thick,name path=line1] (s1oc) |- (c0) -- (oc) -- (c0)-|(s2oc);
+
+  \path (nc) +(0,5.5mm) coordinate (nc0);
+  \path[-,name path=line2] (s1nc) |- (nc0) -- (nc) -- (nc0)-|(s2nc);
+ 
+  
+  \path[name intersections={of=line1 and line2, by={a,b,c}}];% here
+  \coordinate (aux) at (nc0-|s2nc);
+  \draw[thick,-,dgreen] (s1nc) |- (nc0);
+  \draw[thick,-,dgreen,connect=(nc0) to (nc) over (a) by 2pt];
+  \draw[thick,-,dgreen,connect=(nc0) to (aux) over (c) by 2pt];
+  \draw[thick,-,dgreen] (aux)--(s2nc);
+   
+  
+  \path (or) +(0,7.5mm) coordinate (or0) +(0,4.5mm) coordinate(or1) +(5mm,7.5mm) coordinate(or2);
+  \path[-,name path=line3](s1or)|-(or0)--(or)--(or0)-|(s2or);
+  \path[name intersections={of=line3 and line2, by={a,b,c}}];% here
+  \path[name intersections={of=line3 and line1, by={d,e,f}}];% here
+  \coordinate (aux) at (or0-|s2or);
+  \draw[thick,-,red] (s1or) |- (or0);
+  \draw[thick,-,red,connect=(or0) to (or1) over (a) by 2pt];
+  \draw[thick,-,red,connect=(or1) to (or) over (d) by 2pt];
+  \draw[thick,-,red,connect=(or0) to (or2) over (f) by 2pt];
+  \draw[thick,-,red,connect=(or2) to (aux) over (c) by 2pt];
+  \draw[thick,red,-] (aux)--(s2or); 
+
+  \path (nr) +(0,9.5mm) coordinate (nr0) +(0,6.5mm) coordinate(nr1) +(5mm,9.5mm) coordinate(nr2)
+ +(-5mm,9.5mm) coordinate(nr3);
+  \path[-,name path=line4](s1nr)|-(nr0)--(nr)--(nr0)-|(s2nr);
+  \path[name intersections={of=line4 and line1, by={a}}];% here
+  \path[name intersections={of=line4 and line2, by={b,c,d}}];% here
+  \path[name intersections={of=line4 and line3, by={e,f,g}}];% here
+  \coordinate (aux) at (nr0-|s2nr);
+  \draw[thick,-,dgreen] (s1nr) |- (nr3);
+  \draw[thick,-,dgreen,connect=(nr3) to (nr0) over (a) by 2pt];
+  \draw[thick,-,dgreen,connect=(nr0) to (nr1) over (e) by 2pt];
+  \draw[thick,-,dgreen,connect=(nr1) to (nr) over (b) by 2pt];
+  \draw[thick,-,dgreen,connect=(nr0) to (nr2) over (d) by 2pt];
+  \draw[thick,-,dgreen,connect=(nr2) to (aux) over (g) by 2pt];
+  \draw[thick,-,dgreen] (s2nr) -- (aux);
+
+
+
+
+\end{tikzpicture} 
+\caption{High Level Representation of a Decentralized Send-Receive Model of the Task Manager Example}
+\label{fig:sr}
+\end{figure*}

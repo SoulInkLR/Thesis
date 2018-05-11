@@ -1,0 +1,71 @@
+\begin{figure}[h]
+\center
+\begin{tikzpicture}
+
+
+\draw[->]  (-2,0) -- (8,0) node[below left] {time};
+
+\draw[very thick,-]   (2,0) |- (4,0.75) -- (4,0);
+
+
+\draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
+    (2,-0.2) -- node[fill=white,below] {$g_{a}$}  (4,-0.2);
+
+
+\end{tikzpicture}
+\begin{tikzpicture}
+
+
+\draw[->]  (-2,0) -- (8,0) node[below left] {time};
+
+
+\draw[draw=white,fill=red!30,very thick,semitransparent,-]  % <--- changed  
+                (-2,0) |- (4,0.75) -- (4,0); 
+\draw[draw=red,very thick,semitransparent,-]  % <--- changed  
+                (-2,0.75) -| (4,0); 
+
+
+
+\draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
+    (-2,-0.2) -- node[fill=white,below] {$\backward g_a$}  (4,-0.2);
+
+
+
+\end{tikzpicture}
+\begin{tikzpicture}
+
+
+\draw[->]  (-2,0) -- (8,0) node[below left,yshift=-2mm] {time};
+
+
+\draw[draw=white,fill=blue!30,very thick,semitransparent,-]  % <--- changed  
+                (2,0) |- (8,0.75) -- (8,0); 
+\draw[draw=blue,very thick,semitransparent,-]  % <--- changed  
+                (2,0) |- (8,0.75); 
+
+
+
+\draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
+    (2,-0.2) -- node[fill=white,below] {$\forward g_a$}  (8,-0.2);
+
+
+
+\end{tikzpicture}
+\begin{tikzpicture}
+
+
+\draw[->]  (-2,0) -- (8,0) node[below left] {time};
+
+\draw[draw=dgreen,fill=dgreen!30,very thick,-]   (0,0) |- (3,0.75) -- (3,0);
+
+
+\draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
+    (0,-0.2) -- node[fill=white,below] {$\backwardp{l}{u} g_{a}$}  (3,-0.2);
+
+
+
+
+
+\end{tikzpicture}
+\caption{Backward and Forward Operators on a Guard}\label{fig:zones}
+\end{figure}
