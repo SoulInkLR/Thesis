@@ -1,7 +1,7 @@
 % ******************************* PhD Thesis Template **************************
 % Please have a look at the README.md file for info on how to use the template
 
-\documentclass[a4paper,12pt,Times,twoside,numbered,index]{Classes/PhDThesisPSnPDF}
+\documentclass[a4paper,Times,twoside,numbered,index,1pt]{Classes/PhDThesisPSnPDF}
 
 % ******************************************************************************
 % ******************************* Class Options ********************************
@@ -126,6 +126,7 @@
   \maketitle
 \end{titlepage}
 
+\mainmatter
 
 %\include{Dedication/dedication}
 %\include{Declaration/declaration}
@@ -153,7 +154,6 @@
 \printnomencl
 
 % ******************************** Main Matter *********************************
-\mainmatter
 \include{Chapter1/chapter1}
 \part{Preliminaries}
 {In this part, we give formal definition and present results that will be used in subsequent
@@ -165,7 +165,7 @@ can be used to model a realistic view of a distributed real-time systems. It als
 two important constraints that an application can incur when being deployed in a distributed
 environment under real-time restriction.} 
 \include{Chapter2/chapter2}
-\include{Chapter3/chapter3}
+%\include{Chapter3/chapter3}
 \part{Contribution}
 {This part includes our contributions to the field of modeling and validating
 distributed real-time systems. First, Chapter~\ref{chap:4} proposes a knowledge based
@@ -206,7 +206,7 @@ of the latter with perfect clocks.
 % Bibliography style previews: http://nodonn.tipido.net/bibstyle.php
 % Reference styles: http://sites.stat.psu.edu/~surajit/present/bib.htm
 
-\bibliographystyle{apalike}
+\bibliographystyle{alpha}
 %\bibliographystyle{plainnat} % use this to have URLs listed in References
 \cleardoublepage
 \bibliography{References/references} % Path to your References.bib file

@@ -1,0 +1,49 @@
+\begin{abstract}
+
+
+Nowadays, real-time systems are ubiquitous in several application domains. 
+Such an emergence led to an increasing need of performance (resources, 
+availability, concurrency, etc) and initiated a shift from the
+use of single processor based hardware platforms, to large sets 
+of interconnected and distributed computing nodes. This trend introduced the birth 
+of a new family of systems known as \emph{Networked Embedded Systems}, 
+that are intrinsically distributed.
+Such an evolution stems from the growing complexity of real-time software 
+embedded on such platforms (e.g. electronic control in avionics 
+and automotive domains), and the need to integrate formerly isolated systems so that 
+they can cooperate, as well as, share resources improving thus functionality 
+and reducing costs.
+Undoubtedly, the design, implementation and verification of such systems are 
+acknowledged to be very hard tasks since they are
+are prone to different kinds of factors 
+that increases considerably the complexity of coordinating parallel activities.
+  %recurrent in suchlike applications. 
+
+In this thesis, we propose a rigorous design flow that addresses part of the aspects that
+needs to be considered when building distributed real-time applications.
+We investigate formal timed automata based models, with well defined semantics, in order 
+to study the behavior of a given system with some imposed timing constraints when deployed 
+in a distributed environment. Particularly, we study \emph{(i)} the impact of the communication 
+delays by introducing a minimum latency between actions execution and their effective 
+scheduling date, and \emph{(ii)} the effect of hardware imperfections, more precisely clock 
+drifts, on systems execution by breaking the synchrony hypothesis, often adopted during 
+the modeling phase. Nevertheless, timed automata formalism is intended to describe a high
+level abstraction of the behavior of a given application, free from the physical constraints of
+the its deployment environment. Therefore, we use an intermediate representation of 
+the initial application, that besides having \say{equivalent} behavior, explicitly expresses
+implementation mechanism, and thus reduce the gap between the modeling and the concrete
+implementation. Additionally,  we contribute in building such models by \emph{(iii)} 
+proposing a knowledge based optimization that aims to eliminate unnecessary computation time 
+or exchange of messages during execution. 
+  
+We compare the behavior of each proposed model to the initial high level model and study the
+relationships between both. Then, we identify and formally characterize the potential problems 
+resulting from these additional constraints and propose execution strategies that allows
+to preserve some desired properties and achieve a \say{similar} execution scenario, faithfull
+to the original specifications.   
+  
+\end{abstract}
+
+
+\begin{abstractfr}
+\end{abstractfr}

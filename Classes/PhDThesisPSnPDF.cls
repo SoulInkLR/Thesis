@@ -149,6 +149,19 @@
 \newif\ifsetMargin\setMarginfalse % Set Custom Margin
 \DeclareOption{custommargin}{\setCustomMargintrue}
 
+% **************************** Separate Abstract(fr)  ******************************
+\newif \ifdefineAbstractfr\defineAbstractfrfalse %To enable Separate abstract
+
+\newif\ifPHD@abstractfr\PHD@abstractfrfalse % Enable Separate Abstract
+\DeclareOption{abstractfr}{
+  \PHD@abstracttrue
+  \ClassWarning{PhDThesisPSnPDF}{You have chosen an option that generates only
+    the Title page and an abstract with PhD title and author name, if this was
+    intentional, ignore this warning. Congratulations on submitting your thesis!
+    If not, please remove the option `abstract' from the document class and
+    recompile. Good luck with your writing!}
+  \PassOptionsToClass{oneside}{book}
+}
 % **************************** Separate Abstract  ******************************
 \newif \ifdefineAbstract\defineAbstractfalse %To enable Separate abstract
 
@@ -180,7 +193,7 @@
 % *************************** Pre-defined Options ******************************
 
 % Font Size
-\newcommand\PHD@ptsize{12pt} %Set Default Size as 12
+\newcommand\PHD@ptsize{11pt} %Set Default Size as 12
 
 \DeclareOption{10pt}{
   \ClassWarning{PhDThesisPSnPDF}{The Cambridge University PhD thesis guidelines
@@ -188,6 +201,7 @@ recommend using a minimum font size of 11pt (12pt is preferred) and 10pt for
 footnotes.}
   \renewcommand\PHD@ptsize{10pt}
 }
+\DeclareOption{1pt}{\renewcommand\PHD@ptsize{1pt}}%
 \DeclareOption{11pt}{\renewcommand\PHD@ptsize{11pt}}%
 \DeclareOption{12pt}{\renewcommand\PHD@ptsize{12pt}}%
 \PassOptionsToClass{\PHD@ptsize}{book}%
@@ -1091,6 +1105,45 @@ wish to left align your text}
     \defineChapterfalse
 \fi
 
+% ******************************** Abstract(fr) ************************************
+% The abstract environment puts a large, bold, centered "Abstract" label at
+% the top of the page. Defines both abstract and separate abstract environment
+
+% To include only the Title and the abstract pages for submission to BoGS
+\ifPHD@abstractfr
+    \defineAbstractfrtrue
+    % Disable the table of contents, figures, tables, index and nomenclature
+    \renewcommand{\tableofcontents}{}
+    \renewcommand{\listoffigures}{}
+    \renewcommand{\listoftables}{}
+    \renewcommand{\printnomencl}{}
+    \renewcommand{\printnomencl}[1][2]{}
+    \renewcommand{\printthesisindex}{}
+    \renewcommand{\bibname}{}
+    \renewcommand{\bibliography}[1]{\thispagestyle{empty}}
+\else
+    \defineAbstractfrfalse
+\fi
+
+
+\newenvironment{abstractfr} {
+\ifPHD@abstractfr
+% Separate abstract as per Student Registry guidelines
+	\thispagestyle{empty}
+	\setsinglecolumn
+	\begin{center}
+		{ \Large {\bfseries {\@title}} \par}
+		{{\large \vspace*{1em} \@author} \par}
+	\end{center}
+
+\else
+% Normal abstract in the thesis
+	\cleardoublepage
+	\setsinglecolumn
+	\chapter*{\centering \Large Abstractfr}
+	\thispagestyle{empty}
+\fi
+}
 % ******************************** Abstract ************************************
 % The abstract environment puts a large, bold, centered "Abstract" label at
 % the top of the page. Defines both abstract and separate abstract environment
