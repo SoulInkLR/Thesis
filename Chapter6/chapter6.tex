@@ -1,7 +1,356 @@
 \chapter{Clock Drift}\label{chap:6}
 \minitoc
+\section{Distributed Timed Automata}
+\label{sec:3}
+
+In the previous section, we introduced a timed automata model that 
+describes a high level representation of systems execution. 
+However, this type of model assumes that components clocks are perfectly synchronous which is 
+hardly the case in practice.
+Effectively, clocks are able to measure time up to a certain precision and will be likely
+to drift since they are implemented based on oscillators that are not perfect (the oscillator frequency 
+is not constant, it changes depending on environmental conditions and aging).
+In this section, we present a distributed timed automata model where clocks advance at different rates
+and we study the effect of clock drift on the system behavior.
+ 
+\subsection{Expressing Clock Constraints Using Local Clock}
+
+When building distributed real-time systems, a common practice is to use 
+local clocks as time references~\cite{ahlem:conf_free,ahlem:these}.
+These clocks measure the absolute time elapsed 
+since the system startup and are never reset. 
+This approach reduces the effort of keeping track of the actual time progress in components
+and enable to have a common time scale. 
+
+The idea consists in mapping each clock of a component to a (unique) local clock.
+Thus, the value of component clocks are obtained by simply shifting their corespondent local clock 
+by a constant amount of time as soon as the clocks are not reset.
+Effectively, for each clock $x$ of a component, we introduce a real variable $\rho_x$ that stores the absolute
+time of its last reset (w.r.t to its local clock), that is, if $x$ is mapped to a local clock $g$,
+then each time $x$ is reset, $\rho_x$ is update to the current value of g.
+Notice that the value of $x$ can be found by the equality $x=g-\rho_x$.
+As a result, any timing constraints $c$ of a component $B_i$ can be expressed using a local clock $g$ as follows:
+\begin{equation}
+  \label{eq:glob}
+  c = \bigwedge_{x_i\in\X_i} l\triangleleft x_i\triangleright u
+    =\bigwedge_{x_i\in\X_i} l+\rho_{x_i}\triangleleft g\triangleright u+\rho_{x_i}
+\end{equation}
+
+where $\triangleleft\in\{<,\le\}$ and $\triangleright\in\{>,\ge\}$.
+Notice any timing constraints of Definition~\ref{def:atom} can be written on the form of inequalities. 
+
+\subsection{Distributed Component}
+
+For an interaction $\alpha$, we denote by $\clock{\alpha}$ the set of clocks appearing in its
+timing constraints, that is, $\clock{\alpha}=\{x\in\X|\forall (\loc,\alpha,g,r,\loc')\in\T, x\in g \}$.
+We also put for a subset of interaction $\gamma_i$, $\p{\gamma_i}=\{\cup_{\alpha\in\gamma_i}\p{\alpha}\}$.
+
+\begin{definition}[Interaction Partition]
+  Given a set of interaction $\gamma$, a partition of $\gamma$ is a subset $\{\gamma_k\}_{k=1}^m$, such that
+  $\gamma=\gamma_1\cup\cdots\gamma_m$ and $\forall i,j\in\{1,\cdots,m\}$ such that $i\neq j$, $\gamma_i\cap\gamma_j=\emptyset$.
+\end{definition}
+
+In what follows, we assign to each interaction partition a unique local clock based on which
+interactions constraints are evaluated. Moreover, we imposes that interaction partitions do not share clocks,
+that is, for a given partition $\{\gamma_k\}_{k=1}^m$:
+\begin{displaymath}
+  \bigwedge_{\substack{i,j\in\{0,\cdots,m\}\\i\neq j}}\p{\gamma_i}\cap\p{\gamma_j}=\emptyset
+\end{displaymath}
+This avoid timing inconsistency and ensure that each clock of a 
+component is evaluated using a unique local clock. We call this type of partitions
+timing conflict free partitions (TCF).
+
+
+\begin{definition}[Distributed Component]
+  Let $S=(\Loc,\loc_0,\gamma,\X,\T,\I)$ be the composition of $n$ timed automaton synchronized through the interaction
+set $\gamma$. Given a TCF partitioning of interaction $\{\gamma_k\}_{k=1}^m$,
+we define the corresponding distributed timed automaton
+as the tuple $S^{dt}=(\Loc,\loc_0,\gamma,\X^{dt},\pi,\tcal{P}^{dt},\T^{dt},\I^{dt})$ such that:
+\begin{itemize}
+  \item $\X^{dt}$ is the set of local clocks (a unique clock per interaction partition) 
+  \item $\pi:\X\lto\X^{dt}$ is a many to one mapping between component clocks and local clocks 
+  \item $\tcal{P}^{dt}=\{\cup_{x\in\X}\rho_x|\rho_x\in\realpoz\}$ is the set of positive real variables
+    storing the last relative reset times
+  \item $\T^{dt}$ is such that for every $(\loc,\alpha,g,r,\loc')\in\T$, $\alpha\in\gamma_i\subset\pi$, we have
+    the corresponding transition $(\loc,\alpha,g^{dt},r^{dt},\loc')\in\T^{dt}$ where:
+  \begin{itemize}
+    \item $g^{dt}$ is the guard $g$ expressed using the local clock $x_i\in\X^{dt}$ 
+    \item $r^{dt}=\{\rho_x|x\in r\}$ is the update function for reset variables 
+  \end{itemize}
+  \item $\I^{dt}$ is the set of location invariants expressed using local clocks 
+\end{itemize}
+\end{definition}
+
+We extend the notion of reset to variable of $\tcal{P}^{dt}$ as follows:
+\[\val[r](\rho_x)=\begin{cases}
+  \val(\pi(x)), \text{ if }\rho_x\in r \\
+  \val(\rho_x), \text{ otherwise}
+\end{cases}\]
+
+\begin{property}[Semantics]
+  A distributed component $S^{dt}=(\Loc,\loc_0,\gamma,\X^{dt},\pi,\tcal{P}^{\X},\T^{dt},\I^{dt})$
+  w.r.t a given partitioning of interaction $\pi$ defines the $LTS^{dt}=(\Q^{dt},q_0^{dt},\gamma,\lto_{\gamma})$ where:
+  \begin{itemize}
+    \item $\Q_{dt}=\Loc\times\val(\X_{dt}\times\tcal{P}_{dt})\times\Delta$ where $\Loc$ is the set of global 
+      locations, $\Val(\X_{dt}\times\tcal{P}_{dt})$ is the set of clock and data valuations, and $\Delta$ is the
+      the offset of clock in $\X_{dt}$ w.r.t to an implicit referene clock (perfect)
+    \item $q_0^{dt}=(\loc_0,0,0)$ is the initial state.
+    \item $\lto_{\gamma}\subseteq\Q\times(\gamma\cup\realpos)\times\Q$ is the set of labeled transitions defined by the rules:
+    \begin{itemize}
+      \item $(\loc,\val,\delta)\transit{\alpha}_{\gamma}(\loc',\val[r],\delta)$ for $\alpha\in\gamma$, if
+      $(\loc,\alpha,g_{dt},r_{dt},\loc')\in\T_{dt}\wedge g_{dt}\models\val$
+    \item $(\loc,\val,\delta)\transit{d}_{\gamma}(\loc,\val',\delta')$ for $d\in\realpos$, 
+      such that $\val'=\val+d-\delta+\delta'\wedge \val'\models\I(\loc)\wedge\val'\ge\val$
+    \end{itemize}
+  \end{itemize}
+\end{property}
+
+In what follows, we consider a more realistic scheme where clock can drift up
+to a certain value $\epsilon$ with respect to a reference clock.
+This induces that $\delta\in[-\epsilon,\epsilon]^{|\X^{dt}|}$.
+
+
+\subsection{Correctness}
+
+\begin{property}\label{pr:rd}
+  $\forall x,y\in\X^{dt},x\neq y$ we have $\val(x)-\val(y)\in[-2\epsilon,2\epsilon]$
+\end{property}
+
+Property~\ref{pr:rd} states that the relative drift between local partitions 
+clock is bounded by $2\epsilon$. This results from the fact that all local
+clocks are kept within $\epsilon$ of a reference clock.
+
+In order to attest the correctness of the distributed semantics, we compare
+its corresponding LTS and the LTS of the standard semantics.
+
+\begin{definition}[Simulation]\label{def:sim}
+  A simulation over $A=(\Q_A,\sum,\to_A)$ and $B=(\Q_B,\sum,
+  \to_B)$ is a relation $R\subseteq \Q_A\times \Q_B$ such that we have:
+  \begin{itemize}
+    \item $\forall(q,r)\in R, a\in \sum, \ q\transit{a}_A q'\implies\exists r'\in\Q_B 
+      \text{ such that } r\transit{a}_B r'\wedge (q',r')\in R$
+    \item $\forall(q,r)\in R, d\in\realpoz, \ q\transit{d}_A q'\implies\exists r'\in\Q_B 
+      \text{ such that } r\transit{d}_B r'\wedge (q',r')\in R$
+  \end{itemize}
+  B simulates A, denoted by $A\simu{R}B$, means that B can do everything A does.
+  Notice that if $A\simu{R}B$ and $B\simu{R}A$ we say that A and B are bisimilar ($A\sim_{R} B$). 
+\end{definition}
+
+Let $R$ be the relation:
+\begin{align*}
+  R=\{(q_{dt},q)\in\Q_{dt}\times\Q|q_{dt}=(\loc_{dt},\val_{dt},\delta), q=(\loc,\val) \\
+  \text{ such that: }\exists k\in[-\epsilon,\epsilon]^{|\X^{dt}|}  
+  \begin{cases}
+  \loc_{dt}=\loc,\\
+    \forall x\in\X,\val(x)=\valdt(\pi(x))-\rho_x-\delta  
+  \end{cases}\}
+\end{align*}
+
+The relation $R_{dt}$ relates states of the distributed semantics with
+states of the standard semantics having the same location configuration,
+and whose clocks valuations expressed on local clocks are $\epsilon-$close. 
+We call such states $\epsilon-$similar.
+
+\begin{lemma}\label{lem:equiv}
+  For $\Delta=\{0\}$, we have $LTS^{dt}\sim_{R}LTS$ 
+\end{lemma}
+
+Lemma~\ref{lem:equiv} describes the fact that a given system and its corresponding distributed model are bisimilar
+when $\Delta=\{0\}$, that is, when clocks advance at the same rate (perfect clocks). 
+
+\begin{property}\label{pr:enabled1}
+  Let $(\qdt,q)\in \RS$ such that $\qdt$ satisfies $\enabled(\alpha)$, then
+  $q$ satisfies $\enabledb(\alpha)\vee\enabled(\alpha)\vee\enabledf(\alpha)$.
+\end{property}
+
+Property~\ref{pr:enabled1} expresses that for states $(\qdt,q)\in\RS$ if it exists
+an interaction enabled at $\qdt$ then this interaction is either enabled at $q$, 
+will be enabled after a time progress of $\epsilon$ or is up to $\epsilon$ after 
+the deadline of $\alpha$. This property flows directly from the $\epsilon-$similarity
+of states $(\qdt,q)\in\RS$, the form of interactions timing constraints (conjunction of intervals)
+and the fact that clocks involved in the same interaction advances at the same rate. 
+It points out that any execution from
+state $\qdt$ might not be always possible from state $q$ or any of its time successor.
+
+\begin{lemma}\label{lm:enabled1}
+  Let $(\qdt,q)\in\RS$ such that $\qdt$ satisfies $\enabled(\alpha)\wedge\enabledb(\alpha)$, then
+  $q$ satisfies $\enabled(\alpha)\vee\enabledb(\alpha)$.
+\end{lemma}
+Lemma~\ref{lm:enabled1} can be deduced straightforwardly from property~\ref{pr:enabled1}.
+It expresses that for states $(\qdt,q)\in\RS$, if it exists an interaction $\alpha\in\gamma$
+such that $\alpha$ is enabled and that clock valuations are up to $\epsilon$ before the deadline
+of this interaction then, $\alpha$ can be executed from $q$ or by doing a time progress
+up to $\epsilon$.
+
+The usual notion of simulation as defined in~\ref{def:sim} is too precises. 
+It requires that each trace in one system
+can be matched~\emph{exactly} by a trace in the other system, that is, 
+two states can be distinguished even for an infinitesimally
+small mismatch between timings ($\delta\in\Delta\neq\{0\}$). 
+Thus, we rely on the following quantitative variant of simulation~\cite{drift:esim}. 
+
+\begin{definition}[$\epsilon-$simulation]\label{def:esim}
+  Given two LTS, $LTS_1=(\Q_1,\sum,\lto_{1})$ and $LTS_2=(\Q_2,\sum,\lto_{2})$, a relation $R\subseteq\Q_1\times\Q_2$ is a:
+  \begin{itemize}
+    \item Strong timed $\epsilon-$simulation, if for any $(q,r)\in R$, $\sigma\in\sum$, $d\in\realpoz$
+    \begin{itemize}
+      \item $q\transit{\sigma}\q'$ implies $r\transit{\sigma}r'$ for some $r'\in\Q_2$ with $(q',r')\in R$
+      \item $q\transit{d}\q'$ implies $r\transit{d'}r'$ for some $r'\in\Q_2$ and $d'\in\realpoz$ with $|d'-d|\le\epsilon$ and $(q',r')\in R$
+    \end{itemize}
+    \item Timed action $\epsilon-$simulation, if for any $(q,r)\in R$, $\sigma\in\sum$, $d\in\realpoz$
+    \begin{itemize}
+      \item $q\transit{d,\sigma}\q'$ implies $r\transit{d',\sigma}r'$ for some $r'\in\Q_2$ and $d'\in\realpoz$ 
+        with $|d'-d|\le\epsilon$ and $(q',r')\in R$
+    \end{itemize}
+  \end{itemize}
+  If there exists a strong timed (resp. timed action) $\epsilon-$simulation
+  between $LTS_1$ and $LTS_2$ w.r.t $R_{\epsilon}$, then we write
+  $LTS_1\sqsubseteq^{\epsilon}_{R}LTS_2$ (resp.
+$LTS_1\sqsubseteq^{\epsilon*}_{R}LTS_2$
+\end{definition}
+
+
+This approach characterizes
+the degree of closeness between timed systems: it generalizes the (boolean) 
+notions of timed simulation
+(yes or no) to metrics over timed system. Formally, for a positive real number
+$\epsilon$, a state $q$ is 
+told $\epsilon-$similar to another state $r$ if there is a time-abstract simulation 
+that can relates both states in
+the sense that the difference between the delays of time-step transitions is at most $\epsilon$.
+
+Although this definition of simulation is less 
+restrictive, Property~\ref{pr:enabled1} gives the intuition that for some state
+$(\qdt,q)\in\RS$ there may be interactions that can be executed from $\qdt$ but not from
+$q$, which make the $\epsilon-$simulation impossible.
+\section{Robust Distributed Semantics}
+\label{sec:4}
+As explained in previous sections, the distributed semantics may 
+exhibit new behavior with respect to the standard semantics.  
+In this section, we identify the problematical states of the 
+distributed semantics and provide sufficient conditions
+that will guarantee action (or strong) timed $\epsilon-$simulation. 
+
+\begin{definition}[Potentially Bad States]
+  We denote by $PBS$ the set of potentially bad states of the 
+  distributed semantics characterized as follows:
+  \[PBS(S^{dt}=\{q^{dt}=(\loc,\val,\delta)|\exists\alpha\in\gamma,\val\models g_{\alpha}\wedge
+  \val+\epsilon\not\models g_{\alpha} \} \]
+\end{definition}
+
+The intuition behind this characterization results form Property~\ref{pr:enabled1}.
+Restricting the progress of time 
+to this amount
+before any interaction deadline will prevent any execution not possible 
+in the corresponding state of the standard semantics.
+Consequently, we restrict the progress of
+time in the distributed semantics as follows:
+\begin{equation}\label{eq:res}
+ (\loc,\val,\delta)\transit{d}_{\gamma}(\loc,\val',\delta') \text{ for } d\in\realpos, 
+      \text{ such that }\val'=\val+d-\delta+\delta'\wedge \val'\models\I(\loc)\wedge
+      (\loc,\val,\delta)\notin PBS
+\end{equation}
+
+\begin{proposition}\label{prop:esim}
+  Let $\reach(S^{dt*})$ be the set of reachable state of the restricted distributed semantics 
+  and $LTS^{dt*}$ its respective labeled transition system.
+  We have: 
+  \[PBS(S^{dt*})\cap\reach(S^{dt*})=\emptyset\implies LTS^{dt*}\sqsubseteq^{\epsilon*}_{\RS}LTS^g\]
+\end{proposition}
+
+\begin{proof}[Proposition~\ref{prop:esim}]
+  
+  In order to prove proposition~\ref{prop:esim}, we need to show that if for any 
+  $(\qdt,q)\in\RS$, $\sigma\in\gamma$ and $d\in\realpoz$:
+      \begin{displaymath}
+        \qdt\transit{d,\sigma}\qdtb \implies \exists q'\in\Q^g, q\transit{d',\sigma}q',\text{ with } 
+        d'\in\realpoz, \ |d'-d|\le\epsilon \text{ and } (\qdtb,q')\in\RS
+      \end{displaymath}
+       
+      Let $(\qdt,q)\in\RS$ such that $PBS(S^{dt})\cap\reach(S^{dt})=\emptyset$ and $\exists\sigma\in\gamma,\exists d\in\realpoz,$ 
+  $\qdt\transit{d,\sigma}\qdtb$. We distinguish two cases:
+  \paragraph{\textbf{Case 1:} $d > 0$}
+  We have $\qdt \transit{d,\sigma}\qdtb$. This means:
+    \[
+    \begin{cases}{}
+      \valdtb=(\valdt+d-\delta+\delta')[r^{dt}] \\ 
+      \valdt +d-\delta+\delta'\models\I^{dt}(\loc)\wedge g_{\sigma}^{dt} \\ 
+      \valdt +d-\delta+\delta'+\epsilon\models\I^{dt}(\loc)\wedge g_{\sigma}^{dt}& by~\ref{eq:res} 
+    \end{cases}\]
+  which expressed on original clocks becomes:
+    \[\begin{cases}{}
+      \valdtb=(\val+\rho+k+d-\delta+\delta')[r^{dt}]\\ 
+      \val+d+k-\delta+\delta'\models\I(\loc)\wedge g_{\sigma} \\ 
+      \val+d+k-\delta+\delta'+\epsilon\models\I(\loc)\wedge g_{\sigma} 
+    \end{cases}\]
+  We also have $k-\delta+\delta'\in[-3\epsilon,3\epsilon]$. Consequently we have: 
+  
+  \begin{enumerate}
+    \item $k-\delta+\delta'\in[0,\epsilon]$, then:\\
+      \[\begin{cases}{}
+      \valdtb=\val+d+k-\delta+\delta'+(\rho)[r^{dt}]\\ 
+      \val+d+\epsilon\models\I(\loc)\wedge g_{\sigma} \label{1} 
+    \end{cases}\]
+    We put $d'=d+\epsilon$, we obtain: 
+      \[\begin{cases}
+      \valdtb=\val+d'+k-\delta+\delta'-\epsilon+(\rho)[r^{dt}] \text{ since } r^{dt}\text{ applies only on } \rho\\ 
+      \val+d'\models\I(\loc)\wedge g_{\sigma} \label{1} 
+      \end{cases}\]
+    Notice that $k'=k-\delta+\delta'-\epsilon\in[-\epsilon,0]$ 
+      Then $\val +d+\epsilon\models\I(\loc)\wedge g_{\sigma}$. We put $d'=d+\epsilon$ and conclude
+      that $q\transit{d',\sigma}q'$ such $(\qdtb,q')\in\RS$
+    \item We repeat the same procedure for the rest of the intervals in $[-3\epsilon,3\epsilon]$
+  \end{enumerate}
+  
+  \paragraph{\textbf{Case 2:} $d = 0$}
+   Since $PBS(S^{dt})\cap\reach(S^{dt})=\emptyset$, using the same methodology of case 1, we can conclude
+   that $\exists q'\in\Q^g, q\transit{d',\sigma}q',\text{ with } 
+        d'\in\realpoz, \ |d'-d|\le\epsilon \text{ and } (\qdtb,q')\in\RS$
+  This proof shows that we can always find an execution sequence of the standard semantics that is up to
+  $3\epsilon-$similar to any execution sequence of the distributed semantics. 
+  \qed
+\end{proof}
+\begin{definition}[Robustness]
+  For a given timed system S, we say that S is robust to clock drifts iff $LTS^{dt*}\simdt LTS^g$
+  and $\reach(S^{dt})$ is deadlock-free.
+\end{definition}
+
+\section{Related Work}
+\label{sec:5}
+Robust reachability has been introduced to check whether a given
+timed automata model (system) still satisfies the specification when
+subject to different perturbations such as clocks drift.
+In~\cite{drift:puri98}, Puri introduced a model of clock drift for closed timed automata
+by introducing a parameter $\epsilon>0$ that bounds the clocks drift rates.
+This work showed that the standard reachability analysis approach is not correct
+when clocks drift, even by infinitesimally small amount, and subsequently provide a region based
+method for calculating $Reach^*(S,q_0)$, the set of reachable states for \emph{every} drift 
+(the limit as $\epsilon\to 0$),
+that is, $Reach^*(S,q_0)=\cap_{\epsilon>0} Reach(S_{\epsilon},q_0)$.
+Other works~\cite{drift:conrad,drift:puriR} proposed a zone based algorithm for computing
+this reach-set more efficiently and generalized the approach for open timed automata 
+model~\cite{drift:puriR}.
+In~\cite{drift:wulf}, another perturbation model was considered. Here, 
+the system model is syntactically modified by~\emph{relaxing} the guards through 
+a parametrized  enlargement of $\delta$.
+De Wulf~\cite{drift:wulf} showed that the notion of robustness defined in~\cite{drift:puri} and
+studied in other works~\cite{drift:conrad, drift:puriR} is closely related to the notion of 
+implementability introduced in~\cite{drift:wulf}, that is, whether for some $\delta>0$,
+the enlarged system model still satisfies the requirements expressed by the safety properties.
+This allows to prove that the considered notion of implementability is decidable 
+for timed automata.
+Furthermore,~\cite{drift:surp} considers a more realistic model of drifting clocks by considering
+clock resynchronization, available now in most distributed real-time systems. It was proven
+that standard zone-based reachability analysis  is exact when testing robust safety, provided
+a uniform strictly positive robustness margin of 1.
+Finally,~\cite{drift:akshay,drift:ortiz} tackled the problem by proposing a timed automata 
+model with independent clocks (icTA). Akshay \emph{et al.} focused more on the 
+untimed language of icTA, where Ortiz \emph{et al.} suggested an alternative semantics for icTA
+and introduced an extension to the usual notion of bisimulation (multi-timed bisimulation) to
+study the behavior of the latter. 
+\section{Conclusion and Future Work}
+\label{sec:6}
 \section{Perturbation Models}
 \section{Robustness Analysis}
 \section{Robustness of Send/Receive Models to imprecisions}
 
-~\cite{fm16,apsec17,lites,drift,sbip}

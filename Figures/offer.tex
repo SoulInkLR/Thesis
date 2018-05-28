@@ -3,19 +3,32 @@
   \begin{tikzpicture}[every node/.style={scale=0.8},scale=0.8]
 
   \node [place,label=left:\textcolor{red}{$x\le4$}](l0) {$\loc$};
+  \node [above=7.5mm of l0](l01) {};
+  \node [above=7.5mm of l0,xshift=7.5mm](l02) {};
+  \node [above=7.5mm of l0,xshift=-7.5mm](l03) {};
   \node [place,below=1.3cm of l0,xshift=1cm] (l1) {\phantom{$\loc$}};
   \node [place,below=1.3cm of l0,xshift=-1cm] (l2) {\phantom{$\loc$}};
 
+  \path (l01) edge (l0)
+        (l02) edge (l0)
+        (l03) edge (l0);
   \path (l0) edge [bend left] node[right,align=center]{$a$}(l1)
              edge [bend right] node[left,align=center]{$b$} (l2);
   
   \node [place,right=5cm of l0,yshift=1cm](l0) {\scriptsize $\locp$};
   \draw [-] ($(l0) + (180:4mm)$) arc (180:360:4mm);
+  \node [above=7.5mm of l0](l01) {};
+  \node [above=7.5mm of l0,xshift=7.5mm](l02) {};
+  \node [above=7.5mm of l0,xshift=-7.5mm](l03) {};
   \node [place,label=left:\textcolor{red}{$x\le4$},below=1cm of l0](l1) {$\loc$};
   \node [place,below=1cm of l1,xshift=1cm] (l2) {\phantom{$\loc$}};
   \node [place,below=1cm of l1,xshift=-1cm] (l3) {\phantom{$\loc$}};
 
-  \path (l0) edge node[right,align=center]{$o$}(l1)
+
+  \path (l01) edge (l0)
+        (l02) edge (l0)
+        (l03) edge (l0)
+        (l0) edge node[right,align=center]{$o$}(l1)
         (l1) edge [bend left] node[right,align=center]{$a$} (l2)
         (l1) edge [bend right] node[left,align=center]{$b$} (l3);
 \end{tikzpicture}

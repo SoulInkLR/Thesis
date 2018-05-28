@@ -13,15 +13,18 @@ In order to reduce the gap between the high level abstraction of a system and it
 implementation, we propose an intermediate model more suited for the distributed real-time
 context and that is obtained by applying transformation rules on the initial model. 
 It aims to explicitly express the ongoing communication mechanism as well as 
-allowing interaction execution based only on its participating components.
-
+allowing interactions execution based only on their participating components.
+The key concept of this approach is to structure a given system in two main layers: \emph{(1)}
+an application layer that consists of a set of distributed components and \emph{(2)} a 
+scheduling layer that is responsible for scheduling the execution of the latter. Additionally, 
+a third layer may be needed by the scheduling layer in order to achieve global consistency.
 \section{Target Architecture}
 
-In a distributed context, components communicate through asynchronous message-passing.
-Consequently, each component is able either to send a message, to wait for a notification
-or to execute an internal computation. Our approach proposes an architecture for executing
-multiparty interactions as a two way handshake protocol~\cite{} involving asynchronous exchange 
-of messages between \emph{distributed} components and a second layer responsible for 
+In a distributed context, we consider that components communicate through asynchronous 
+message-passing. Consequently, each component is able either to send a message, to wait for 
+a notification or to execute an internal computation. Our approach proposes an architecture for 
+executing multiparty interactions as a two way handshake protocol~\cite{} involving asynchronous 
+exchange of messages between \emph{distributed} components and a second layer responsible for 
 triggering interactions, the scheduling layer (see Figure~\ref{fig:ta}). 
 In order to evaluate the enabled interactions at a given state, distributed components are 
 required to send their current local information (e.g. enabled actions, invariants, 
@@ -29,7 +32,7 @@ clock constraints, etc.) to the scheduling layer using an \emph{offer} messages.
 As offers are sent asynchronously,  
 the scheduling layer may not have a global knowledge of the system. It may decide to execute
 an interaction based only on a partial knowledge, that is, once it accumulates enough offers.
-We require that the exchange of messages is sender triggered and not blocking, that is,
+We require that the exchange of messages is sender-triggered and not blocking, that is,
 each time a sender is ready to transmit the corresponding receiver is ready to receive.
 The class of models satisfying this restriction are called Send/Receive models.
 \input{Figures/ta.tex}
@@ -37,8 +40,8 @@ The class of models satisfying this restriction are called Send/Receive models.
   Figure~\ref{fig:ta} depicts a high level representation of the timed system~\ref{fig:tm} in a 
   distributed setting. Components $C$, $T_1$, $T_2$ and $R$ are transformed into the distributed
   components $C^{SR}$, $T_1^{SR}$, $T_2^{SR}$ and $R^{SR}$ respectively. Each component send 
-  information about it current state to the scheduling layer through offers  
-  ($\{o_1,\cdots,o_4\}$), and is notified through notifications ($\{n_1,\cdots,n_4\}$).
+  information about its current state to the scheduling layer through offers messages
+  ($\{o_1,\cdots,o_4\}$), and is notified through notifications messages ($\{n_1,\cdots,n_4\}$).
   Triangles (respectively dots) indicates the sender (respectively the receiver). 
 \end{example}
 
@@ -64,8 +67,9 @@ In fact, a global clock measures the absolute time elapsed since the system star
 reset. This approach allows to have a common timescale between the distributed components
 and the scheduling layer, which reduces considerably the effort when keeping track of the
 actual time progress since one needs to maintain only the global clock(s). 
-Notice that any component clock $x$ can be obtained simply by shifting the global clock by 
-an amount of time that is constant as soon as $x$ is not reset. Consequently, achieving 
+Notice that any component clock $x$ can be derived from the global clock simply by shifting its 
+value by an amount of time that is constant between successive resets of $x$ is not reset. 
+Consequently, achieving 
 the global time mechanism is done by removing local clocks from individual components 
 and adding global clock(s) to the scheduling layer. Moreover, for each local clock $x$
 we include a variable $\rho_x$ that stores the absolute time of its last reset with respect
@@ -73,20 +77,20 @@ to a given global clock $g$. This variable is updated each time a transition res
 is executed. Then, the value of $x$ can be found by the equality $x=g-\rho_x$.  
 As a result, any clock constraint $c$ involved in a component can be expressed using clock $g$
 as follows:
-\begin{displaymath}
+\begin{equation}\label{eq:g_clk}
   c=\bigwedge_{x\in\mc{X}} l_x\le x\le u_x=\bigwedge_{x\in\mc{X}}l_x+\rho_x\le g\le u_x+\rho_x
-\end{displaymath}
+\end{equation}
 
 \subsection{Conflicting Interactions and Interaction Partitioning}
 \label{sub:conf}
 In a distributed context, interaction execution may occur in parallel. However,
 when two interactions share at least a component it is impossible to execute both
 interaction concurrently. Particularly, if these interactions are enabled from the same state 
-then they are \emph{conflicting} since they will compete on the same ressources (shared 
+then they are \emph{conflicting} since they will compete on the same resources (shared 
 components) at the same time.
 In general, conflicts can be very hard to characterize for real life case studies since 
 they depend on the reachability of particular states. In~\cite{}, the computation of
-the conflicting interactions set relies on over-approximation. It is based on a notion 
+the conflicting interactions set relies on over-approximations. It is based on a notion 
 of \emph{potential conflicts} that can be detected by simple syntactic pre-checks, as depicted
 in Figure~\ref{fig:pconf}, and are used to quickly exclude conflicts since two interactions
 that are not potentially conflicting are also not conflicting. 
@@ -100,17 +104,17 @@ that are not potentially conflicting are also not conflicting.
 \end{definition}
 \input{Figures/pconf.tex}
 
-In order to avoid a centralized scheduling and introduce concurrency between interactions
+In order to avoid a centralized scheduling and to introduce concurrency between interactions
 execution, we propose to decentralize the scheduling layer into several schedulers each one
 responsible of scheduling a subset of interaction. The purpose behind this practice is: 
-\emph{(i)} to spread the workload across the different schedulers concurrently and
+\emph{(i)} to spread the workload across concurrent schedulers and
 as much as possible independently, and \emph{(ii)} to map schedulers as close as possible to 
 the components that they concretely handle (with respect to the corresponding subset of 
 interactions), which brings back the communication overhead between components to the same 
 magnitude. Our work does not address interaction partitioning, nonetheless it is a crucial 
 concern for load-balancing and for tuning the system to achieve a desired level of performance. 
 
-\begin{definition}[Interaction Partition]
+\begin{definition}[Interaction Partition]\label{def:inter_part}
   Given an interaction set $\gamma$, a partition of $\gamma$ is a set of subset 
   $\{\gamma_k\}_{k=1}^m$ such that $\gamma=\gamma_1\cup\cdots\cup\gamma_m$ and 
   $\forall i,j\in\{1,\cdots,m\}$ such that $i\neq j$, $\gamma_i\cap\gamma_j=\emptyset$.
@@ -123,7 +127,9 @@ are potentially conflicting, they cannot execute in parallel. We call such inter
 A simple solution to resolve such conflicts is to enforce
 a \emph{conflict-free} partitioning of interactions. In spite of that, this solution will 
 restrict the choice for distributing interactions across schedulers. Thus, another method
-~\cite{} is to use a tiers component called \emph{conflict resolution protocol} (CRP). This
+~\cite{} is to incorporate a third layer that will arbiter the execution of potentially 
+conflicting interactions. The latter can be represented using a tiers component realizing 
+a \emph{conflict resolution protocol} (CRP). This
 component implements an algorithm based on the idea of message-counting technique~\cite{}.
 This technique is based on counting the number of times that a component participates in an 
 interaction. Conflicts are then resolved by ensuring that each participation number is used 
@@ -160,7 +166,7 @@ following layers:
 \input{Figures/SR.tex}
 \begin{example}
   Figure~\ref{fig:sr} describes a Send/Receive model with a decentralized scheduling. 
-  The set of interaction is partitioned into two classes 
+  The set of interactions is partitioned into two classes 
   $\gamma_1=\{\alpha_1,\alpha_3,\alpha_5,\alpha_7\}$ and
   $\gamma_2=\{\alpha_2,\alpha_4,\alpha_6,\alpha_8\}$, each one handled by a scheduler ($Sch_1$
   and $Sch_2$ respectively). Since $\gamma_1$ and $\gamma_2$ are conflicting, for instance
@@ -172,39 +178,39 @@ following layers:
   they are participating in interactions handled in both schedulers.
 \end{example}
 \subsection{Send/Receive Components}
+\input{Figures/offer.tex}
 The transformation of a timed component $B$ into a Send/Receive component $B^{SR}$ relies 
 on decomposing each transition of $B$ into two transitions: \emph{(1)} an offer (send)
 transition and \emph{(2)} a notification (receive) transition. This is done by splitting
 each location $\loc$ into two locations, $\loc$ itself and $\locp$ as shown in 
 Figure~\ref{fig:offer}.
 
-\input{Figures/offer.tex}
-
 When at $\locp$ location, the Send/Receive component is not in a stable state and is able only
 to send an offer to its respective scheduler(s). We require that offers are sent as soon as 
 possible meaning that there is no delay when at location $\locp$. We call such location
 \emph{urgent} location, graphically represented by a $\smile$ inside the location. 
-From a semantics point of view, an urgent location can be modeled 
-as usual location whose all incoming transitions reset a clock and with a location invariant
-bounded by zero as illustrated in Figure~\ref{fig:urgloc}.
+From a semantics point of view, an urgent location is equivalent to adding an extra clock
+$x$ that is reset on all incoming edges, and having an invariant $x\le0$ on the location 
+as illustrated in Figure~\ref{fig:urgloc}. Thus, time is not allowed to pass when the system 
+is in such locations.  
 An offer contains the exact variables encoding the current state of a component. It includes
 the following variables:
 \begin{itemize}
   \item An invariant variable of the current location invariant 
   \item A guard variable for each action (port), that is set to the guard (over clocks and data)
     of each port if it exists from the current location, otherwise to $\false$.
-  \item A \emph{Boolean} variable indicating wither the next transition reset clocks or not 
+  \item A \emph{Boolean} variable indicating whether the next transition reset clocks or not 
   \item A \emph{participation number} variable used for conflict resolution
 \end{itemize}
 \input{Figures/urgloc.tex}
 
-\begin{definition}[Send/Receive Component]\label{def:tcSR}
-Let $B=(\Loc,\loc_{0},\mc{X},\mc{D},\mc{A},\mc{E},\mc{I})$ be a timed component. The 
+\begin{definition}[Send/Receive Component]\label{def:tc_SR}
+  Let $B=(\Loc,\loc_{0},\X,\D,\A,\E,\{f_e\}_{e\in\E},\I)$ be a timed component. The 
   corresponding Send/Receive component is defined by the timed component
-  $B^{SR}=(\Loc^{SR},\loc_0^{SR},\emptyset,\mc{D}^{SR},
-  \mc{P}^{SR},\mc{E}^{SR},\emptyset)$, such that:
+  $B^{SR}=(\Loc^{SR},\loc_0^{SR},\emptyset,\D^{SR},\mc{P}^{SR},\E^{SR},\{f_e\}_{e\in\E^{SR}},
+  \emptyset)$, such that:
   \begin{itemize}
-    \item $\Loc^{SR}=\Loc\cup\Loc^{\perp}$, where $\Loc^{\perp}=\{\loc_{\perp}|\loc\in\Loc\}$.
+    \item $\Loc^{SR}=\Loc\cup\Loc^{\perp}$, where $\Loc^{\perp}=\{\locp|\loc\in\Loc\}$.
       Locations of $\Loc^{\perp}$ are urgent locations.
     \item $\loc_0^{SR}=\loc_{0_{\perp}}\in\Loc^{\perp}$ is the initial location.
     \item $\mc{P}^{SR}= P\cup\{o\}$, where $P=\{p_a|a\in\mc{A}\}$ is the set of ports for each
@@ -218,20 +224,20 @@ Let $B=(\Loc,\loc_{0},\mc{X},\mc{D},\mc{A},\mc{E},\mc{I})$ be a timed component.
     \item For each place $\loc\in\Loc$, we include an offer transition $e_{\loc}=(\locp,o,\true,
       \emptyset,\loc)$ in $\mc{E}^{SR}$
     \item For each transition $e=(\loc,a,g,r,\loc')\in\mc{E}$, we include a notification 
-      transition $e_{p_a}=(\loc,p_a,\true,r^{SR},\locp')$ where $r^{SR}$ applies first 
-      the assignment operations of $e$, then update guard variables, invariant variable,
-      reset variables and the participation number as follows:
+      transition $e_{p_a}=(\loc,p_a,\true,\emptyset,\locp')$. The transfer function $f_{e_{p_a}}$
+      applies the original transfer function $f_e$ of e, then update guard variables, 
+      invariant variable, reset variables and the participation number as follows:
       \begin{itemize}
-        \item $\forall a'\in\mc{A}, g_{p_{a'}}=\begin{cases}
+        \item $\forall a'\in\mc{A}, g_{p_{a'}}:=\begin{cases}
             g_{a'} & \text{if } e'=(\loc',a',g_{a'},r,\loc'')\in\mc{E}\\
           \false & otherwise
         \end{cases}$
-        \item $\mc{I}_B=\Inv{\loc'}$
-        \item $\forall x\in\mc{X}, r_x=\begin{cases}
+        \item $\mc{I}_B:=\Inv{\loc'}$
+        \item $\forall x\in\mc{X}, r_x:=\begin{cases}
             \true & \text{if } x\in r\\
           \false & otherwise
         \end{cases}$
-        \item $n:=n+1$
+        \item $n_B:=n_B+1$
       \end{itemize}
   \end{itemize}
 \end{definition}
@@ -244,10 +250,10 @@ of $p$ at $\loc$, the location invariant $\Inv{\loc}$, the participation number 
 component $B$, as well as the reset variable $r_x$ for each clock $x\in\mc{X}$, such that,
 $r_x=\true$, if $x$ has been reset by the previous transition execution. Reset variables
 $r_x$ are used to reset clocks in the Scheduling layer before computing guard of interactions.
-In the second place, a response transition $e_{p_a}=(\loc,p_a,\true,r^{SR},\locp')$  
+In the second place, a notification transition $e_{p_a}=(\loc,p_a,\true,\emptyset,\locp')$  
 is executed upon the execution of an interaction involving $p_a$ in the scheduling layer. 
 In the same manner to $e$ in $B$, $e_{p_a}$ updates values of variables $\mc{D}$ according to
-to the update function $r$, as well as variables needed for the next offer. 
+to the transfer function $f_e$, as well as variables needed for the next offer. 
 Figure~\ref{fig:tcSR} depicts the Send/Receive transformation of the component $C$ of Example
 ~\ref{fig:tm}.
 \input{Figures/tcSR.tex}
@@ -387,12 +393,13 @@ and tokens are moved to send places, or the execution is denied and tokens are m
 to receive places.
 
 
-\begin{definition}[Scheduler]\label{def:sch}
+\begin{definition}[Scheduler]\label{def:sch_sr}
   Let $\gamma(B_1,\cdots,B_n)$ be a timed system and $\gamma_j\subset\gamma$ be a subset of
   interactions. The corresponding scheduler $Sch_j$ responsible for executing interactions
   of $\gamma_j$ is defined by the tuple  
   $Sch_j=(\Loc_j, \mc{P}_j,\mc{T}_j,\mc{X}_j, \mc{D}_j,\{g_{\tau}\}_{\tau\in\mc{T}},
-  \{r_{\tau}\}_{\tau\in\mc{T}_j},\{\mc{I}_{\loc}\}_{\loc\in\Loc_j})$, where:
+  \{r_{\tau}\}_{\tau\in\mc{T}_j},\{f_{\tau}\}_{\tau\in\mc{T}_j},\{\mc{I}_{\loc}\}_{\loc\in\Loc_j})
+  $, where:
   \begin{itemize}
     \item $\mc{X}_j=\{g_j\}\cup\{z_j\}$ is the set of clocks of $Sch_j$, where $g_j$ is
       the global clock used for scheduling interactions of $\gamma_j$ (it is never reset)
@@ -410,8 +417,8 @@ to receive places.
       \end{itemize}
     \item For each transition $\tau\in\mc{T}_j$, $g_{\tau}$ is a guard over 
       $\mc{X}_j$ and $\mc{D}_j$.
-    \item For each transition $\tau\in\mc{T}_j$, $r_{\tau}$ is an update function over 
-      $\mc{X}_j$ and $\mc{D}_j$.
+    \item For each transition $\tau\in\mc{T}_j$, $r_{\tau}$ is a reset function over $\X_j$.
+    \item For each transition $\tau\in\mc{T}_j$, $f_{\tau}$ is a transfer function over$\D_j$.
     \item For each place $\loc\in\Loc_j$, $\mc{I}_{\loc}$ is an invariant over $\mc{X}_j$. 
     \item $(\Loc_j,\mc{P}_j,\mc{T}_j)$ is a 1-Safe Petri net defining 
       the structure of the scheduler such that:
@@ -448,20 +455,23 @@ to receive places.
             \item For each component $B_i$, $\mc{T}_j$ includes the offer transitions 
               $(w_i^j,o_i,r_i^j)$, $(r_i^j,o_i,r_i^j)$ and $\{(t_{\alpha},o_i,t_{\alpha})|
               B_i\in\p{\alpha}\}$ where $\alpha$ is an externally conflicting interaction.
-              These transitions have no guard. Their update function update reset time variables
-              $\rho_x$ whenever $r_x=\true$, that is, $\rho_x=g$. 
+              These transitions have no guards and no reset functions. 
+              Their transfer functions update reset time 
+              variables $\rho_x$ whenever $r_x=\true$, that is, $\rho_x=g$. 
             \item For each action $a$ involved in interactions of $\gamma_j$, $\mc{T}_j$ includes
               a transition $(s_{p_a},p_a,w_i^j)$ where $i$ is the index of the component
-              containing $a$. This transition notify the corresponding Send/Receive component 
-              to execute the transition labeled by $p_a$. It has no guard and no update function.
+              containing $a$. This transition notifies the corresponding Send/Receive component 
+              to execute the transition labeled by $p_a$. It has no guard, no reset function,
+              and no transfer function.
             \item For each interaction $\alpha=\{a_i\}_{i\in{I}}\in\gamma_j$, that is 
               internally conflicting or not conflicting with interactions of $\gamma_j$,
               $\mc{T}_j$ includes the transition $\tau_{\alpha}=(\{r_i^j\}_{B_i\in\p{\alpha}},
-              \alpha,\{s_{p_{a_i}}\}_{a_i\in\alpha})$. The guard of this transition is $g_{\tau}=
-              \bigwedge_{a_i\in\alpha}g_{p_{a_i}}$. Notice that guards over date are the same,
+              \alpha,$\\$\{s_{p_{a_i}}\}_{a_i\in\alpha})$. The guard of this transition is 
+              $g_{\tau}=
+              \bigwedge_{a_i\in\alpha}g_{p_{a_i}}$. Notice that guards over data are the same,
               whereas guard of clocks are expressed using the global clock $g$ and the reset
-              time variables $\rho_x$. This transition has the update function 
-              $r_{\tau_{\alpha}}=\{z:=0\}$.
+              time variables $\rho_x$. This transition has no transfer function 
+              and its reset function resets clock $z$.
             \item For each interaction $\alpha=\{a_i\}_{i\in{I}}\in\gamma_j$, that is 
               externally conflicting another interaction,
               $\mc{T}_j$ includes the following transitions:
@@ -470,10 +480,11 @@ to receive places.
                   )$. The guard of this transition is $g_{\tau}=\bigwedge_{a_i\in\alpha}
                   g_{p_{a_i}}$.
                 \item $\tau_{ok_{\alpha}}=(t_{\alpha},ok_{\alpha},\{s_{p_{a_i}}\}_{a_i\in\alpha})
-                  $. This transition has no guard and its update function is 
-                  $r_{\tau_{ok_{\alpha}}}=\{z:=0\}$.
+                  $. This transition has no guard, no reset function, and its transfer function is
+                   $r_{\tau_{ok_{\alpha}}}=\{z:=0\}$.
                 \item $\tau_{fail_{\alpha}}=(t_{\alpha},fail_{\alpha},\{s_{p_{a_i}}\}_{a_i
-                  \in\alpha})$. This transition has no guard and no update function.
+                  \in\alpha})$. This transition has no guard, no reset function, and no 
+                  transfer function.
               \end{itemize}
           \end{itemize}
       \end{itemize}
@@ -492,13 +503,13 @@ any other Petri Net formalism such as Time Petri Nets or Timed Petri nets.
   handled by scheduler $Sch_2$, scheduling interactions of $\gamma_1$ requires the intervention
   of the conflict resolution layer.
 \end{example}
-\begin{property}[Scheduler Semantics]
-Let $Sch=(\Loc, \mc{P},\mc{T},\mc{X}, \mc{D},\{g_{\tau}\}_{\tau\in\mc{T}},
-    \{r_{\tau}\}_{\tau\in\mc{T}},$\\$\{\mc{I}_{\loc}\}_{\loc\in\Loc})$ be a tuple defining 
+\begin{property}[Scheduler Semantics]\label{pr:sch_sr_sem}
+  Let $Sch=(\Loc, \mc{P},\T,\X, \D,\{g_{\tau}\}_{\tau\in\mc{T}},\{r_{\tau}\}_{\tau\in\mc{T}},
+    \{f_{\tau}\}_{\tau\in\mc{T}},$\\$\{\mc{I}_{\loc}\}_{\loc\in\Loc})$ be a tuple defining 
   a scheduler. Let $(2^{\Loc},\mc{P},\to_{\mc{P}})$ be the finite labeled transition
   system of its underlying 1-Safe Petri net. The semantics of the scheduler $Sch$ 
   is equivalent to the semantics of the timed component 
-  $(2^{\Loc},\loc_0,\mc{X},\mc{D},\mc{P},\mc{E},\mc{I})$ such that:
+  $(2^{\Loc},\loc_0,\mc{X},\mc{D},\mc{P},\mc{E},\{f_{e}\}_{e\in\mc{T}},\I)$ such that:
   \begin{itemize}
     \item $\loc_0=\otimes_{\loc\in m_0|m_0(\loc)=1}\loc$, where $m_0$ is the initial marking 
       of the Petri net $(\Loc, \mc{P},\mc{T})$.
@@ -538,7 +549,7 @@ There exists several implementations of the conflict resolution protocol in the 
 ~\cite{,,}. We present here only one variant since our interest is not in studying the 
 conflict resolution layer. It is centralized variant based on Bagrodia's protocol.
 
-\begin{definition}
+\begin{definition}[Conflict Resolution Protocol]
   Let $\gamma(B_1,\cdots,B_n)$ be a timed system and $\{\gamma_j\}^m_{j=1}$ be an interaction
   partition. The corresponding centralized conflict resolution protocol component is defined
   by the timed component $CP=(\Loc^{CP},\loc_0^{CP},\emptyset,\mc{D}^{CP},\mc{P}^{CP},\mc{E}^{CP}
@@ -639,12 +650,12 @@ scheduling interactions. However, because of the nature of the location invarian
 constraints that propagate on the global level), this technique results in observing
 all the components of the system, instead of only a subset as presented in~\cite{}.
 
-In order to model the behavior of a system under some communication delays bounded by $\hmn$
-($\hmn$ being the worst case communication delay), we introduce the \emph{local planning 
+In order to model the behavior of a system under some communication delays bounded by $\hmin$
+($\hmin$ being the worst case communication delay), we introduce the \emph{local planning 
 semantics}. This semantics aims to distinguish between the decision dates for executing 
 interactions and their actual execution dates by adding a notion of \emph{planning} on 
 the semantics level. The delay between the planning of interaction and its execution is
-thus constrained by $\hmn$., which is a parameter of the semantics. Although this approach 
+thus constrained by $\hmin$., which is a parameter of the semantics. Although this approach 
 is based on the same idea of anticipating the execution of interactions, it differs from 
 the approach of~\cite{} in the following point:
 \begin{itemize}

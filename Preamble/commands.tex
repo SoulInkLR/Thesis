@@ -90,13 +90,22 @@ urlcolor=black
 \newcommand{\mf}[1]{\mathbf{#1}}
 \newcommand{\mc}[1]{\mathcal{#1}}
 \newcommand{\mb}[1]{\mathbb{#1}}
-\newcommand{\TTS}{\mc{T}=(\mc{Q},q_0,\Sigma,\mb{K},\to)}
-\newcommand{\TTSg}{\mc{T}_g=(\mc{Q}_g,q_{0_g},\gamma,\realpos,\to_{\gamma})}
-\newcommand{\TTSb}[1]{\mc{T}_{#1}=(\mc{Q}_{#1},q_{0_{#1}},\Sigma,
+\newcommand{\q}{q} 
+\newcommand{\X}{\mc{X}} 
+\newcommand{\D}{\mc{D}} 
+\newcommand{\E}{\mc{E}} 
+\newcommand{\A}{\mc{A}}
+\newcommand{\T}{\mc{T}}
+\newcommand{\V}{\mc{V}}
+\newcommand{\I}{\mc{I}}
+\newcommand{\Q}{\mc{Q}} 
+\newcommand{\TTS}{\T=(\Q,q_0,\Sigma,\mb{K},\to)}
+\newcommand{\TTSg}{\T_g=(\Q_g,q_{0_g},\gamma,\realpos,\to_{\gamma})}
+\newcommand{\TTSb}[1]{T_{#1}=(Q_{#1},q_{0_{#1}},\Sigma,
 \mb{K},\to_{#1})}
-\newcommand{\TTSs}{\mc{T}=(\mc{Q},q_0,\mc{A},\realpos,\to)}
+\newcommand{\TTSs}{\T=(\Q,q_0,\A,\realpos,\to)}
 
-\newcommand{\TTSbw}[1]{\mc{T}_{#1}=(\mc{Q}_{#1},q_{0_{#1}},\Sigma
+\newcommand{\TTSbw}[1]{\T_{#1}=(\Q_{#1},q_{0_{#1}},\Sigma
 \cup\{\tau\},\mb{K},\to_{#1})}
 
 \newcommand{\transit}[1]{\xrightarrow{#1}}
@@ -114,7 +123,7 @@ urlcolor=black
 \newcommand{\eqv}[1]{\sim_{#1}}
 \newcommand{\eqvw}[1]{\dot{\sim}_{#1}}
 \newcommand{\val}{\upsilon}
-\newcommand{\Val}{\realpoz^{\mc{X}}}
+\newcommand{\Val}{\realpoz^{\X}}
 \newcommand{\false}{\textnormal{\textit{false}}}
 \newcommand{\true}{\textnormal{\textit{true}}}
 \newcommand{\backward}{\raisebox{2pt}{$\swarrow$}}
@@ -125,12 +134,12 @@ urlcolor=black
 \newcommand{\enabledbackwardb}[3]{Enabled\hspace{-0.8pt}\backwardp{#2}{#3}\hspace{-1mm}(#1)}
 \newcommand{\Loc}{\mc{L}}
 \newcommand{\loc}{\ell}
-\newcommand{\locp}{\perp_{\loc}}
-\newcommand{\locpb}[2]{\perp_{\loc_{#1}^{#2}}}
-\newcommand{\Invb}[2]{\mc{I}_{#1}(#2)}
-\newcommand{\Inv}[1]{\mc{I}(#1)}
-\newcommand{\tc}{B=(\Loc,\loc_0,\mc{X},\mc{A},\mc{E},\mc{I})}
-\newcommand{\tci}[1]{B_{#1}=(\Loc_{#1},\loc_{0_{#1}},\mc{X}_{#1},\mc{A}_{#1},\mc{E}_{#1},\mc{I}_{#1})}
+\newcommand{\locp}{\loc_{\perp}}
+\newcommand{\locpb}[2]{\loc_{\perp_{#1}^{#2}}}
+\newcommand{\Invb}[2]{\I_{#1}(#2)}
+\newcommand{\Inv}[1]{\I(#1)}
+\newcommand{\tc}{B=(\Loc,\loc_0,\X,\A,\E,\I)}
+\newcommand{\tci}[1]{B_{#1}=(\Loc_{#1},\loc_{0_{#1}},\X_{#1},\A_{#1},\E_{#1},\I_{#1})}
 \newcommand{\enabled}[1]{Enabled(#1)}
 \newcommand{\p}[1]{part(#1)}
 \newcommand{\urgent}{Urgent}
@@ -140,15 +149,148 @@ urlcolor=black
 \newcommand{\target}{\textsf{target}}
 \newcommand{\guard}{\textsf{guard}}
 \newcommand{\reset}{\textsf{reset}}
-\newcommand{\hmn}{h_{\min}}
+%\newcommand{\hmn}{h_{\min}}
 \newcommand{\reacha}[1]{\mathit{\stackon[0pt]{Reach(#1)}{\hstretch{7.0}{\sim}}}}
 \newcommand{\stacktxt}[1]{\mathit{\stackon[0pt]{#1}{\hstretch{7.0}{\sim}}}}
+\newcommand{\lpsabrb}{LPS }
+\newcommand{\lpsabr}{LPS}
+\newcommand{\lps}{local planning semantics }
+\newcommand{\lpsb}{local planning semantics}
 \NewEnviron{myequation}{%
 \begin{displaymath}
 \scalebox{1.5}{$\BODY$}
 \end{displaymath}
 }
 
+
+%%%%%%%%%%%%%%%%%%PLANNING%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\squig}{{\scriptstyle\sim\mkern-3.9mu}}
+\newcommand{\lsquigend}{{\lhd\mkern-3mu}}
+\newcommand{\rsquigend}{{\scriptstyle\rule{.1ex}{0ex}>}}
+\newcounter{sqindex}
+\newcommand\squigs[1]{
+    \setcounter{sqindex}{0}
+      \whiledo {\value{sqindex}< #1}{\addtocounter{sqindex}{1}\squig}
+    }
+\newcommand{\tranbp}[2]{
+  \mathbin{\stackon[2pt]{\squigs{#2}\rsquigend}{\scriptstyle{#1\,}}}_{\gamma}
+}
+
+ 
+\makeatletter
+\def\namedlabel#1#2{\begingroup
+  \mbox{\hspace{1cm}}#2%
+    \def\@currentlabel{#2}%
+    \phantomsection\label{#1}\endgroup
+}
+\makeatother
+
+\makeatletter
+\newcommand{\mytag}[2]{%
+ \text{#1}%
+  \@bsphack
+    \protected@write\@auxout{}%
+   {\string\newlabel{#2}{{#1}{\thepage}}}%
+  \@esphack
+}          
+\makeatother
+
+
+\newcommand{\confl}{\mathit{conf}}
+\newcommand{\pmin}{\min(\pi)}
+\newcommand{\hmin}{h_{\min}}
+\newcommand{\hmax}{h_{\max}}
+\newcommand{\hmaxt}{h_{\max}^{\infty}}
+\newcommand{\hmaxm}{h_{\max}^{\hmin}}
+\newcommand{\hmxb}[1]{h_{\max}(#1)}
+\newcommand{\hmx}{h_{\max}(\alpha)}
+\newcommand{\plntxt}[1]{\mathit{Plannable(#1)}}
+\newcommand{\plntxtb}[1]{\mathit{\stackon[0pt]{Plannable(#1)}{\hstretch{7.0}{\sim}}}}
+
+
+\newcommand{\tcal}[1]{\mathcal{#1}}
+\newcommand{\lto}{\longrightarrow}
+\newcommand{\urgb}{\tsf{urg}}
+\newcommand{\urg}{\textnormal{\textit{urg}}}
+\newcommand{\tpcp}[1]{\textsf{tpc}(#1)}
+\newcommand{\tpc}{\textsf{tpc}}
+
+\newcommand{\pln}[1]{\mathit{Plannable(#1)}=\bigvee_{\loc\in\Loc_{#1}}
+\al{\loc}\wedge\backhtxt(\bigwedge_{a_i\in#1} \guard{a_i}{\loc_i})}
+
+\newcommand{\plnIntxt}[2]{\mathit{Plannable(#1,#2)}}
+\newcommand{\plnIn}[2]{\mathit{Plannable(#1,#2)}=\bigvee_{\loc\in\Loc_{#1}}
+\al{\loc}\wedge\bigwedge_{a_i\in#1} \Big(\guard{a_i}{\loc_i}+#2\Big)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\newcommand{\clock}[1]{\textsf{clock}(#1)}
+
+\newcommand{\valdt}{v^{dt}}                              % valuation of the clocks
+\newcommand{\valdtb}{v^{dt'}}                              % valuation of the clocks
+\newcommand{\valg}{\bar{v}}                              % valuation of the clocks
+\newcommand{\valgp}{\bar{v'}}  
+\newcommand{\qdt}{q^{dt}}
+\newcommand{\qdtb}{q^{dt'}}
+\newcommand{\RS}{R}
+\newcommand{\enabledb}{\mathit{Enabled}^{{\scriptscriptstyle
+\swarrow^{\epsilon}}}}
+\newcommand{\enabledf}{\mathit{Enabled}^{{\scriptscriptstyle
+\nearrow^{\epsilon}}}}
+\newcommand{\reach}{\textit{Reach}}
+\newcommand{\simdt}{\sqsubseteq^{\epsilon*}_{\RS}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%DRIFT%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\pgfdeclareshape{document}{
+\inheritsavedanchors[from=rectangle] % this is nearly a rectangle
+\inheritanchorborder[from=rectangle]
+\inheritanchor[from=rectangle]{center}
+\inheritanchor[from=rectangle]{north}
+\inheritanchor[from=rectangle]{south}
+\inheritanchor[from=rectangle]{west}
+\inheritanchor[from=rectangle]{east}
+\inheritanchor[from=rectangle]{north east}
+\inheritanchor[from=rectangle]{north west}
+\inheritanchor[from=rectangle]{south east}
+\inheritanchor[from=rectangle]{south west}
+% ... and possibly more
+\backgroundpath{% this is new
+% store lower right in xa/ya and upper right in xb/yb
+\southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+\northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+% compute corner of ‘‘flipped page’’
+\pgf@xc=\pgf@xb \advance\pgf@xc by-7pt % this should be a parameter
+\pgf@yc=\pgf@yb \advance\pgf@yc by-7pt
+% construct main path
+\pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
+\pgfpathlineto{\pgfpoint{\pgf@xa}{\pgf@yb}}
+\pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yb}}
+\pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yc}}
+\pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@ya}}
+\pgfpathclose
+% add little corner
+\pgfpathmoveto{\pgfpoint{\pgf@xc}{\pgf@yb}}
+\pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+\pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yc}}
+\pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+}
+}
+\makeatother
+
+
+\tikzstyle{doc}=[%
+  draw,
+  thick,
+  align=center,
+  color=black,
+  shape=document,
+  minimum width=11mm,
+  minimum height=6mm,
+  shape=document,
+  inner sep=1ex,
+]
 
 
 \tikzset{                                 
@@ -186,6 +328,7 @@ urlcolor=black
   h2n/.style={shift={(0,.5)}},
   h2s/.style={shift={(0,-.5)}},
   h2se/.style={shift={(0.5,-1.1)}},
+  h2e/.style={shift={(0.5,0)}},
   rc/.style={rounded corners=2mm},
   triangle/.style={fill=black,regular polygon,regular polygon sides=3,
    minimum size=10pt,inner sep=0pt},

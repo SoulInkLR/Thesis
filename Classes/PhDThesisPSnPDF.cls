@@ -614,7 +614,8 @@ supported!}
       bookmarksopen=true,
       bookmarksnumbered=true,
       breaklinks=true,
-      linktocpage,
+      %linktocpage,
+      linktoc=all,
       colorlinks=true,
       linkcolor=black,
       urlcolor=black,
@@ -651,7 +652,8 @@ supported!}
       bookmarksopen=true,
       bookmarksnumbered=true,
       breaklinks=true,
-      linktocpage,
+      %linktocpage,
+      linktoc=all,
       colorlinks=true,
       linkcolor=blue,
       urlcolor=blue,
@@ -1179,7 +1181,8 @@ wish to left align your text}
 % Normal abstract in the thesis
 	\cleardoublepage
 	\setsinglecolumn
-	\chapter*{\centering \Large Abstract}
+\chapter*{\centering \Large Abstract}
+%	\chapter*{\centering \Large Formal Methods for Distributed Real-Time Systems}
 	\thispagestyle{empty}
 \fi
 }
