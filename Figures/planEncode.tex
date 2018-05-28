@@ -1,0 +1,30 @@
+\begin{figure}[!h]
+  \centering
+  \subfloat[Part of a timed automaton]{
+    \begin{tikzpicture}[->,node distance=1.3cm,>=stealth',
+  place/.style={circle,thick,draw=black,minimum size=7mm},
+  initial text={},
+baseline]
+    \node [place,initial, initial where=above,label={[shift={(-1,-0.6)},scale=0.8]$x\le k$}] (l1)  {$\loc_1$};
+    \node [place,below=2.5cm of l1] (l2) {$\loc_2$};
+      \node [left=1.5cm of l1]{};
+      \node [right=1.5cm of l1]{};
+      \path (l1) edge node[left,scale=0.8]{$a,g_a,r_a$} (l2);
+    \end{tikzpicture}}\hspace{4cm}
+    \captionsetup[subfigure]{oneside,margin={1cm,0cm}}
+  \subfloat[Planning encoding]{
+  \begin{tikzpicture}[->,node distance=1.3cm,>=stealth',
+  place/.style={circle,thick,draw=black,minimum size=7mm},
+  initial text={},
+baseline]
+    \node [place,initial, initial where=above,label={[shift={(-1.2,-0.5)},scale=0.8]$x\le k-h_{\min}$}] (t1)  {$\loc_1$};
+    \node [place,below=10mm of t1,align=center,label={[shift={(-1.5,-0.6)},scale=0.8]$x_p\le h_{\min}\wedge x\le k$},scale=0.9] (t2) {$\loc_{1}^{a}$};
+    \node [place,below=7mm of t2] (t2b) {$\loc_2$};
+    \path (t1) edge node[xshift=2mm,right,align=center,xshift=-2mm,scale=0.8]{$plan_a$\\$\backwardp{\hmin}{\hmin} g_a$\\$x_p:=0$} (t2)
+      (t2) edge node[xshift=1mm,right,align=center,scale=0.8]{$a$\\$x_p=h_{\min}$\\$r_a$} (t2b);
+  \end{tikzpicture}}
+  \caption{Planning as a Timed Automaton}\label{fig:enc}
+\end{figure}
+
+
+
