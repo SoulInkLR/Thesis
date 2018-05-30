@@ -63,12 +63,12 @@ Equation~\ref{eq:conf1}, potentially conflicting interactions are reduced by
 checking the following precondition:
 
 \begin{equation}\label{eq:conf2}
-  \stacktxt{Conflict(S,\alpha_1,\alpha_2)}=\ \reacha{S} \wedge \enabled{\alpha_1} \wedge 
+  \overline{Conflict(S,\alpha_1,\alpha_2)}=\ \reacha{S} \wedge \enabled{\alpha_1} \wedge 
   \enabled{\alpha_2}
 \end{equation}
 
 Notice that since $Reach(S)\Rightarrow\reacha{S}$, we obtain that 
-$Conflict(S,\alpha_1,\alpha_2) \Rightarrow \stacktxt{Conflict(S,\alpha_1,\alpha_2)}$.
+$Conflict(S,\alpha_1,\alpha_2) \Rightarrow$\\$\overline{Conflict(S,\alpha_1,\alpha_2)}$.
 Thus, if two interactions are established to be conflicting  
 according to Equation~\ref{eq:conf2}, then they are conflicting according to 
 Equation~\ref{eq:conf1}.
@@ -104,7 +104,7 @@ fully independent as they synchronize through interactions in the composition.
 A typical example of that is a shared resource used in mutual exclusion by a set of 
 components: any of them can potentially use it, but they should coordinate so that states in 
 which two (or more) components use the resource are not reachable.
-Another illustration of this can be found in example of Figure~\ref{fig:run}: components 
+Another illustration of this can be found in example of Figure~\ref{fig:tm}: components 
 $T_1$ (resp. $T_2$) may reach location $\loc_1^2$ (resp. $\loc_1^3$) by executing 
 action $init_1$ (resp. $init_2$), but in the composition $T_1$ and $T_2$ cannot be 
 simultaneously at locations $\loc_1^2$ and $\loc_1^3$.
@@ -181,7 +181,7 @@ following formula is not satisfiable:
 \end{equation}
 where $Reach(B_i)$ denots the reachable states of component $B_i$.
 \begin{example}
-Let us reconsider the example of Figure~\ref{fig:run}.
+Let us reconsider the example of Figure~\ref{fig:tm}.
 Among the resulting linear invariants, we focus on following:
 \begin{numcases}{}
 1\cdot\al{\loc_1^2} + 1\cdot\al{\loc_1^3} - 1\cdot\al{\loc_1^1} = 0 \label{eq:inv1} \\

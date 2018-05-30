@@ -29,7 +29,7 @@
         (r2) edge [out=0,in=0] node[right,align=center]{$n_1^{\alpha_2}\le N_1$\\
                                                       $n_3^{\alpha_2}\le N_3$\\
                                                       $fail_{\alpha_2}$} (w2);
-  \node [rounded corners,inner xsep=60mm,inner ysep=30mm,draw,fit=(w1)(r2)] (rec1) {};
+  \node [rounded corners,inner xsep=60mm,inner ysep=15mm,draw,fit=(w1)(r2)] (rec1) {};
   \node [dots,label=90:$rsv_{\alpha_1}$] (i1) at ($(rec1.south west)!0.175!(rec1.south east)$) {};
   \node [triangle,rotate=180,label=-90:$ok_{\alpha_1}$] (i1) at ($(rec1.south west)!0.25!(rec1.south east)$) {};
   \node [triangle,rotate=180,label=-90:$fail_{\alpha_1}$] (i1) at ($(rec1.south west)!0.325!(rec1.south east)$) {};

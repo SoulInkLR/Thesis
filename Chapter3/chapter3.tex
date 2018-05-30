@@ -147,7 +147,7 @@ the same scheduler, are resolved locally by the latter.
   This mean that the set of conflicting interactions of the whole system is $\gamma$.
 \end{example}
 
-\section{3-Layer Send/Receive Model}
+\section{3-Layer Send/Receive Model}\label{sec:3.2}
 Let $S=\gamma(B_1,\cdots,B_n)$ be a timed system. Given a partition of interaction
 $\{\gamma_k\}^m_{k=1}$, the Send/Receive model corresponding to $S$ is based on the three
 following layers:
@@ -261,15 +261,18 @@ Figure~\ref{fig:tcSR} depicts the Send/Receive transformation of the component $
 As explained earlier, the scheduling layer works with a partial view of the global state of 
 the system. Initially, every scheduler is waiting for offers form the corresponding components
 (with respect to the interactions partition). Each received offer specifies to the schedulers
-the state of the sender component. For the sake of distributed implementation, it is
+the state of the sender component. In what follows, we consider work-conservative scheduler,
+that is, schedulers preserving the execution sequences of the initial model under
+the standard semantics. For the sake of distributed implementation, it is
 worth taking a decision as soon as possible. Thus, once a scheduler gathers enough information 
-for scheduling an interaction, it executes the corresponding transition that will trigger
-the notification responses to the components involved in that interaction.
+for scheduling interactions, it arbitrarily choose one and executes the corresponding 
+transition that will trigger the notification responses to the components involved in 
+that interaction.
 In what follows, we use Petri nets~\cite{} to describe the scheduling layer. 
 Petri nets are a well suited formalism for encoding parallel and concurrent executions. 
-Particularly, we focus on a class of Petri nets (\emph{1-Safe}) to encode the schedulers
-introduced by our method since it is proven that any 1-Safe Petri net can be transformed in
-an equivalent timed automaton~\cite{}. 
+Particularly, we focus on a class of Petri nets (\emph{1-Safe}) to encode the structure of 
+the schedulers introduced by our method since it is proven that any 1-Safe Petri net can be 
+transformed in an equivalent automaton~\cite{}. 
 Consequently, they provide a clear and compact representation 
 of the scheduling layer.
 
@@ -293,7 +296,7 @@ The set of directed edges $\mc{E}$ is the union of the sets $\{(\loc,\tau)\in\Lo
 \loc\in{^\bullet\tau}\}$ and $\{(\tau,\loc)\in\mc{T}\times\Loc|\loc\in\tau^\bullet\}$.
 A \emph{marking} of a Petri net is a mapping $m:\Loc\to\naturals$ that describes the current
 \emph{state} of a Petri net by assigning a non-negative integer to each of its places.
-We use tokens~\cite{} to represent the marking (1 token per integer). We say that a place is
+We use tokens~\cite{} to represent the marking (number of tokens). We say that a place is
 \emph{marked} if it contains at least one token.
 For a transition $\tau$, we say that $\tau$ is \emph{enabled} at a given state if all of 
 its input places $^\bullet\tau$ are marked, that is, $\forall\loc\in{^\bullet\tau},\ m(\loc)>0$.
@@ -331,8 +334,8 @@ the set of triples $(m,a,m')$ such that $m\transitb{a}{\mc{P}}m'$.
 Given a Petri net $\mc{P}=(\Loc,\mc{A},\mc{T})$ and an initial marking $m_0$, the marking $m$
 is \emph{reachable} if there exists a sequence of transitions $m_0\transitb{a_1}{\mc{P}}m_1
 \transitb{a_1}{\mc{P}}\cdots\transitb{a_1}{\mc{P}}m$. We say that $\mc{P}$ is one \emph{1-Safe}
-if there is up to one token per place in each reachable marking. This implies at most
-$2^{\Loc}$ markings. In this thesis, we consider only this class of Petri nets.
+if there is at most one token per place in each reachable marking. This implies at most
+$2^{|\Loc|}$ markings. In this thesis, we consider only this class of Petri nets.
 The behavior of a 1-Safe Petri net  $\mc{P}=(\Loc,\mc{A},\mc{T})$ is defined by the finite
 labeled transition system $(2^{\Loc},\mc{A},\to_{\mc{P}})$, where $2^{\Loc}$ is the set of
 states, $\mc{A}$ is the set of actions, and $\to_{\mc{P}}\subseteq 2^{\Loc}\times\mc{A}\times
@@ -390,7 +393,8 @@ ports participating in that interaction. Otherwise (Figure~\ref{fig:sch2}),
 a request is sent to the CRP and the token is moved to the
 corresponding $try$ place. Thereafter, either the CRP grants the execution of the interaction
 and tokens are moved to send places, or the execution is denied and tokens are moved back
-to receive places.
+to receive places. Eventually, the scheduler may receive new offers when being in $try$
+places. This corresponds to the execution of a conflicting interaction in another scheduler.
 
 
 \begin{definition}[Scheduler]\label{def:sch_sr}
@@ -401,7 +405,7 @@ to receive places.
   \{r_{\tau}\}_{\tau\in\mc{T}_j},\{f_{\tau}\}_{\tau\in\mc{T}_j},\{\mc{I}_{\loc}\}_{\loc\in\Loc_j})
   $, where:
   \begin{itemize}
-    \item $\mc{X}_j=\{g_j\}\cup\{z_j\}$ is the set of clocks of $Sch_j$, where $g_j$ is
+    \item $\mc{X}_j=\{t_j\}\cup\{z_j\}$ is the set of clocks of $Sch_j$, where $t_j$ is
       the global clock used for scheduling interactions of $\gamma_j$ (it is never reset)
       and $z_j$ is a clock used for internal constraints. 
     \item $\mc{D}_j$ is the set of variables containing:
@@ -427,12 +431,12 @@ to receive places.
         \begin{itemize}
           \item For each component $B_i$ involved in interactions of $\gamma_j$, we include
             a waiting place $w_i^j$, a receive place $r_i^j$, where $\mc{I}_{w_i^j}=\true$
-            and $\mc{I}_{r_i^j}$ is the invariant $\mc{I}_{B_i}$ expressed on $g$.
+            and $\mc{I}_{r_i^j}$ is the invariant $\mc{I}_{B_i}$ expressed on $t_j$.
           \item For each action $a$ involved in interactions of $\gamma_j$, we include a sending
             place $s_{p_a}$, where $\mc{I}_{s_{p_a}}=z\le0$.
           \item For each interaction $\alpha\in\gamma_j$ that is externally conflicting 
             with another interaction, we include a try place $t_{\alpha}$ with 
-            $\mc{I}_{t_{\alpha}}$ is the invariant $\mc{I}_{B_i}$ expressed on $g$.
+            $\mc{I}_{t_{\alpha}}$ is the invariant $\mc{I}_{B_i}$ expressed on $t_j$.
         \end{itemize}
         \item $\mc{P}_j$ is the set of ports. It includes the following ports:
           \begin{itemize}
@@ -457,7 +461,7 @@ to receive places.
               B_i\in\p{\alpha}\}$ where $\alpha$ is an externally conflicting interaction.
               These transitions have no guards and no reset functions. 
               Their transfer functions update reset time 
-              variables $\rho_x$ whenever $r_x=\true$, that is, $\rho_x=g$. 
+              variables $\rho_x$ whenever $r_x=\true$, that is, $\rho_x:=g$. 
             \item For each action $a$ involved in interactions of $\gamma_j$, $\mc{T}_j$ includes
               a transition $(s_{p_a},p_a,w_i^j)$ where $i$ is the index of the component
               containing $a$. This transition notifies the corresponding Send/Receive component 
@@ -469,7 +473,7 @@ to receive places.
               \alpha,$\\$\{s_{p_{a_i}}\}_{a_i\in\alpha})$. The guard of this transition is 
               $g_{\tau}=
               \bigwedge_{a_i\in\alpha}g_{p_{a_i}}$. Notice that guards over data are the same,
-              whereas guard of clocks are expressed using the global clock $g$ and the reset
+              whereas guard of clocks are expressed using the global clock $t_j$ and the reset
               time variables $\rho_x$. This transition has no transfer function 
               and its reset function resets clock $z$.
             \item For each interaction $\alpha=\{a_i\}_{i\in{I}}\in\gamma_j$, that is 
@@ -490,7 +494,7 @@ to receive places.
       \end{itemize}
   \end{itemize}
 \end{definition}
-Notice that Definition~\ref{def:sch} presents only the syntax of a scheduler. It uses 
+Notice that Definition~\ref{def:sch_sr} presents only the syntax of a scheduler. It uses 
 the Petri net formalism only for compactness purposes and is not to be confused with 
 any other Petri Net formalism such as Time Petri Nets or Timed Petri nets.
 \input{Figures/sch.tex}
@@ -633,7 +637,7 @@ a certain threshold to minimize the impact of this phenomenon.
 
 \subsection{Communication Delays}
 
-The Send/Receive model as presented in Section~\ref{sec:sr} assumes implicitly that 
+The Send/Receive model as presented in Section~\ref{sec:3.2} assumes implicitly that 
 communication between the different layers is timeless. This restricts the applicability
 of such approach to applications where the timing constraints are far bigger than the 
 communication delays imposed by a given target platform.  

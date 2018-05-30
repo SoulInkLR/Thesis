@@ -1,7 +1,161 @@
 \chapter{Introduction}
-\section{Distributed Real-Time Systems}
-\section{From Modelling to Implementation of Distributed Real-Time Systems}
-\subsection{Modeling}
-\subsection{Implementation}
-\subsection{Validation}
-\section{Contribution and Organization}
+
+\section{Real-Time Systems}
+
+Computer systems consists of a combination of hardware, software, user and data. Such
+systems are constantly evolving and will become undoubtedly a constituent part of our daily life.
+Nowadays, computer systems are widespread in several application domains. From simple system
+like espresso machines to complex large system such as an airplane, these systems are
+continuously developing to facilitate and enhance our lifestyle by providing always improved 
+solutions (more comfort, energy efficient, security, etc) that answers directly to real life 
+problems.  
+A \emph{real-time} are defined as those systems in which the correctness of the system
+depends not only on the logical results of computations, but also on the physical time at which 
+the results are produced~\cite{intro:stan88}.
+In other terms, real-time systems are computing systems that has temporal constraints to meet
+and thus is required to guarantee a response within specified timing constraints. 
+These types need to achieve different requirements that can be structured into three main 
+categories~\cite{intro:kopetz11}: \emph{(i)} functional requirements, 
+\emph{(ii)} temporal requirements, and \emph{(iii)} dependability requirements.
+Functional requirements refer to the functions that the real-time system must perform. 
+In order to accomplish such requirements, the systems needs to be able to observe its current
+states, that is, the values of variables describing the latter. For instance the position, speed
+and level of oil in a car are possible state variables. Additionally, a given system 
+needs to control its states variables (actuation) for regulation purposes, and provide an 
+interface to the system operator that allows its monitoring.
+On the other hand, temporal requirements are born from the requirement of control loops. 
+A typical example is the time bounds for which a gear change needs to be achieved in the control
+system operating in modern vehicles. Temporal requirements of a given system might be of
+different order of magnitude. For instance the man-machine interface, in comparison with fast
+control loops, is less strict because of the human perception of time. Finally, dependability
+requirements are additional requirements regarding the quality of service that a given system
+produce, that is, the criteria for deciding whether the services provided by the system can 
+justifiably be trusted. The concept of dependability encompasses the following attributes
+\cite{intro:aviz04}: availability (readiness for correct service), reliability (continuity of
+correct service), safety (absence of catastrophic consequences), integrity (absence of 
+improper system alterations), and maintainability (ability to undergo modifications and repairs).
+
+Real-time systems can be classified from different perspectives~\cite{intro:kopetz11} based
+on either the characteristic of the application (perspective A), i.e., on factors outside 
+the computer system, or on the design and implementation (perspective B), i.e., on factors 
+inside the computer system.
+Tables~\ref{tbl:rts_class} presents a classification of real-time systems based on these two 
+perspectives:
+\begin{table}[!h]
+  \begin{tabular}{ |c|c|c| } 
+    \hline
+    Perspective  & Classification & Description \\
+    \hline
+    \multirow{2}{*}{A} & \makecell{hard real-time \\ vs \\ soft real-time} 
+                         & \parbox{0.55\linewidth}{\vspace{1mm}A hard real-time system is a \
+                         system that must meet
+                         \emph{hard deadlines}, that is, deadlines that if missed could result
+                         in severe consequences. On the other hand, for 
+                         soft real-time systems the goal becomes to meet a certain subset
+                         of deadlines in order to optimize some specific criteria. Particularly,
+                         deadlines violation results in degraded quality, but the system keeps
+                         operating and may recover in the future.\vspace{1mm}} \\ \cline{2-3} 
+                         & \makecell{fail-safe \\ vs \\ fail-operational}
+                         & \parbox{0.55\linewidth}{\vspace{1mm}Fail-safe systems refer to those 
+                         system where a safe state can be identified and quickly reached upon the
+                         occurrence of a failure. On the contrary, fail-operational systems
+                         are systems that must remain operational and provide a minimal level
+                         of service even in case of failure (no safe state).\vspace{1mm}} 
+                        \\ \cline{2-3} 
+    \hline\cline{1-3}\hline
+    \multirow{3}{*}{B} & \makecell{guaranteed-response \\vs\\ best effort}
+                         & \parbox{0.55\linewidth}{\vspace{1mm}Real-time systems where the 
+                         probability of failure is reduced to the probability that some
+                         assumptions, on peak load or fault number and types for instance, 
+                         do not hold in reality are called guaranteed-response. On the other 
+                         hand, best-effort systems are systems where no analytical argument for 
+                         correctness can be made. The latter is rather established during the
+                         test and integration phases.\vspace{1mm}} \\ \cline{2-3} 
+                         & \makecell{resource-adequate\\ vs\\ resource-inadequate}
+                         & \parbox{0.55\linewidth}{\vspace{1mm}While Resource-adequate systems
+                         are systems that provide sufficient computational resources to handle
+                         a specified peak load and fault scenarios, resource-inadequate 
+                         systems rely on dynamic ressource allocation strategy based on 
+                         resource sharing and probalistic arguments about expected load and 
+                         fault scenarios.\vspace{1mm}} \\ \cline{2-3} 
+                         & \makecell{event-triggered\\ vs\\ time-triggered}
+                         & \parbox{0.55\linewidth}{\vspace{1mm}Event-triggered systems are 
+                         systems where all communication and processing activities are initiated
+                         whenever a significant event (rather than the regular clock tick) 
+                         occurs. Oppositely, in time-triggered systems all activities are 
+                         initiated by the progress of real-time.\vspace{1mm}} \\ \cline{2-3} 
+    \hline
+  \end{tabular}
+  \caption{Classification Of Real-Time Systems}
+  \label{tab:class}
+\end{table}
+
+
+\section{Real-Time Model}
+\subsection{Temporal Control Versus Logical Control}
+\subsection{Event-Triggered Control Versus Timed-Triggered Control}
+
+\section{System Design}
+\subsection{System Design Versus Software Design}
+\subsection{Design Phases}
+\subsection{Design Styles}
+
+\section{Existing Approaches For Building Real-Time Systems}
+
+\subsection{Lustre}
+\subsection{Oasis}
+\subsection{Giotto}
+\section{Contribution}
+\bibentry{fm16}
+\bibentry{apsec17}
+\bibentry{lites}
+\bibentry{drift}
+
+Nowadays, real-time systems are ubiquitous in several application domains, 
+and such an emergence led to an increasing need of performance: resources, 
+availability, concurrency, etc. This expansion initiates a shift from the
+use of single processor based hardware platforms, to large sets 
+of interconnected and distributed computing nodes. Moreover, it prompts the birth 
+of a new family of systems known as \emph{Networked Embedded Systems}, 
+that are intrinsically distributed.
+Such an evolution stems from an increase in complexity of real-time software 
+embedded on such platforms (e.g. electronic control in avionics 
+and automotive domains~\cite{charette09}), and the need to integrate 
+formerly isolated systems~\cite{kopetz04} so that 
+they can cooperate as well as share resources improving thus functionality 
+and reducing costs.
+
+To deal with such complexity, the community of safety critical systems 
+often restricts its scope to predictable systems, which are represented 
+with domain specific models (e.g. periodic tasks, synchronous systems, 
+time-deterministic systems) for which the range of possible executions 
+is small enough to be easily analyzed, allowing the pre-computation 
+of optimal control strategies.
+\emph{Networked Embedded Systems} usually describe a set of real-time systems, 
+distributed across several platforms, and interacting through a network. 
+Because of their adaptive behavior, the standard practice when implementing 
+such systems is not to rely on models for pre-computation of execution strategies but rather 
+to design systems dynamically adapting at runtime to the actual context of execution.
+Such approaches, however, do not offer any formal guarantee of timeliness. Also, 
+the lack of a priori knowledge on system behavior leaves also little room for 
+static optimization.
+
+Model-based development is one promising approach in building distributed 
+real-time systems. First, an application model expressing a timed abstraction
+of the application behavior is built. This abstraction is platform 
+independent, meaning that it does not consider any hardware specification
+such as communication delays or CPU(s) speed, which allows to: 
+\emph{(i)} model the system at early stages 
+without any knowledge of the target platform, and \emph{(ii)} verify 
+the obtained model against some safety properties (functional requirements).
+Thereafter, the application source code, which represents the actual 
+implementation of the system on a given platform, 
+is automatically generated from the high level model. 
+Then, the big challenge becomes  
+how to verify the timing behavior of the implementation, since a lot of 
+assumptions drop such as atomic execution of actions or timeless communication delays. 
+In this paper, we propose a model-based approach aiming to mitigate the communication delays of 
+distributed platforms. 
+In this approach, systems consist of components represented 
+as timed automata that may synchronize on particular actions to coordinate 
+their activities. 

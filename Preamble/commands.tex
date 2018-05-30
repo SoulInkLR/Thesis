@@ -99,14 +99,14 @@ urlcolor=black
 \newcommand{\V}{\mc{V}}
 \newcommand{\I}{\mc{I}}
 \newcommand{\Q}{\mc{Q}} 
-\newcommand{\TTS}{\T=(\Q,q_0,\Sigma,\mb{K},\to)}
-\newcommand{\TTSg}{\T_g=(\Q_g,q_{0_g},\gamma,\realpos,\to_{\gamma})}
-\newcommand{\TTSb}[1]{T_{#1}=(Q_{#1},q_{0_{#1}},\Sigma,
-\mb{K},\to_{#1})}
-\newcommand{\TTSs}{\T=(\Q,q_0,\A,\realpos,\to)}
+\newcommand{\tts}{\texttt{T}}
+\newcommand{\TTS}{\tts=(\Q,q_0,\Sigma\cup\mb{K},\to)}
+\newcommand{\TTSg}{\tts_g=(\Q_g,q_{0_g},\gamma\cup\realpos,\to_{\gamma})}
+\newcommand{\TTSb}[1]{\tts_{#1}=(Q_{#1},q_{0_{#1}},\Sigma\cup\mb{K},\to_{#1})}
+\newcommand{\TTSs}{\tts=(\Q,q_0,\A\cup\realpos,\to)}
 
-\newcommand{\TTSbw}[1]{\T_{#1}=(\Q_{#1},q_{0_{#1}},\Sigma
-\cup\{\tau\},\mb{K},\to_{#1})}
+\newcommand{\TTSbw}[1]{\tts_{#1}=(\Q_{#1},q_{0_{#1}},\Sigma
+\cup\{\tau\}\cup\mb{K},\to_{#1})}
 
 \newcommand{\transit}[1]{\xrightarrow{#1}}
 \newcommand{\transitb}[2]{\xrightarrow{#1}_{#2}}
@@ -150,8 +150,8 @@ urlcolor=black
 \newcommand{\guard}{\textsf{guard}}
 \newcommand{\reset}{\textsf{reset}}
 %\newcommand{\hmn}{h_{\min}}
-\newcommand{\reacha}[1]{\mathit{\stackon[0pt]{Reach(#1)}{\hstretch{7.0}{\sim}}}}
-\newcommand{\stacktxt}[1]{\mathit{\stackon[0pt]{#1}{\hstretch{7.0}{\sim}}}}
+\newcommand{\reacha}[1]{\overline{Reach(#1)}}
+%\newcommand{\stacktxt}[1]{\mathit{\stackon[0pt]{#1}{\hstretch{7.0}{\sim}}}}
 \newcommand{\lpsabrb}{LPS }
 \newcommand{\lpsabr}{LPS}
 \newcommand{\lps}{local planning semantics }

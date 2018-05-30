@@ -1142,7 +1142,7 @@ wish to left align your text}
 % Normal abstract in the thesis
 	\cleardoublepage
 	\setsinglecolumn
-	\chapter*{\centering \Large Abstractfr}
+	\chapter*{\centering \Large Résumé}
 	\thispagestyle{empty}
 \fi
 }

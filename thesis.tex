@@ -1,7 +1,7 @@
 % ******************************* PhD Thesis Template **************************
 % Please have a look at the README.md file for info on how to use the template
 
-\documentclass[a4paper,Times,twoside,numbered,index,12pt]{Classes/PhDThesisPSnPDF}
+\documentclass[numbered,a4paper,Times,twoside,index,12pt]{Classes/PhDThesisPSnPDF}
 
 % ******************************************************************************
 % ******************************* Class Options ********************************
@@ -141,7 +141,6 @@
 \renewcommand{\baselinestretch}{0.9}\normalsize
 \tableofcontents
 \renewcommand{\baselinestretch}{1.0}\normalsize
-
 %\tableofcontents
 
 %\listoffigures\mtcaddchapter 
@@ -151,7 +150,7 @@
 % \printnomencl[space] space can be set as 2em between symbol and description
 %\printnomencl[3em]
 
-\printnomencl
+%\printnomencl
 
 % ******************************** Main Matter *********************************
 \include{Chapter1/chapter1}
@@ -207,7 +206,6 @@ of the latter with perfect clocks.
 % Reference styles: http://sites.stat.psu.edu/~surajit/present/bib.htm
 
 \bibliographystyle{alpha}
-%\bibliographystyle{plainnat} % use this to have URLs listed in References
 \cleardoublepage
 \bibliography{References/references} % Path to your References.bib file
 
@@ -216,7 +214,6 @@ of the latter with perfect clocks.
 % an option in the document class. The location of 'reference.bib' should be
 % specified in the preamble.tex file in the custombib section.
 % Comment out the lines related to natbib above and uncomment the following line.
-
 %\printbibliography[heading=bibintoc, title={References}]
 
 
