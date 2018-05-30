@@ -1,7 +1,7 @@
 % ******************************* PhD Thesis Template **************************
 % Please have a look at the README.md file for info on how to use the template
 
-\documentclass[numbered,a4paper,Times,twoside,index,12pt]{Classes/PhDThesisPSnPDF}
+\documentclass[a4paper,Times,twoside,index,12pt,biblatex]{Classes/PhDThesisPSnPDF}
 
 % ******************************************************************************
 % ******************************* Class Options ********************************
@@ -80,10 +80,11 @@
 % Preamble: Contains packages and user-defined commands and settings
 \input{Preamble/packages}
 \input{Preamble/commands}
-
+%\addbibresource{References/references.bib}
 % ************************ Thesis Information & Meta-data **********************
 % Thesis title and author information, refernce file for biblatex
 \input{thesis-info}
+\listfiles
 
 % ***************************** Abstract Separate ******************************
 % To printout only the titlepage and the abstract with the PhD title and the
@@ -188,7 +189,6 @@ of the latter with perfect clocks.
 \include{Chapter8/chapter8}
 \part{Conclusion}
 \include{Chapter9/chapter9}
-
 \listoffigures 
 
 \listoftables 
