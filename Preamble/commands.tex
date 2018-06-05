@@ -356,3 +356,32 @@ urlcolor=black
   }        
 }       
 
+\definecolor{mymagenta}{RGB}{226,0,116}
+\definecolor{mygray}{RGB}{208,208,208}
+\newcommand*{\mytextstyle}{\color{black}}
+\newcommand{\arcarrow}[4]{%
+   % inner radius, middle radius, outer radius, start angle,
+   % end angle, tip protusion angle, options, text
+   \pgfmathsetmacro{\rin}{3}
+   \pgfmathsetmacro{\rmid}{3.5}
+   \pgfmathsetmacro{\rout}{4}
+   \pgfmathsetmacro{\astart}{#1}
+   \pgfmathsetmacro{\aend}{#2}
+   \pgfmathsetmacro{\atip}{1}
+   \fill[#4, very thick] (\astart+\atip:\rin)
+                         arc (\astart+\atip:\aend:\rin)
+      -- (\aend-\atip:\rmid)
+      -- (\aend:\rout)   arc (\aend:\astart+\atip:\rout)
+      -- (\astart:\rmid) -- cycle;
+   \path[
+      decoration = {
+         text along path,
+         text = {|\mytextstyle|#3},
+         text align = {align = center},
+         raise = -1.0ex
+      },
+      decorate
+   ](\astart+\atip:\rmid) arc (\astart+\atip:\aend+\atip:\rmid);
+}
+
+
