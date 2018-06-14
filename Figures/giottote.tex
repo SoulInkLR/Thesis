@@ -1,0 +1,32 @@
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+
+
+
+\draw[->]  (-2,0) -- (8,0) node[below left] {time};
+\draw[-]   (-2,0) -- (-2,5) node[above left] {Tasks};
+  \draw[-]  (2,0) -- (2,0.2) node[below,yshift=-2mm]{P};
+
+\draw[-]  (-2,1) -- (8,1) ;
+\draw[-]  (-2,2.5) -- (8,2.5) ;
+
+
+  \draw[pattern=north east lines,pattern color=red!40,draw=red] (-2,2.5) rectangle (-1.5,1);
+  \draw[pattern=north east lines] (-1.25,2.5) rectangle (1,1);
+  \draw[pattern=north east lines,pattern color=green!40,draw=green] (1.5,2.5) rectangle (2,1);
+  
+  \node at (-.5,4)(i){Read Inputs};
+  \node at (3,4)(o){Write Outputs};
+  \node at (0,-1)(e){Task Execution};
+
+  \draw[->] (i) -- (-1.75,2.5);
+  \draw[->] (o) -- (1.75,2.5);
+  \draw[->] (e) -- (0,1);
+
+
+\end{tikzpicture} 
+\caption{Example of a Giotto Task Execution}
+\label{fig:giottote}
+\end{figure}
+

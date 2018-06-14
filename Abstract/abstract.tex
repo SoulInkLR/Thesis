@@ -3,49 +3,93 @@
 
 Nowadays, real-time systems are ubiquitous in several application domains. 
 Such an emergence led to an increasing need of performance (resources, 
-availability, concurrency, etc) and initiated a shift from the
+availability, concurrency, etc.) and initiated a shift from the
 use of single processor based hardware platforms, to large sets 
 of interconnected and distributed computing nodes. This trend introduced the birth 
-of a new family of systems known as \emph{Networked Embedded Systems}, 
-that are intrinsically distributed.
+of a new family of systems that are intrinsically distributed, namely
+\emph{Networked Embedded Systems}.
 Such an evolution stems from the growing complexity of real-time software 
 embedded on such platforms (e.g. electronic control in avionics 
 and automotive domains), and the need to integrate formerly isolated systems so that 
-they can cooperate, as well as, share resources improving thus functionality 
+they can cooperate, as well as, share resources improving thus functionalities 
 and reducing costs.
 Undoubtedly, the design, implementation and verification of such systems are 
 acknowledged to be very hard tasks since they 
 are prone to different kinds of factors, such as communication delays, CPU(s) 
 speed or even hardware imprecisions, which increases considerably the complexity of 
 coordinating parallel activities.
-  %recurrent in suchlike applications. 
 
 In this thesis, we propose a rigorous design flow intended for 
 building distributed real-time applications.
 We investigate timed automata based models, with well defined semantics, in order 
 to study the behavior of a given system with some imposed timing constraints when deployed 
 in a distributed environment. Particularly, we study \emph{(i)} the impact of the communication 
-delays by introducing a minimum latency between action execution and the effective 
-date at which action execution has been decided, 
-and \emph{(ii)} the effect of hardware imperfections, more precisely clock 
-drifts, on systems execution by breaking the clock synchrony hypothesis, often adopted during 
+delays by introducing a minimum latency between actions executions and the effective 
+date at which actions executions have been decided, 
+and \emph{(ii)} the effect of hardware imperfections, more precisely clocks imprecisions, 
+on systems execution by breaking the clock synchrony hypothesis, often adopted during 
 the modeling phase. Nevertheless, timed automata formalism is intended to describe a high
 level abstraction of the behavior of a given application. 
 Therefore, we use an intermediate representation of 
 the initial application, that besides having \say{equivalent} behavior, explicitly expresses
-implementation mechanisms, and thus reduce the gap between the modeling and the concrete
+implementation mechanisms, and thus reduces the gap between the modeling and the concrete
 implementation. Additionally,  we contribute in building such systems by \emph{(iii)} 
-proposing a knowledge based optimization that aims to eliminate unnecessary computation time 
-or exchange of messages during execution. 
+proposing a knowledge based optimization method that aims to eliminate unnecessary 
+computation time or exchange of messages during the execution. 
   
 We compare the behavior of each proposed model to the initial high level model and study the
 relationships between both. Then, we identify and formally characterize the potential problems 
-resulting from these additional constraints and propose execution strategies that allows
-to preserve some desired properties and achieve a \say{similar} execution scenario, faithful
-to the original specifications.   
+resulting from these additional constraints. Furthermore, we propose execution strategies that 
+allow to preserve some desired properties and reach a \say{similar} execution scenario, 
+faithful to the original specifications.   
   
 \end{abstract}
 
 
 \begin{abstractfr}
+\begin{otherlanguage}{french}
+Aujourd'hui, les systèmes temps réel sont omniprésents dans plusieurs domaines.
+Une telle expansion donne lieu à un besoin croissant en terme de performance (ressources,
+disponibilité, parallélisme, etc.) et a initié par la même occasion une transition de
+l'utilisation de plateformes matérielles à processeur unique, à de grands ensembles
+de nœuds de calcul inter-connectés et distribués. Cette tendance a introduit la naissance
+d'une nouvelle famille de systèmes connue sous le nom de \emph{Networked Embedded Systems},
+qui sont intrinsèquement distribués.
+Une telle évolution provient de la complexité croissante des logiciels temps réel
+embarqués sur de telles plateformes (par exemple les système de contrôle en avionique
+et dans domaines de l'automobile), ainsi que la nécessité d'intégrer des systèmes autrefois 
+isolés afin d'accomplir les fonctionnalités requises, améliorant ainsi les performances 
+et réduisant les coûts.
+Sans surprise, la conception, l'implémentation et la vérification de ces systèmes sont
+des tâches très difficiles car elles sont sujettes à différents types de facteurs, tels que les 
+délais de communication, la fréquence du CPU ou même les imprécisions matérielles, 
+ce qui augmente considérablement la complexité de coordonner les activités parallèles.
+
+Dans cette thèse, nous proposons un workflow rigoureux destiné à la construction d'applications 
+distribuées temps réel.
+Pour ce faire, nous étudions des modèles basés sur les automates temporisés, avec une sémantique
+bien définie, afin d'étudier le comportement d'un système donné avec des contraintes de temps 
+imposées lorsqu'il est déployé dans un environnement distribué. En particulier, nous étudions 
+\emph{(i)} l'impact des délais de communication en introduisant une latence minimale entre 
+les exécutions d'actions et la date à laquelle elles ont été décidées,
+et \emph{(ii)} l'effet des imperfections matérielles, plus précisément les imprécisions 
+d'horloges, sur l'exécution des systèmes. 
+Le paradigme des automates temporisés reste néanmoins destiné à décrire une abstraction 
+du comportement d'une application donnée.
+Par conséquent, nous utilisons une représentation intermédiaire de
+l'application initiale, qui en plus d'avoir un comportement \say{équivalent}, exprime 
+explicitement les mécanismes mis en œuvre durant l'implémentation, et donc réduit ainsi 
+l'écart entre la modélisation et l'implémentation réelle.
+De plus, nous contribuons à la construction de tels systèmes en \emph{(iii)}
+proposant une optimisation basée sur la \emph{connaissance}, qui a pour but d'éliminer les 
+temps de calcul inutiles et de réduire les échanges de messages pendant l'exécution.
+  
+
+  Nous comparons le comportement de chaque modèle proposé au modèle initial et étudions
+les relations entre les deux. Ensuite, nous identifions et caractérisons formellement les 
+problèmes potentiels résultants de ces contraintes supplémentaires. Aussi, nous proposons 
+des stratégies d'exécution qui permettent de préserver certaines propriétés souhaitées 
+et d'obtenir des scénarios d'exécution \say{similaires}, et fidèles aux spécifications 
+de départs.
+\end{otherlanguage}
 \end{abstractfr}

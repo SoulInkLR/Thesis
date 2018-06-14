@@ -1,0 +1,48 @@
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+
+
+
+
+   \fill[even odd rule,gray!35] circle (2.5);
+
+   \node at (0,0) [
+      font  = \mytextstyle,
+      color = white,
+      align = center
+   ](mid){\Large\textbf  Design Flow};
+   
+  \arcarrow{130}{100}{Analysis}{cyan!30}
+   \arcarrow{97}{67}{Feedback}{red!20}
+   \arcarrow{64}{40}{Design}{green!30}
+   \arcarrow{37}{7}{Feedback}{red!20}
+   \arcarrow{4}{-44}{Implementation}{blue!30}
+   \arcarrow{-47}{-77}{Feedback}{red!20}
+   \arcarrow{-80}{-116}{Integration}{orange!30}
+   \arcarrow{-119}{-149}{Feedback}{red!20}
+   \arcarrow{-152}{-190}{Deployment}{yellow!30}
+   \arcarrow{-193}{-225}{Feedback}{red!20}
+
+  \node[above=4 of mid,xshift=-4.5cm](spec) {Specifications};
+  \node[below=4 of mid,xshift=4.5cm,align=center](dep) {Acceptance Testing \\ 
+  and Final Deployement };
+
+
+\node[single arrow, rounded corners=1pt,blue, fill=blue!30, draw, align=center,
+  minimum height=12.5mm,minimum width=2mm,rotate=-45,below=4mm of spec,yshift=10mm,
+  xshift=10mm](aw1){};
+
+  
+\node[single arrow, rounded corners=1pt,blue, fill=blue!30, draw, align=center,
+  minimum height=12.5mm,minimum width=2mm,rotate=-45,above=4mm of dep,yshift=-10mm,
+  xshift=-10mm](aw1){};
+
+
+
+
+\end{tikzpicture} 
+\caption{Overal Design Flow}
+\label{fig:design}
+\end{figure}
+

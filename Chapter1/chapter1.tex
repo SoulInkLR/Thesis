@@ -2,44 +2,45 @@
 
 \section{Real-Time Systems}
 
-Computer systems consists of a combination of hardware, software, user and data. Such
-systems are constantly evolving and will become undoubtedly a constituent part of our daily life.
-Nowadays, computer systems are widespread in several application domains. From simple system
-like espresso machines to complex large system such as an airplane, these systems are
-continuously developing to facilitate and enhance our lifestyle by providing always improved 
-solutions (more comfort, energy efficient, security, etc) that answers directly to real life 
+Computer systems consist of a combination of hardware, software, user and data. Such
+systems are constantly evolving and will become undoubtedly a constituent part of our daily 
+lives.
+Nowadays, computer systems are widespread in several application domains. From simple systems
+like espresso machines to complex larger systems such as an airplane, these systems are
+continuously developing to facilitate and enhance our lifestyle by always providing improved 
+solutions (more comfort, energy efficient, security, etc.) that answer directly to real life 
 problems.  
-A \emph{real-time} are defined as those systems in which the correctness of the system
+\emph{Real-time} systems are defined as those systems in which the correctness of the system
 depends not only on the logical results of computations, but also on the physical time at which 
 the results are produced~\cite{intro:stan88}.
-In other terms, real-time systems are computing systems that has temporal constraints to meet
-and thus is required to guarantee a response within specified timing constraints. 
-These types need to achieve different requirements that can be structured into three main 
+In other terms, real-time systems are computing systems that have temporal constraints to meet
+and thus, are required to guarantee a response within specified timing constraints. 
+Such systems need to achieve different requirements that can be structured into three main 
 categories~\cite{intro:kopetz11}: \emph{(i)} functional requirements, 
 \emph{(ii)} temporal requirements, and \emph{(iii)} dependability requirements.
 Functional requirements refer to the functions that the real-time system must perform. 
-In order to accomplish such requirements, the systems needs to be able to observe its current
-states, that is, the values of variables describing the latter. For instance the position, speed
+In order to accomplish such requirements, the system needs to be able to observe its current
+state, that is, the values of variables describing the latter. For instance the position, speed
 and level of oil in a car are possible state variables. Additionally, a given system 
-needs to control its states variables (actuation) for regulation purposes, and provide an 
+needs to control its state variables (actuation) for regulation purposes, and provide an 
 interface to the system operator that allows its monitoring.
-On the other hand, temporal requirements are born from the requirement of control loops. 
+On the other hand, temporal requirements are born from the requirements of control loops. 
 A typical example is the time bounds for which a gear change needs to be achieved in the control
 system operating in modern vehicles. Temporal requirements of a given system might be of
 different order of magnitude. For instance the man-machine interface, in comparison with fast
 control loops, is less strict because of the human perception of time. Finally, dependability
 requirements are additional requirements regarding the quality of service that a given system
-produce, that is, the criteria for deciding whether the services provided by the system can 
+produces, that is, the criteria for deciding whether the services provided by the system can 
 justifiably be trusted. The concept of dependability encompasses the following attributes
-\cite{intro:aviz04}: availability (readiness for correct service), reliability (continuity of
-correct service), safety (absence of catastrophic consequences), integrity (absence of 
+\cite{intro:aviz04}: availability (readiness for correct services), reliability (continuity of
+correct services), safety (absence of catastrophic consequences), integrity (absence of 
 improper system alterations), and maintainability (ability to undergo modifications and repairs).
 
 Real-time systems can be classified from different perspectives~\cite{intro:kopetz11} based
-on either the characteristic of the application (perspective A), i.e., on factors outside 
+on either the characteristics of the application (perspective A), i.e., on factors outside 
 the computer system, or on the design and implementation (perspective B), i.e., on factors 
 inside the computer system.
-Tables~\ref{tbl:rts_class} presents a classification of real-time systems based on these two 
+Tables~\ref{tab:rts_class} presents a classification of real-time systems based on these two 
 perspectives:
 \begin{table}[!h]
   \begin{tabular}{ |c|c|c| } 
@@ -53,12 +54,14 @@ perspectives:
                          in severe consequences. On the other hand, for 
                          soft real-time systems the goal becomes to meet a certain subset
                          of deadlines in order to optimize some specific criteria. Particularly,
-                         deadlines violation results in degraded quality, but the system keeps
-                         operating and may recover in the future.\vspace{1mm}} \\ \cline{2-3} 
+                         deadline violations result in degraded quality. However, the system 
+                         keeps operating and may recover in the future.
+                         \vspace{1mm}} \\ \cline{2-3} 
                          & \makecell{fail-safe \\ vs \\ fail-operational}
                          & \parbox{0.55\linewidth}{\vspace{1mm}Fail-safe systems refer to those 
-                         system where a safe state can be identified and quickly reached upon the
-                         occurrence of a failure. On the contrary, fail-operational systems
+                         systems where a safe state can be identified and quickly reached 
+                         upon the occurrence of a failure. On the contrary, fail-operational 
+                         systems
                          are systems that must remain operational and provide a minimal level
                          of service even in case of failure (no safe state).\vspace{1mm}} 
                         \\ \cline{2-3} 
@@ -68,15 +71,15 @@ perspectives:
                          probability of failure is reduced to the probability that some
                          assumptions, on peak load or fault number and types for instance, 
                          do not hold in reality are called guaranteed-response. On the other 
-                         hand, best-effort systems are systems where no analytical argument for 
+                         hand, best-effort systems are systems where no analytical arguments for 
                          correctness can be made. The latter is rather established during the
                          test and integration phases.\vspace{1mm}} \\ \cline{2-3} 
                          & \makecell{resource-adequate\\ vs\\ resource-inadequate}
                          & \parbox{0.55\linewidth}{\vspace{1mm}While Resource-adequate systems
                          are systems that provide sufficient computational resources to handle
                          a specified peak load and fault scenarios, resource-inadequate 
-                         systems rely on dynamic ressource allocation strategy based on 
-                         resource sharing and probalistic arguments about expected load and 
+                         systems rely on dynamic resource allocation strategy. It is based on 
+                         resource sharing and probabilistic arguments about expected load and 
                          fault scenarios.\vspace{1mm}} \\ \cline{2-3} 
                          & \makecell{event-triggered\\ vs\\ time-triggered}
                          & \parbox{0.55\linewidth}{\vspace{1mm}Event-triggered systems are 
@@ -87,7 +90,7 @@ perspectives:
     \hline
   \end{tabular}
   \caption{Classification Of Real-Time Systems}
-  \label{tab:class}
+  \label{tab:rts_class}
 \end{table}
 
 \section{Control Aspects in Real-Time Systems}
@@ -96,9 +99,9 @@ perspectives:
 When building real-time systems, a clear distinction between the aspects related to the time 
 domain and those related to the value domain needs to be made. The latter are respectively
 referred to as the concepts of \emph{temporal control} and \emph{logical control}.
-Temporal control is related to the progression of \emph{real-time} is of concern when it comes 
-to determining the instants in the domain of real time for the accomplishment of 
-computations, that is when they must be activated.
+Temporal control is related to the progression of \emph{real-time}. It is of concern when it 
+comes to determining the instants in the domain of real time for the accomplishment of 
+computations, that is, when computations must be activated.
 Such instants are derived from the dynamic of the application. 
 
 Logical control is related to the control flow \emph{within} a given task, meaning that it 
@@ -106,7 +109,7 @@ is based on the given task structure and the particular input data. For instance
 of a branch condition and the selection of one of the alternatives is an example of logical
 control. The \emph{execution time} represents the time interval needed to execute a task
 performing the logical control.
-If the temporal control and the logical control aspects of are mixed in a program segment,
+If the temporal control and the logical control aspects are mixed in a program segment,
 then it is impossible to determine the worst-case execution time of this program segment without
 analyzing the behavior of its environment.
 \begin{example}\label{exp:control1}
@@ -115,8 +118,8 @@ wait statement is contained in a program segment that also includes logical cont
 (algorithmic) statements, then the temporal behavior of this program segment depends
 on both, the progress of execution time and the progress of real-time.
 \end{example}
-Thus, a good design decouples the reasoning about temporal constraints governed by the 
-application from the reasoning about logical inner aspect of the algorithmic part of the 
+Thus, a good design decouples the reasoning about temporal constraints, governed by the 
+application, from the reasoning about logical inner aspects of the algorithmic part of the 
 application.
 Synchronous real-time languages, such as LUSTRE~\cite{intro:lustre} and 
 ESTEREL~\cite{intro:esterel} distinguish clearly between logical control and temporal
@@ -125,13 +128,13 @@ control. In these languages, the progression of real-time is partitioned into an
 steps. Each step begins with a tick of a real-time clock that starts a computational
 task (logical control). The computational model assumes that a task, once activated
 by the tick of a real-time clock (temporal control), finishes its computation quasi
-immediately. Practically this means that a task must terminate its executions before
-the next triggering signal (the next tick of the real-time clock) initiates the next
+immediately. Practically, this means that a task must terminate its execution before
+the next triggering signal (the next tick of the real-time clock) initiating the next
 execution of the task.
 
 \subsection{Event-Triggered Control Versus Timed-Triggered Control}
 In real-time systems, the activation (start-up) of computation tasks is usually achieved through
-triggering signals, that is, a control signal that specifies the instant when an activity 
+triggering signals, that is, control signals that specify the instant when an activity 
 (computation) should start in the temporal domain.
 Two main paradigms are commonly used for triggering activities of a real-time system, namely,
 the event-triggered control and the time-triggered control.
@@ -139,7 +142,7 @@ We say that the control is event-triggered when the triggering signal is associa
 the occurrence of a significant event, such as the arrival of a particular message, the 
 fulfillment of an activity within a component, or the occurrence of an external interrupt.
 Time-triggered control relies on the progression of time. The activation of computation is 
-pre-determined and usually depend on the periodic overflow of a timer.
+pre-determined and usually depends on the periodic overflow of a timer.
 Time-triggered systems are based on the notion of \emph{logical execution time (LET)} 
 introduced by the programming language Giotto~\cite{intro:giotto}. LET specifies the amount of 
 time between the activation time of a computation and its due time. It abstracts the execution
@@ -147,18 +150,20 @@ time of programs in the sense that even if they start before their activation da
 and finish before their due time, they behave as if they exactly consumed their LET.
 
 \section{System Design}
-System design is the process of defining the elements of a system such as the requirements 
-architecture, components and their interfaces and the data flowing through the system.
-Systems design implies a systematic approach to the design of a system. It may take a bottom-up 
-or top-down approach, but either way the process is systematic wherein it takes into account all
-related variables of the system that needs to be created—from the architecture, to the required 
-hardware and software, right down to the data and how it travels and transforms throughout its 
-travel through the system. Systems design then overlaps with systems analysis, systems 
-engineering and systems architecture.
-The systems design approach first appeared right before World War II, when engineers were 
-trying to solve complex control and communications problems. They needed to be able to 
+System design is the process of defining the elements of a system such as the requirements, 
+the architecture, the system components and their interfaces as well as the data flowing 
+through the system.
+System design implies a systematic approach to the design of a system. It may adopt a bottom-up 
+or a top-down approach, but either way the process is systematic wherein it takes into account 
+all
+related variables of the system that need to be created. From the architecture, to the required 
+hardware and software, right down to the data and how it travel and transform throughout its 
+travel through the system. System design, then, overlaps with system analysis, system 
+engineering and system architecture.
+The system design approach first appeared right before World War II, when engineers were 
+trying to solve complex control and communication problems. They needed to be able to 
 standardize their work into a formal discipline with proper methods, especially for new fields 
-like information theory, operations research and computer science in general.
+like information theory, operational research and computer science in general.
 
 System design~\cite{intro:sys_design} differs radically from pure software design in the sense
 that it does not focus only on functional requirements. It also accounts for nonfunctional 
@@ -175,7 +180,7 @@ is hardly possible.
 In fact the design flow is rather decomposed into several iterations as depicted in 
 Figure~\ref{fig:design}. Each iteration needs to include test generation and an evaluation 
 of testability. A given design is then evaluated with respect to the different objectives 
-(performance, dependability,energy consumption, etc). 
+(performance, dependability, energy consumption, etc.). 
 \input{Figures/design.tex}
 
 \subsection{Design Styles}
@@ -185,11 +190,11 @@ Notice that the presented design styles are not exclusive in the sense that a gi
 may combine several design styles.
 
 \subsubsection{Model-Based Design}
-Model-based~\cite{intro:mb,intro:mb2} design is one promising approach in building 
+Model-based design~\cite{intro:mb,intro:mb2} is one promising approach in building 
 real-time systems. It relies on mathematical modeling for the design, analysis 
-and validation of systems. This approach captures not only what the dynamics and the 
-expected properties of the systems are, but also what is assumed about the system's environment.
-It enables thus developers to verify the logic of their
+and validation of systems. This approach captures not only what the dynamic and the 
+expected properties of the system are, but also what is assumed about the system's environment.
+Thus, It enables developers to verify the logic of their
 application, assumptions about its environment and end-to-end behavior at early stages of the
 design cycles.
 First, an application model expressing the behavior and dynamic of the considered system is 
@@ -206,26 +211,27 @@ level model, and integrated in a simulated environment.
 
 Large scale systems are complex systems that usually require to assemble several
 components with wide-range functionalities. Many issues may rise when designing such 
-systems~\cite{intro:cb} ranging from design process and relationships with suppliers to 
-incomplete specification and testing. A typical example is the Toyota sticky accelerator 
+systems~\cite{intro:cb} ranging from the design process and the relationships with suppliers to 
+incomplete specifications and testing. A typical example is the Toyota sticky accelerator 
 problem that was caused in part by components provided by two contractors whose interaction 
 was not verified appropriately.
-Component-based design tackle these issues by proposing an approach where such systems
+Component-based design tackles these issues by proposing an approach where such systems
 are build by assembling strongly encapsulated entities called \emph{component} with 
-stable, well-defined and rigorous interface specifications~\cite{intro:cb2}.
+stable, well-defined, and rigorous interface specifications~\cite{intro:cb2}.
 This approach is based on the principle of re-usability of heterogeneous components and focuses
 on the idea that internal knowledge about the design or the implementation of the latter is
 not needed. In some cases, this knowledge is not even available. 
 
 \subsubsection{Architecture-Based Design}
 
-A system architecture is a conceptual model that describes the structure, behavior, constraints 
-of a system along with its interaction with its environment. Designing the architecture of 
+A system architecture is a conceptual model that describes the structure, behavior, and 
+constraints 
+of a system along with the interaction with its environment. Designing the architecture of 
 a system is acknowledged to be a very hard task since it must address practical concerns
-of the engineering effort~\cite{intro:ab2} involved in system development (short term) 
+of the engineering efforts~\cite{intro:ab2} involved in system development (short term) 
 and evolution (long term). Moreover, it needs to support a set of requirements whose
 details may be unknown until an advanced late step of the development process. 
-Thus, a methodical design approach that provides means for coping with requirements uncertainty
+Thus, a methodical design approach that provides means for coping with requirements uncertainty,
 and proposes guidance that helps in the decision making during the design process, is needed.
 Architecture-based design~\cite{intro:ab} helps not only to detect design errors early in the 
 development process, but also supports engineering efforts, which allows to produce 
@@ -237,8 +243,8 @@ high-quality code, by addressing the aforementioned problems.
 Giotto~\cite{intro:giotto} is a programming approach for representing embedded systems
 at the architecture level using a timed-triggered programming language. It separates the
 platform-independent functionalities and timing aspects from platform-dependent scheduling 
-and communications issues, which allows thus an intermediate abstractions that enables the 
-design engineer to annotate the functional programming modules with temporal attributes that 
+and communication issues. It allows thus, an intermediate abstraction that enables the 
+design engineers to annotate the functional programming modules with temporal attributes that 
 are derived from the high-level stability analysis of control loops. 
 Figure~\ref{fig:giotto} depicts the workflow of Giotto. A platform-abstract Giotto program
 is written. This program captures all the functionalities and the timing aspects necessary
@@ -246,27 +252,27 @@ for ensuring consistency with the mathematical model of the control design. Ther
 the program is implemented on a given platform. Notice that this step is completely decoupled
 from the first step in the sense that it does not require any interaction with the control 
 engineer, and can in large parts be automated using powerful compilers. 
-Giotto compilation facilitate the evaluation and the optimization phases by guarantying 
-the preservation of functionality and timing. 
+Giotto compilation facilitates the evaluation and the optimization phases by guarantying 
+the preservation of functionalities and timings. 
 \input{Figures/giotto.tex}
-In Giotto all data is communicated through ports that can be classified into three categories:
-sensor ports, actuator ports and task ports. Sensor ports are updated by the environment  
+In Giotto, all data are communicated through ports that can be classified into three categories:
+sensor ports, actuator ports and task ports. Sensor ports are updated by the environment, 
 whereas all other ports are updated by the Giotto program. Task ports are used to communicate 
 data between concurrent tasks or to transfer data from one mode (execution mode) to another.
-A Giotto task consists of a set of \texttt{In} (input) ports and a set of \texttt{out} (output)
-ports and a function \texttt{f} from its input ports and current state, which can be viewed
+A Giotto task consists of a set of \texttt{In} (input) ports, a set of \texttt{out} (output)
+ports, and a function \texttt{f} from its input ports and current state, which can be viewed
 as a set of private ports inaccessible from outside the task, to its output ports
 and its next state. 
 The invocation of Giotto tasks are based on two essential concepts: instantaneous communication
-and time-deterministic. In fact, tasks are activated on periodic cycles P 
+and time determinism. In fact, tasks are activated on periodic cycles P 
 (Figure~\ref{fig:giottote}). The Giotto logical abstraction 
-does not specifies when and how the actual computation of a task \texttt{f} is performed, 
+does not specify when and how the actual computation of a task \texttt{f} is performed, 
 it only determines the instant at which input are read $t_{start}$ and output are produced 
 $t_{end}$.
 \input{Figures/giottote.tex}
 \subsection{Oasis}
 
-Oasis~\cite{intro:oasis1,intro:oasis2} is a framework that provides method for the design 
+Oasis~\cite{intro:oasis1,intro:oasis2} is a framework that provides methods for the design 
 and implementation of safety-critical real-time systems. It includes a complete set of 
 development tools (code generation, validation, simulation and execution) that eases the design 
 and verification stages
@@ -284,9 +290,43 @@ interval: each processing operation performed by an
 agent takes place between two temporal instants (points) of the real-time. 
 These points are the beginning date ($t_{start}$), which is the earliest instant
 when the processing can be started, and the ending date ($t_{end}$) which is the latest
-date when it must be terminated. These two dates allow to explain a formal duration of
+date when it must be terminated. These two dates allow to explain a formal duration 
 that is constant and represents a constraint for the actual duration of execution.
 \input{Figures/oasis.tex}
+
+\subsection{PTIDES}
+PTIDES~\cite{intro:ptides2} is an event-triggered 
+programming model that serves as a coordination language for 
+model-based design of distributed real-time embedded systems. 
+It leverages network time synchronization to provide a coherent global temporal semantics.
+PTIDES builds on top of a strong timed semantic foundation, based on discrete-event (DE)
+model~\cite{intro:ptides4}, and provides a mathematical framework
+for presenting strategies that explore concurrency of implementations. It also allows 
+deterministic schedulability analysis.
+PTIDES structures real-time software as an interconnection of components communicating using
+timestamped events. 
+
+Figure~\ref{fig:ptides} (taken from~\cite{intro:ptides}) illustrates the PTIDES workflow.
+\begin{figure}[h]
+  \includegraphics[scale=0.3]{Figures/ptides}
+  \caption{PTIDES Code Generation and Analysis Workflow}
+  \label{fig:ptides}
+\end{figure}
+
+The PTIDES design environment is an extension of the Ptolemy II framework~\cite{intro:ptides3},
+which supports modeling, simulation, and design of systems using mixed models of computation. 
+The physical part of the system can be modeled in the continuous domain. The simulation can be 
+instantiated with different ODE solvers that suit diverse time scales present in the model. 
+PTIDES models define the functional and temporal interaction of distributed software components,
+the networks that bind them together, sensors, actuators, and physical dynamics. 
+Simulation can be done on such models, such that functionality and timing can be 
+tested. In particular, to get a picture of the temporal behavior
+of a particular implementation of a model, each actor can
+be endowed with a platform-dependent execution time, and
+simulation can be performed to determine whether real-time
+deadlines can be met for a given set of inputs.
+
+
 \subsection{Lustre}
 Lustre~\cite{intro:lustre} is a synchronous dataflow language used for the development of 
 reactive systems, that is, systems that continuously interact with their environment.
@@ -297,37 +337,45 @@ Lustre is based on the synchrony hypothesis~\cite{intro:lustre2}: A reaction is 
 environment. 
 
 A Lustre program consists in a set of nodes operating on flows of values (inputs and outputs 
-are described by their flows of values along with time). Given a variable or an expression $x$,
+are described by their flows of values along with time). 
+The synchronous dataflow approach consists in adding a time dimension to the dataflow model.
+This is done by associating time with the rate of dataflow, that is, the manipulated entities
+can be interpreted as function of time.
+For instance, given a variable or an expression $x$,
 it represents an infinite sequence of values $(x_0,\ldots,x_n,\ldots)$, $x_n$ being the value
-of $x$ at the logical time instant n, that is, at the $n$th  reaction of the program. 
-Figure~\ref{fig:lustre3} shows a small example of a lustre program.
-\begin{lstlisting}[caption={A Lustre Programm},label={fig:lustre3},captionpos=b]
-  node Nand(X,Y: bool) returns (Z: bool);
-     var U: bool;
-  let
-     U = X and Y;
-     Z = not U;
-  tel
+of $x$ at the logical time instant n, that is, at the $n$-th  reaction of the program. 
+Figure~\ref{fig:lustre3} shows a small example of a Lustre program.
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\ttfamily,
+escapeinside={||},
+mathescape=true,
+numbers=left,
+backgroundcolor=\color{gray!20}]
+  |\textbf{node}| Nand(X,Y: |\textbf{bool}|) |\textbf{returns}| (Z: |\textbf{bool}|);
+     |\textbf{var}| U: |\textbf{bool}|;
+  |\textbf{let}|
+     U = X |\textbf{and}| Y;
+     Z = |\textbf{not}| U;
+  |\textbf{tel}|
 \end{lstlisting}
-The above program defines a node that takes two boolean inputs X and Y, and returns the negation
-of \say{X and Y}.
-\section{Contribution}
+\caption{A Lustre Program}
+\label{lst:lustre3}
+\end{figure}
+The above program defines a node that takes two Boolean inputs X and Y, and returns the negation
+of \say{X and Y}. It expresses the following relation:
+\begin{displaymath}
+  \text{For any instant t, \texttt{$Z_t$= not ($X_t$ and $Y_t$)}} 
+\end{displaymath}
 
-\begin{itemize}
-  \item[]\cite{fm16}~\bibentry{fm16}
-  \item[]\cite{apsec17}~\bibentry{apsec17}
-  \item[]\cite{lites}~\bibentry{lites} (in review)
-  \item[]\cite{drift}~\bibentry{drift} 
-  \item[]\cite{sbip}~\bibentry{sbip} (in review)
-\end{itemize}
+\section{Contribution}
 
 Nowadays, real-time systems are ubiquitous in several application domains, 
 and such an emergence led to an increasing need of performance: resources, 
 availability, concurrency, etc. This expansion initiates a shift from the
 use of single processor based hardware platforms, to large sets 
 of interconnected and distributed computing nodes. Moreover, it prompts the birth 
-of a new family of systems known as \emph{Networked Embedded Systems}, 
-that are intrinsically distributed.
+of a new family of systems that are intrinsically distributed, namely, 
+\emph{Networked Embedded Systems}. 
 Such an evolution stems from an increase in complexity of real-time software 
 embedded on such platforms (e.g. electronic control in avionics 
 and automotive domains~\cite{charette09}), and the need to integrate 
@@ -349,10 +397,77 @@ Such approaches, however, do not offer any formal guarantee of timeliness. Also,
 the lack of a priori knowledge on system behavior leaves also little room for 
 static optimization.
 
+In this thesis, we propose a rigorous design flow intended for building distributed real-time 
+applications using the BIP Framework. BIP~\cite{intro:bip} (Behavior, Interaction, Priority)
+is a model-based and component-based framework where systems consist of components
+represented as timed automata that may synchronize on particular actions to coordinate
+their activities.
+Particularly, we investigate timed automata based models, with well defined semantics, in order 
+to study the behavior of a given system with some imposed timing constraints when deployed 
+in a distributed environment. 
+
+\subsection*{Knowledge Based Optimization of}
+
+In Chapter~\ref{chap:3}, we propose an intermediate model more appropriated for the 
+representation of distributed real-time systems. It provides details on how the 
+implementation of a system with multiparty interactions can be derived by explicitly expressing
+the ongoing communication mechanism. This model is obtained using model transformations that
+are in partly based of the notion of \emph{conflicting interactions}. In other words,
+in a distributed context components may compete on the same resources at the same time. Thus,
+any distributed implementation must preserve the overall system consistency by ensuring 
+mutual exclusion in such cases. In fact, \emph{conflicts} are hard to characterize for real life
+case studies and their computation is based on over-approximation. Chapter~\ref{chap:4} proposes
+a knowledge based optimization in order to optimize the computation of the conflicting 
+interactions set.
+
+
+\subsection*{Communication Delays}
+
+Chapter~\ref{chap:5} tackles the communication delays problem inherent to distributed real-time
+systems. This is achieved by considering additional delays between the decision to execute 
+an interaction and its actual execution. These delays result from the transmission
+delays between the component responsible for such a decision and the components involved in
+the interaction, and may have a huge impact in the satisfaction of timing constraints in 
+real-time.
+This will particularly help to anticipate the execution of interactions at 
+least some delay beforehand, corresponding to the actual worst estimation of communication 
+delays of a given platform, which will alleviate the effect of those delays on the system 
+behavior.
+Indeed, such delays may introduce behavioral flaws (e.g. deadlocks) when dealing with
+arbitrary timing constraints (i.e. no restriction to the non-decreasing deadlines case
+as in~\cite{ahlem:these}). The proposed approach introduces a semantics based on partial states
+of the system components and formalizes in a precise way the effect of the delays
+in this context. It also provides practical means for enforcing system correctness in their 
+presence. 
+
+\subsection*{Clock Drift}
+
+The verification of real-time systems against some considered properties relies on the fact
+that clocks are perfectly synchronous, that is, clocks advance at the same rate, which is not the
+case in practice. Clocks are in fact implemented using oscillators and counter registers, thus,
+their precision depend highly on the quality of the oscillators and parameters of their 
+underlying environment (temperature, humidity, etc.). Chapter~\ref{chap:6} studies the 
+effect of this hardware imperfections by breaking the perfect clocks assumption.
+More precisely, this problem is formulated as a robustness problem, i.e., does the system
+still satisfies the specification when subject to different kind of perturbations (in our case
+clock imperfection). First, a timed automata model for distributed real-time system with 
+drifting clocks is introduced. Thereafter, we revisit the robustness by proposing a strategy
+that allows to have \say{similar} or close execution scenarios in the latter and the system with 
+perfect clocks.
+
+A complete list of the publications carried out during this thesis is presented below.
+\begin{itemize}
+  \item\cite{fm16}~\bibentry{fm16}
+  \item\cite{apsec17}~\bibentry{apsec17}
+  \item\cite{lites}~\bibentry{lites} (in review)
+  \item\cite{drift}~\bibentry{drift} 
+  \item\cite{sbip}~\bibentry{sbip} (in review)
+\end{itemize}
+
 \section{Outline}
 The rest of this thesis is structured as follows:
 \begin{itemize}
-  \item Part~\ref{part:1} introduces all the preliminaries and includes the following chapters:
+  \item Part I introduces all the preliminaries and includes the following chapters:
     \begin{itemize}
       \item Chapter~\ref{chap:2} gives formal definitions of timed transition systems,
         timed automata, their semantics and properties.
@@ -360,7 +475,7 @@ The rest of this thesis is structured as follows:
         the representation of distributed real-time systems. It also tackles two important
         constraints related the distributed real-time context.
     \end{itemize}
-  \item Part~\ref{part:2} includes our contributions. It consists of the following chapters:
+  \item Part II includes our contributions. It consists of the following chapters:
     \begin{itemize}
       \item Chapter~\ref{chap:4} proposes a knowledge based optimization for systems modeled
         using the approach of Chapter~\ref{chap:3}.
@@ -371,11 +486,12 @@ The rest of this thesis is structured as follows:
         deadlock freedom.
       \item Chapter~\ref{chap:6} investigates the clock drift problem and revisits the robustness
         approach when studying systems with clock imperfections.    
-      \item Chapter~\ref{chap:7}
+      \item Chapter~\ref{chap:7} gives an overview of the BIP toolbox and the accomplished 
+        implementation. It also presents the experimental results on different case studies
     \end{itemize}
-  \item Part~\ref{part:3} concludes the dissertation and includes the following chapter:
+  \item Part III concludes the dissertation and includes the following chapter:
     \begin{itemize}
-      \item Chapter~\ref{chap:8} concludes with an overview of the accomplished work as well as 
+      \item Chapter~\ref{chap:9} concludes with an overview of the accomplished work as well as 
         some interesting perspectives.
     \end{itemize}
 \end{itemize}

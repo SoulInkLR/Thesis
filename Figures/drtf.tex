@@ -1,0 +1,73 @@
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+
+\node[align=center,fill=gray!20,draw,rectangle](ai){Components \\ Info};
+\node[align=center,fill=gray!20,draw,rectangle,right=2mm of ai](ii){Interactions \\ Info};
+\node[align=center,fill=gray!20,draw,rectangle,right=2mm of ii](ci){Compound \\ Info};
+\node[align=center,above=5mm of ii](a){Analyser};
+
+\node[fit=(ai)(ii)(ci)(a),draw](rec1){};
+
+\node[draw,align=center,fill=gray!20,right=1.5cm of ci](cr){Conflict \\  Resolution};
+\node[draw,align=center,fill=gray!20,right=2mm of cr](p){Parametric \\ Planning};
+\node[align=center,above=5mm of p,xshift=-10mm](pg){Property Generator};
+\node[fit=(cr)(p)(pg),draw](rec2){};
+
+\node[draw,fill=gray!20,align=center,below=2.5cm of ii](sr1){Send/Receive \\ Component};
+\node[draw,fill=gray!20,align=center,right=2mm of sr1](sr2){Send/Receive \\ Scheduler};
+\node[draw,fill=gray!20,align=center,right=2mm of sr2](sr3){Send/Receive \\ CRP};
+\node[align=center,above=5mm of sr3,xshift=-20mm](sr){Send/Receive Transformation};
+\node[fit=(sr)(sr1)(sr2)(sr3),draw](rec3){};
+
+
+
+\node [doc,above=10mm of rec1,align=center,xshift=-25mm](i1)
+  {Interaction \\ Partition};
+\node [doc,above=10mm of rec1,align=center,xshift=0mm](i2)
+  {Planning \\ Horizons};
+\node [draw,above=10mm of rec1,align=center,inner xsep=5mm, inner ysep=2mm,xshift=25mm,
+  rounded corners=2pt](i3){BIP \\ Model};
+\node [draw,below=27.5mm of sr,align=center,inner xsep=5mm, inner ysep=2mm,rounded corners=2pt,
+  xshift=-7.5mm]
+  (o1){BIP \\ Model};
+\begin{scope}[on background layer]
+\node[draw=red,fit=(rec1)(rec2)(rec3),fill=red!10,opacity=.4](rec4){};
+\end{scope}
+  \node[draw=green,fill=green!20,right=1cm of rec4,inner ysep=11mm,yshift=17.5mm](rtd){RTD-Finder};
+
+  \node[single arrow, rounded corners=1pt,draw, align=center, 
+minimum height=10mm,minimum width=2mm,rotate=-45,below=5mm of a,xshift=22.5mm]{};
+
+  \node[single arrow, rounded corners=1pt,draw, align=center, 
+minimum height=10mm,minimum width=2mm,rotate=-135,below=7.5mm of pg,xshift=22.5mm]{};
+  
+\node[yshift=1mm](i1c1) at ($(i1.south west)!0.5!(i1.south east)$) {};
+\node [below=10mm of i1c1](i1c2) {};
+\draw[->] (i1c1) -- (i1c2);
+\node[yshift=1mm](i1c1) at ($(i2.south west)!0.5!(i2.south east)$) {};
+\node [below=10mm of i1c1](i1c2) {};
+\draw[->] (i1c1) -- (i1c2);
+\node[yshift=1mm](i1c1) at ($(i3.south west)!0.5!(i3.south east)$) {};
+\node [below=10mm of i1c1](i1c2) {};
+\draw[->] (i1c1) -- (i1c2);
+  \node[yshift=-1mm](i1c1) at ($(o1.north west)!0.5!(o1.north east)$) {};
+\node [above=10mm of i1c1](i1c2) {};
+\draw[->] (i1c2) -- (i1c1);
+
+\node[xshift=-1mm](i1c1) at ($(rec2.south east)!0.25!(rec2.north east)$) {};
+\node[xshift=-1mm](i1c2) at ($(rec2.south east)!0.75!(rec2.north east)$) {};
+\node[right=1.1cm of i1c1](i1v1){};
+\node[right=1.1cm of i1c2](i1v2){};
+\draw[->] (i1c1) -- (i1v1);
+\draw[->] (i1v2) -- (i1c2);
+
+\node[xshift=-1mm](i1c1) at ($(rec1.south east)!0.5!(rec1.north east)$) {};
+\node[right=1.1cm of i1c1](i1v1){};
+\draw[->] (i1c1) -- (i1v1);
+
+\end{tikzpicture}
+\caption{The Distributed Real-Time BIP Filter}
+\label{fig:drtf}
+\end{figure}
+

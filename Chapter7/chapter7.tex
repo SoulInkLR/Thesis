@@ -1,5 +1,306 @@
-\chapter{Implementation}
+\chapter{Implementation and Experimentation}
+\label{chap:7}
 \minitoc
-\section{BIP Framework}
+\section{The BIP Framework}
+
+BIP~\cite{intro:bip} is a highly expressive model-based and component-based framework for 
+building embedded applications. It is based on three main layers: Behavior, interactions, and
+priorities as shown in Figure~\ref{fig:bip_layers}:
+\input{Figures/bip.tex}
+\begin{itemize}
+  \item Behavior: This layer describes the behavior of each component of a system as a timed
+    transition system. Atomic components are defined as timed automata with well defined 
+    interface (ports).
+  \item Interactions: The interaction layer specifies how components interact together and
+    coordinate their action using n-ary synchronization. It restricts thus the global behavior 
+    of components together using these synchronizations.
+  \item Priorities: Priorities are used to favor the execution of a subset of enabled 
+    interactions called \emph{maximal} interactions. They can be used to resolve conflicts or to
+    express particular scheduling policies.
+\end{itemize}
+
+The Real-Time BIP language~\cite{rtbip} extends the BIP language through clocks used to express
+timing constraints on transitions and locations (locations invariant). 
+It also supports urgency types on transitions~\cite{urg} that provide additional means to 
+constrain the progress of time in a given system.
+In this thesis, we do not consider priorities or urgency types. However, given a timed system
+$S$ that includes priority rules on interactions and/or urgency types on transitions, 
+then its underlying timed transition system $\tts_S$ is included in the timed
+transition system representing its abstraction $S^*$ from the latter, that is,
+$\tts_S\subseteq\tts_{S^*}$. This means that all the results of this thesis, if they apply
+on $S^*$, then they apply on $S$.
+
+The BIP language defines system as a composition of components using a set of syntactic
+constructs that specify components behavior and interface as well as the ongoing 
+synchronizations (interactions) and priorities. They consist of the following:
+
+\begin{itemize}
+  \item Atomic component: Atoms represent the simplest entity of a system. An atomic component
+    may include a set of ports, data and clocks. Its behavior is described using an 
+    automaton or a Petri net whose transitions are labeled by ports with guards possibly on data 
+    and/or clocks. Ports and data can be exported, and thus become accessible at a higher
+    hierarchy level (compound). They define the interface of a component.
+    Additionally, atomic components support the usage of external C/C++ functions on
+    transition guards and may as well trigger the execution of such functions on the
+    execution of a transition. 
+  \item Connector: Connectors are stateless entities that characterize the possible interactions
+    between a set of components via their interface ports.
+  \item Priority: Priorities are used to restrict the possible set of enabled interactions.
+  \item Compound: A compound is a composite component that consists of a set of atomic 
+    components, the connectors specifying their interactions and a set of priority rules. It
+    may as well export ports and data.
+  \item Package: A BIP package is a compilation unit contained in a single .bip file. It may
+    contain data, external data types, external functions, external operators, port types,
+    atom types, connector types and compound types. It also may use other BIP packages.
+\end{itemize}
+\begin{example}\label{exp:bip}
+Figure~\ref{lst:bip} illustrates the syntax of BIP and presents different elements of the BIP 
+  language. The package \emph{ControllerWorker} includes the definition of the
+  port type \emph{Port}, the connector type \emph{Link} for interactions involving two 
+  ports of type \emph{Port}, atomic components \emph{Controller} and \emph{Worker}.
+  The atomic component \emph{Controller} consists of a clock $x$, an internal port \emph{init}
+  and two exported port, $a$ and $c$, defining its interface. The statement 
+  \texttt{place lc0, lc1, lc2} defines the places of the timed automaton describing its behavior,
+  where \texttt{lc0} is the initial place. Lines 20 to 24 represent the declaration of 
+  a transition. It consists of the following elements:
+  \begin{enumerate}
+    \item The port labeling the transition: \texttt{\textbf{on} init}
+    \item The source and destination places: \texttt{\textbf{from} lc0 \textbf{to} lc1}
+    \item A possible empty list of guards over data and clocks: \texttt{\textbf{when} 
+      $x\ge 8$ second}
+    \item A possible empty list of clocks to reset: \texttt{\textbf{reset} x}
+    \item A possible empty transfer function for updating data variable or triggering the 
+      execution of external C code: \texttt{\textbf{do}\{\}}
+  \end{enumerate} 
+
+As explained earlier, components are composed using connectors. The Compound Type \emph{System}
+defines a system composed of two Workers and one Controller. It also defines the interaction 
+between the \emph{controller} component an each \emph{Worker} component ($worker_1$ and 
+$worker_2$) through connectors $ab1$, $cd1$, $ab2$, and $cd2$.
+\end{example}
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\ttfamily,
+escapeinside={||},
+mathescape=true,
+numbers=left,
+backgroundcolor=\color{gray!20}]
+|\textbf{package}| ControllerWorker
+
+  |\textbf{port type}| Port()
+  
+  |\textbf{connector type}| Link (Port p1, Port p2)
+    |\textbf{define}| p1 p2
+  |\textbf{end}|
+
+|\textbf{atom type}| Worker()
+  |\textbf{clock}| y 
+  
+  |\textbf{export port}|  Port d()
+  |\textbf{export port}|  Port b()
+  
+  |\textbf{place}| l1, l2
+ 
+ |\textbf{initial}| to l1
+
+  |\textbf{on}| b
+    |\textbf{from}| l1 |\textbf{to}| l2
+    |\textbf{when}| ( y>= 5 )
+    |\textbf{do}| {}
+
+  |\textbf{on}| d
+    |\textbf{from}| l2 |\textbf{to}| l1
+    |\textbf{reset}| y
+    |\textbf{do}| {}
+|\textbf{end}|
+
+\end{lstlisting}
+\end{figure}
+
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\ttfamily,
+escapeinside={||},
+mathescape=true,
+numbers=left,
+backgroundcolor=\color{gray!20},
+firstnumber=29]
+|\textbf{atom type}| Controller()
+  |\textbf{clock}| x 
+  |\textbf{export port}|  Port a()
+  |\textbf{export port}|  Port c()
+  |\textbf{port}| Port init()
+
+  |\textbf{place}| lc0, lc1, lc2
+
+  |\textbf{initial to}| lc0
+    |\textbf{do}| {}
+  
+  |\textbf{on}| init
+    |\textbf{from}| lc0 |\textbf{to}| lc1
+    |\textbf{when}| (x >= 8 second) 
+    |\textbf{reset}| x
+    |\textbf{do}| {}
+
+  |\textbf{on}| a
+    |\textbf{from}| lc1 |\textbf{to}| lc2
+    |\textbf{when}| (x == 5 second)
+    |\textbf{reset}| x
+    |\textbf{do}| {}
+
+  |\textbf{on}| c
+    |\textbf{from}| lc2 |\textbf{to}| lc1
+    |\textbf{reset}| x
+    |\textbf{do}| {}
+
+  |\textbf{invariant}| inv1 |\textbf{at}| lc1  |\textbf{when}| (x<= 5 second) 
+|\textbf{end}|
+
+|\textbf{compound type}| System ()
+        component Worker worker1 ()
+        component Worker worker2 ()
+        component Controller controller ()
+    
+        connector Link ab1 (worker1.b, controller.a)
+        connector Link ab2 (worker2.b, controller.a)
+        connector Link cd1 (worker1.d, controller.c)
+        connector Link cd2 (worker2.d, controller.c)
+    
+    |\textbf{end}|
+|\textbf{end}|
+
+\end{lstlisting}
+\caption{A BIP Example}
+\label{lst:bip}
+\end{figure}
 \section{The BIP Toolbox}
-\section{Distributed Real-Time BIP}
+The BIP framework provides a rich set of tools that allows to model, verify and execute 
+systems. The BIP toolbox is structured in different categories as shown by Figure~\ref{fig:tlb}.
+\input{Figures/toolbox.tex}
+
+\subsection*{(1) Language Factory}
+This category includes \emph{translation of various language or modeling paradigm} 
+in addition to the BIP language. It includes translation of synchronous 
+languages~\cite{imp:lustre,imp:sim} as well as languages combining software applications
+and hardware architecture~\cite{imp:aadl,imp:tinyos,imp:dol}, allowing thus automatic generation 
+of BIP models through several translation steps. 
+First, the functional modules of the considered application, along
+with the necessary data structures and applications functions, are translated into 
+BIP components.  Thereafter, connectors representing the interactions between the application
+modules are added. Finally, priorities may be added to refine the behavior of the obtained
+BIP model with respect to the expected behavior.
+
+     Additionally, in association with the RTD-Finder tool 
+    it provides analyses allowing performance evaluation~\cite{apsec17} as well as the actual
+    analyses for the approach presented in Section~\ref{sec4}.
+    Note that the identity filter is the default filter that given a BIP model return the same
+    BIP model.
+
+\subsection*{(2) The BIP Compiler}
+The BIP compiler consists of three parts:
+\begin{enumerate}
+  \item The front-end : it interacts with the user of the compiler. It reads user input and 
+    transforms it in a form suitable for the following process (ie. internal representation).
+  \item The middle-end : applies operations on the internal representation 
+    (eg. optimizations, architectural transformations,etc.). Such operations are contained 
+    into small blocks of the middle-end that we will call filter later on. 
+    An example of filters that can be found in the middle-end of the BIP compiler are:
+    \begin{itemize}
+      \item The identity filter is the default filter that given a BIP model return the
+        same BIP model.
+      \item The flattening filter transforms a hierarchical system into flattened 
+        atomic components synchronized through flattened interaction.
+      \item The distributed real-time filter includes the transformation of BIP models
+        to Send/Receive models as described in Chapter~\ref{chap:3}. It also includes
+        our implementation of the methods presented in Chapter~\ref{chap:4} and
+        Chapter~\ref{chap:5}.
+    \end{itemize}
+    The BIP middle-end can be also associated with the RTD-Finder tool for validation
+    and optimization purposes. 
+  \item The back-end : It consists of a code generator that produces the final result from the 
+    internal representation. Usually, the final output is in the form of a source code in a 
+    programming language (eg. C++). We distinguish two types of code generators, namely,
+    a self contained distributed code generator and an engine-based generator. 
+\end{enumerate}
+
+A typical compilation consists of the following steps:\emph{(1)} First, the front-end 
+executes and creates a BIP-EMF model. Then, \emph{(2)} the filters in the middle-end are 
+executed in turn. The result is a possibly modified BIP-EMF model. Finally, \emph{(3)} 
+the wanted back-end is executed and produces the compilation results.
+
+
+\subsection*{(3) Simulation and Execution}
+As stated above, the back-end of the BIP compiler generates the final representation of 
+a BIP model as source code in a programming language such as C++. The resulting source code
+is either self contained and can be directly compiled and deployed for execution, or it can 
+be linked with an engine that computes the corresponding execution sequences according to 
+the BIP semantics. Usually, the representation used is a C++ software 
+that is linked against the engine’s runtime to create an executable software. Typically, 
+engines target one or more of the following main goals:
+\begin{itemize}
+  \item \emph{Execution} of the model corresponds to the computation of a single execution 
+    sequence that is intended to be executed on the target platform. In this case, the engine 
+    realizes the connection between the model and the platform in order to ensure a correct 
+    behavior of the execution.
+  \item \emph{Simulation} of the model corresponds to the computation of a single execution 
+    sequence that is intended to be executed on the host machine for simulation purpose, 
+    that is, time is interpreted in a logical way.
+  \item \emph{Exploration} of the model corresponds to the computation of several 
+    execution sequences corresponding to multiple simulations of the model. 
+\end{itemize}
+ 
+\subsection*{(4) Verification Tools}
+
+The BIP toolset includes two verification tools intended for system validation and performance
+evaluation.
+
+\begin{enumerate}
+  \item The RTD-Finder~\cite{rtdf} tool is a compositional verification tool that allows 
+    to verify a given
+    system against a set of \emph{safety properties} such as deadlock freedom, mutual exclusion
+    or bounded response time. It is based on the computation of invariants representing 
+    over-approximations of the reachable states of a system.
+  \item SBIP~\cite{sbip} is a statistical model-checker that supports multiple modeling 
+    formalism ranging from DTMCs to CTMCs and GSMPs. It includes a single integrated 
+    environment where one can edit models, compile, simulate, and perform SMC
+    analysis. 
+\end{enumerate}
+
+\section{Tools Developed in this Thesis}
+The methods presented in Chapter~\ref{chap:4} and Chapter~\ref{chap:5} have been implemented 
+in the distributed real-time filter of the BIP compiler. The latter also includes
+the transformation of BIP models to Send/Receive models as described in Chapter~\ref{chap:3}.
+Figure~\ref{fig:drtf} depicts an overview of the distributed real-time filter. It includes the
+following modules: 
+\begin{itemize}
+  \item \textbf{Analyser}: The Analyser creates internal abstractions of the input BIP
+    model. Particularly, it includes:
+    \begin{enumerate}
+      \item Component Info: It encompasses atomic component information such as a map
+        indicating for each port a list of source and destination locations matching transitions
+        labeled by this port, with the corresponding timing constraints. 
+        It also includes urgency predicate for each component.
+      \item Interaction Info: This unit builds for each interaction the set of its participating
+        components, the involved port for each components, as well as all the possible 
+        combinations (locations configurations and timing constraints) based on component info.
+        It also includes for each interaction $\alpha$ all the predicates $\enabled{\alpha}$,
+        $\enabledbackward{\alpha}$ and $\enabledbackwardb{\alpha}{l}{u}$. The latter is 
+        constructed based on the \emph{Planning Horizons} files provided as input.
+      \item Compound Info: The \emph{Compound Info} unit combines the aforementioned info in
+        order to build a given system abstraction. In addition to components and interactions 
+        info, it construct the set of potential conflicts based on the \emph{Interaction 
+        Partition} file and all the necessary elements required for building Send/Receive
+        models of Chapter~\ref{chap:3}, and for the generation of expressions presented in 
+        Chapter~\ref{chap:4} and Chapter~\ref{chap:5}. 
+    \end{enumerate}
+  \item \textbf{Property Generator}: The \emph{Property Generator} module builds all the 
+    necessary expressions for the optimization of conflicts detection and the deadlock freedom
+    verification of the local planning semantics.
+    It interacts with the RTD-Finder tool in order to achieve these tasks. 
+  \item \textbf{Send/Receive Transformation}: Using the system abstraction provided by 
+    the \emph{Analyser} and based on the result of the verification results obtained
+    from the RTD-Finder tool, the \emph{Send/Receive Transformation} module applies the 
+    transformations presented in Chapter~\ref{chap:3}. 
+\end{itemize}
+\input{Figures/drtf.tex}
+
+\section{Experimentation}

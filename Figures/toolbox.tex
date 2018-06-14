@@ -1,0 +1,233 @@
+\begin{figure}[H]
+\centering
+
+\begin{tikzpicture}[scale=0.8,every node/.style={scale=0.8}]
+\tikzstyle{myarrows}=[line width=2mm,draw=blue,fill=blue!30,-triangle 45,postaction=
+  {draw, line width=2mm, shorten >=5mm, -}]
+  \tikzset{sh2nw2/.style={shift={(-3cm,4.5cm)}}}
+
+\node [doc](c){C};
+\node [doc,right=2mm of c](nesc){nesC};
+\node [doc,right=2mm of nesc](dol){DOL};
+\node [doc,right=2mm of dol](simulink){Simulink};
+\node [doc,right=2mm of simulink](lustre){Lustre};
+\node [doc,right=1.5cm of lustre](bip){BIP};
+\node [rectangle,draw=yellow,fill=yellow!20,below=3mm of dol,minimum width=8cm,minimum height=7mm,xshift=4.5mm]
+(tran){Translation};
+\node [rectangle,draw=blue,fill=blue!20,below=3cm of bip,minimum width=1cm,minimum height=7mm]
+(par){BIP Parser};
+
+\node [yshift=1mm](c1) at ($(c.south west)!0.5!(c.south east)$) {};
+\node [below=3mm of c1](c2) {};
+\node [yshift=1mm](nesc1) at ($(nesc.south west)!0.5!(nesc.south east)$) {};
+\node [below=3mm of nesc1](nesc2) {};
+\node [yshift=1mm](dol1) at ($(dol.south west)!0.5!(dol.south east)$) {};
+\node [below=3mm of dol1](dol2) {};
+\node [yshift=1mm](simulink1) at ($(simulink.south west)!0.5!(simulink.south east)$) {};
+\node [below=3mm of simulink1](simulink2) {};
+\node [yshift=1mm](lustre1) at ($(lustre.south west)!0.5!(lustre.south east)$) {};
+\node [below=3mm of lustre1](lustre2) {};
+
+\draw[-latex] (c1) -- (c2);
+\draw[-latex] (nesc1) -- (nesc2);
+\draw[-latex] (dol1) -- (dol2);
+\draw[-latex] (simulink1) -- (simulink2);
+\draw[-latex] (lustre1) -- (lustre2);
+\draw[-latex] (bip) -- (par);
+\node[above=2mm of dol](l){Language Factory};
+\node[above=2mm of bip](lb){BIP Language};
+
+
+
+\node[rounded corners,draw,below=1.5cm of par,inner xsep=5mm,inner ysep=5mm](m){BIP Model};
+
+\node[yshift=1mm] (m1) at ($(tran.south west)!0.5!(tran.south east)$) {};
+\node[yshift=1mm] (m1) at ($(tran.south west)!0.5!(tran.south east)$) {};
+\node[yshift=1mm] (m2) at ($(par.south west)!0.5!(par.south east)$) {};
+
+\draw[-latex] (tran) |- ([sh2nw2]m.center) --(m);
+\draw[-latex] (par) -- (m);
+
+  
+%\node[draw,dashed,fit=(tran)(lb)(l)(m),inner xsep=27mm,inner ysep=8mm,xshift=4.5mm](fr){};
+%\node[yshift=1mm] (fr1) at ($(fr.south west)!0.5!(fr.south east)$) {};
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\node[draw=blue,fill=blue!20,below=15mm of m,align=center,inner xsep=5mm,inner ysep=4mm](idf)
+  {Identity\\Filter};
+\node[draw=blue,fill=blue!20,right=8mm of idf,align=center,inner xsep=5mm,inner ysep=4mm](ff)
+  {Flatenning\\Filter};
+\node[draw=red,fill=red!20,left=8mm of idf,align=center,inner xsep=5mm,inner ysep=4mm](dtf)
+  {Distributed Real-Time\\Filter};
+%\node[draw,dashed,fit=(idf)(dtf),inner ysep=6mm,inner xsep=26mm,xshift=4mm](md){};
+
+%\node[yshift=-1mm] (md1) at ($(md.north west)!0.5!(md.north east)$) {};
+%\node[yshift=1mm] (md2) at ($(md.south west)!0.5!(md.south east)$) {};
+%\draw[-latex] (fr1)--(md1);
+
+%\node[single arrow, rounded corners=1pt,blue, fill=blue!30, draw, align=center, 
+%minimum height=10mm,minimum width=2mm,rotate=-90,below=4mm of fr1](aw1){};
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\node[draw=blue,fill=blue!20,below=1.6cm of dtf, align=center,inner xsep=5mm,inner ysep=6.5mm,xshift=1mm]
+(dtb) {Distributed Code Generator};
+
+\node[yshift=.5mm] (exe1) at ($(dtb.south west)!0.75!(dtb.south east)$) {};
+\node[yshift=1mm] (exe2) at ($(dtb.south west)!0.5!(dtb.south east)$) {};
+\node[yshift=.5mm] (exe3) at ($(dtb.south west)!0.25!(dtb.south east)$) {};
+
+\node [doc,below=10mm of dtb,xshift=2.6cm](cp1){\small C++};
+\node [doc,below=10mm of dtb](cp2){\small C++};
+\node [doc,below=10mm of dtb,xshift=-2.6cm](cp3){\small C++};
+
+\node (cpp1) at ($(cp1.north west)!0.5!(cp1.north east)$) {};
+\node[yshift=-1mm] (cpp2) at ($(cp2.north west)!0.5!(cp2.north east)$) {};
+\node (cpp3) at ($(cp3.north west)!0.5!(cp3.north east)$) {};
+
+\node[yshift=1mm] (cppp1) at ($(cp1.south west)!0.5!(cp1.south east)$) {};
+\node[yshift=1mm] (cppp2) at ($(cp2.south west)!0.5!(cp2.south east)$) {};
+\node[yshift=1mm] (cppp3) at ($(cp3.south west)!0.5!(cp3.south east)$) {};
+
+\draw[-latex] (exe1) -- (cpp1);
+\draw[-latex] (exe2) -- (cpp2);
+\draw[-latex] (exe3) -- (cpp3);
+
+\node[draw,ellipse,below=6mm of cp1] (e1){\footnotesize Executable};
+\node[draw,ellipse,below=6mm of cp2] (e2){\footnotesize Executable};
+\node[draw,ellipse,below=6mm of cp3] (e3){\footnotesize Executable};
+
+\draw[-latex] (cppp1) -- (e1);
+\draw[-latex] (cppp2) -- (e2);
+\draw[-latex] (cppp3) -- (e3);
+
+\node[below=-2mm of e1,xshift=14mm](cm1){};
+\node[below=-2mm of e3,xshift=-14mm](cm2){};
+\node[below=4mm of cm1](cm3){};
+\node[below=4mm of cm2](cm4){};
+\node[below=2mm of e2](cm){Communication Primitives};
+\draw[-] (cm1.center)--(cm3.center);
+\draw[-] (cm2.center)--(cm4.center);
+\draw[-] (cm1.center) to [bend left,looseness=0.25] (cm2.center);
+\draw[-] (cm3.center) to [bend left,looseness=0.25] (cm4.center);
+
+\node[below=-1mm of cm3](dp1){};
+\node[below=-1mm of cm4](dp2){};
+\node[below=4mm of dp1](dp3){};
+\node[below=4mm of dp2](dp4){};
+\draw[-] (dp1.center)--(dp3.center);
+\draw[-] (dp2.center)--(dp4.center);
+\draw[-] (dp1.center) to [bend left,looseness=0.25] (dp2.center);
+\draw[-] (dp3.center) to [bend left,looseness=0.25] (dp4.center);
+\node[below=3mm of cm](dp){Distributed Platform};
+
+\node[draw=blue,fill=blue!20,right=5mm of dtb, align=center,inner xsep=10mm,inner ysep=4mm,xshift=1.7cm](sb)
+{Code Generator\\(engine-based)};
+\node[yshift=1mm] (exe1) at ($(sb.south west)!0.5!(sb.south east)$) {};
+\node [doc,below=10mm of sb](cp2){\small C++};
+
+\node[yshift=-1mm] (cpp2) at ($(cp2.north west)!0.5!(cp2.north east)$) {};
+
+\node[yshift=1mm] (cppp2) at ($(cp2.south west)!0.5!(cp2.south east)$) {};
+
+\draw[-latex] (exe1) -- (cpp2);
+
+\node[draw,ellipse,below=6mm of cp2] (e2){\small Executable};
+\draw[-latex] (cppp2) -- (e2);
+\node[below=-2mm of e2,xshift=15mm](cm1){};
+\node[below=-2mm of e2,xshift=-15mm](cm2){};
+\node[below=4mm of cm1](cm3){};
+\node[below=4mm of cm2](cm4){};
+\node[below=1mm of e2](cm){Execution Engine};
+\draw[-] (cm1.center)--(cm3.center);
+\draw[-] (cm2.center)--(cm4.center);
+\draw[-] (cm1.center) to [bend left,looseness=0.35] (cm2.center);
+\draw[-] (cm3.center) to [bend left,looseness=0.35] (cm4.center);
+
+\node[below=-1mm of cm3](dp1){};
+\node[below=-1mm of cm4](dp2){};
+\node[below=4mm of dp1](dp3){};
+\node[below=4mm of dp2](dp4){};
+\draw[-] (dp1.center)--(dp3.center);
+\draw[-] (dp2.center)--(dp4.center);
+\draw[-] (dp1.center) to [bend left,looseness=0.25] (dp2.center);
+\draw[-] (dp3.center) to [bend left,looseness=0.25] (dp4.center);
+\node[below=2mm of cm](dp2){Platform};
+
+%\node[draw,dashed,fit=(dtb)(cm4),inner ysep=15mm,inner xsep=28mm,yshift=-4mm,xshift=2mm](be){};
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\node[draw=green,fill=green!20,left=7cm of m,inner xsep=4mm,inner ysep=4mm,yshift=-1.4cm](v){RTD-Finder};
+\node[above=2mm of v](vv){Verification};
+\node[draw,dashed,fit=(v)(vv),inner ysep=5mm,inner xsep=5mm](be){};
+\node [doc,above=10mm of vv,xshift=-8mm](p){Property};
+
+\node[yshift=1mm] (v1) at ($(p.south west)!0.5!(p.south east)$) {};
+\node[below=7mm of v1] (v2) {};
+\node[left=6.8cm of m] (v4) {};
+
+\node[yshift=-2mm](vm1) at ($(v.south west)!0.25!(v.south east)$) {};
+\node[yshift=-2mm] (vm2) at ($(v.south west)!0.65!(v.south east)$) {};
+\node[xshift=1mm] (mv1) at ($(dtf.south west)!0.25!(dtf.north west)$) {};
+\node[xshift=1mm] (mv2) at ($(dtf.south west)!0.75!(dtf.north west)$) {};
+
+\node[right=12mm of v2] (o1) {};
+\node[above=8mm of o1] (o2) {};
+
+\draw[-latex](v1)--(v2);
+\draw[-latex](m)--(v4);
+\draw[-latex](o1)-- node[above,yshift=5mm]{Verdict}(o2);
+
+\draw[-latex](mv2)-| node[above,xshift=10mm]{Property}(vm2);
+\draw[-latex](vm1)|- node[above,xshift=8mm]{Verdict}(mv1);
+
+\node[draw=green,fill=green!20,below=6cm of v,inner xsep=4mm,inner ysep=4mm,yshift=-1.4cm](v3){SBIP};
+\node[above=2mm of v3](vv3){Verification};
+\node[draw,dashed,fit=(v3)(vv3),inner ysep=5mm,inner xsep=8mm](be){};
+
+\node[xshift=-1mm](vm1) at ($(be.south east)!0.6!(be.north east)$) {};
+\node[left=4mm of vm1](vm2) {};
+\node (v1) at ($(be.north west)!0.25!(be.north east)$) {};
+\node (v2) at ($(be.north west)!0.85!(be.north east)$) {};
+\node[doc,above=6mm of v1](v11) {Property};
+\node[above=6.5mm of v2](v22) {Verdict};
+
+\draw[-latex](v11)--(v1);
+\draw[-latex](v2)--(v22);
+
+%\node[draw,circle,left=5mm of c,yshift=1cm,scale=0.7]{1};
+%\node[draw,circle,left=5mm of c,yshift=-5.5cm,scale=0.7]{2};
+%\node[draw,circle,left=5mm of c,yshift=-8.6cm,scale=0.7]{3};
+%\node[draw,circle,right=1mm of vv,scale=0.7,yshift=2mm]{4};
+%\node[draw,circle,right=1mm of vv,scale=0.7,yshift=2mm]{4};
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\node[draw,dashed,fit=(dtb)(sb),inner ysep=5mm,inner xsep=20mm](db1){};
+\node[draw,dashed,fit=(dtf)(ff),inner ysep=5mm,inner xsep=23mm](db2){};
+\node[draw,dashed,fit=(par)(m),inner ysep=7mm,inner xsep=59.75mm,xshift=-10mm](db3){};
+
+\node[draw,fit=(db1)(db2)(db3),inner ysep=15mm,inner xsep=20mm](db4){};
+\node[draw,fit=(dp)(dp3)(cp2)(cp3),inner ysep=7mm,inner xsep=27.75mm,xshift=5mm](db5){};
+\node[draw,fit=(v)(vv)(p)(v3)(vv3),inner ysep=25mm,inner xsep=10mm](db6){};
+\node[draw,fit=(c)(bip)(l)(lb)(tran),inner ysep=5mm,inner xsep=22mm](db7){};
+\draw[-latex](db5)--(vm1);
+
+
+\node[single arrow, rounded corners=1pt,blue, fill=blue!30, draw, align=center, 
+minimum height=10mm,minimum width=2mm,rotate=-90,below=5mm of db2,yshift=2mm]{};
+\node[single arrow, rounded corners=1pt,blue, fill=blue!30, draw, align=center, 
+minimum height=10mm,minimum width=2mm,rotate=-90,below=5mm of db3,yshift=2mm]{};
+
+\node[draw,circle,left=5mm of c,yshift=1cm,scale=0.7]{1};
+\node[draw,circle,right=3.5mm of c,yshift=-3.8cm,scale=0.7](comp){2};
+\node[draw,circle,right=1mm of comp,yshift=-4mm,scale=0.6](comp){2.1};
+\node[draw,circle,below=4.1cm of comp,scale=0.6](comp){2.2};
+\node[draw,circle,below=2.35cm of comp,scale=0.6](comp){2.3};
+\node[draw,circle,right=10.8cm of comp,yshift=-2.9cm,scale=0.7]{3};
+\node[draw,circle,right=3mm of vv,scale=0.7,yshift=4.2cm](comp){4};
+\node[draw,circle,below=1.75cm of comp,scale=0.6,xshift=-6mm](comp){4.1};
+\node[draw,circle,below=7.6cm of comp,scale=0.6,xshift=-1mm](comp){4.2};
+\end{tikzpicture}
+\caption{The BIP Toolbox}
+\label{fig:tlb}
+\end{figure}

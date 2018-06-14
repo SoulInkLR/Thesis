@@ -1,0 +1,29 @@
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+
+\node(a){Control Design};
+\node[below=7.5mm of a,rotate=-90](aa){$\Rightarrow$};
+\node[below=7.5mm of aa,xshift=4mm](b){Giotto Program};
+\node[below=7.5mm of b,rotate=-90](bb){$\Rightarrow$};
+\node[below=7.5mm of bb,align=center,xshift=4mm](c){Code for Real-Time\\ Platform};
+\node[right=3cm of a,align=center]{\vbox{\begin{itemize}
+\item Modeling
+\item Control law derivation
+\end{itemize}}};
+
+\node[right=29.5mm of b,align=center]{\vbox{\begin{itemize}
+\item Functionalities and timings 
+\item Periodic software tasks and mode switches
+\end{itemize}}};
+
+\node[right=27mm of c,align=center]{\vbox{\begin{itemize}
+\item Hardware mapping
+\item Computation and communication scheduling
+\end{itemize}}};
+
+
+\end{tikzpicture} 
+\caption{Giotto Workflow}
+\label{fig:giotto}
+\end{figure}

@@ -1,0 +1,33 @@
+\begin{figure}[ht]
+\centering
+
+\begin{tikzpicture}[remember picture]
+
+\node[rectangle,draw=blue!50,fill=blue!20](b){B};
+\node[rectangle,draw=blue!50,fill=blue!20,right=2mm of b,minimum width=6mm,minimum height=2mm](e)
+{E};
+\node[rectangle,draw=blue!50,fill=blue!20,right=2mm of e,minimum width=6mm,minimum height=2mm](h)
+{H};
+\node[rectangle,draw=blue!50,fill=blue!20,right=2mm of h,minimum width=6mm,minimum height=2mm](a)
+{A};
+\node[rectangle,draw=blue!50,fill=blue!20,right=2mm of a,minimum width=6mm,minimum height=2mm](v)
+{V};
+\node[rectangle,draw=blue!50,fill=blue!20,right=2mm of v,minimum width=6mm,minimum height=2mm](i)
+{I};
+\node[rectangle,draw=blue!50,fill=blue!20,right=2mm of i,minimum width=6mm,minimum height=2mm](o)
+{O};
+\node[rectangle,draw=blue!50,fill=blue!20,right=2mm of o,minimum width=6mm,minimum height=2mm](r)
+{R};
+\node[rectangle,draw=red!50,fill=red!20,above=2mm of a,inner xsep=21.15mm,xshift=4.35mm](inter)
+{Interactions};
+\node[rectangle,draw=yellow!50,fill=yellow!20,above=2mm of inter,inner xsep=23.35mm](inter)
+{Priorities};
+
+\begin{scope}[on background layer]
+\node[fit=(inter)(b)(r),fill=gray!20,draw=gray!50]{};
+\end{scope}
+
+\end{tikzpicture}
+\caption{BIP Layers}
+\label{fig:bip_layers}
+\end{figure}
