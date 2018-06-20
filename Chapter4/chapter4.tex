@@ -15,27 +15,27 @@ the intervention of the conflict resolution layer to resolve the conflict situat
 The computation of the conflicting interactions set is based on syntactic pre-checks
 (Definition~\ref{def:pconf}), that is, it is an over-approximation that in some cases  
 induces an unnecessary conflict resolution.  
-The calculation of the conflicting interactions set highly impact the structure and the 
+The calculation of the conflicting interactions set highly impacts the structure and the 
 performance of the underlying Send/Receive model. For every interaction that is in fact
-not conflicting, the corresponding scheduler include an additional place and three transitions
+not conflicting, the corresponding scheduler includes an additional place and three transitions
 involved in the Send/Receive interactions involving the conflict resolution layer.
-In this case, executing an interaction adds not only a evaluation overhead but also latency 
-resulting from the communication delay between the two layers.
+In this case, executing an interaction adds not only an evaluation overhead, but also latency 
+resulting from the communication delays between the two layers.
 In order to refine the conflicting interactions set, we rely on the following definition
 of conflicts.
-\begin{definition}[Conflicting Interaction]
+\begin{definition}[Conflicting Interactions]
 \label{def:conf}
 Let $S = \gamma(B_1,\dotsc,B_n)$ be a timed system. Two interactions 
 $\alpha_1$ and $\alpha_2$ of $\gamma$ are \emph{conflicting}, and we write $\alpha_1\#\alpha_2$, 
   if $\p{\alpha_1} \cap\p{\alpha_2} \neq \emptyset$ and there exists a reachable state from 
-which both $\alpha_1$ and $\alpha_2$ are enabled, i.e. a state satisfying:
+which both $\alpha_1$ and $\alpha_2$ are enabled, i.e., a state satisfying:
 \begin{equation}\label{eq:conf1}
   Conflict(S,\alpha,\beta)=Reach(S) \wedge \enabled{\alpha_1} \wedge \enabled{\alpha_2}
 \end{equation}
   where $Rreach(S)$ is the set of reachable states of the S.
 \end{definition}
 
-The above definition of conflict characterizes the exact set of conflicting interactions.
+The above definition of conflicts characterizes the exact set of conflicting interactions.
 Especially, it considers that two interactions are not conflicting if the whole system
 cannot reach a state from which both can potentially execute.
 Clearly, such interactions do not require conflict resolution as they cannot be scheduled
@@ -59,7 +59,7 @@ Then, the second step \emph{(ii)} calculates then combines local and global know
 of the system on the form of invariants. The latter will represents an over-approximation 
 of the reachable state of the system. 
 After that, by replacing $Reach(S)$ by its over-approximation $\reacha{S}$ in
-Equation~\ref{eq:conf1}, potentially conflicting interactions are reduced by
+Expression~\ref{eq:conf1}, potentially conflicting interactions are reduced by
 checking the following precondition:
 
 \begin{equation}\label{eq:conf2}
@@ -70,8 +70,8 @@ checking the following precondition:
 Notice that since $Reach(S)\Rightarrow\reacha{S}$, we obtain that 
 $Conflict(S,\alpha_1,\alpha_2) \Rightarrow$\\$\overline{Conflict(S,\alpha_1,\alpha_2)}$.
 Thus, if two interactions are established to be conflicting  
-according to Equation~\ref{eq:conf2}, then they are conflicting according to 
-Equation~\ref{eq:conf1}.
+according to Expression~\ref{eq:conf2}, then they are conflicting according to 
+Expression~\ref{eq:conf1}.
 Hereinafter, \emph{false} conflicts refers to potential conflicts as defined in
 Definition~\ref{def:pconf} but that are not conflicts with respect to Definition~\ref{def:conf}.
 
@@ -81,18 +81,19 @@ or \emph{(ii)} because both interactions are not enabled at the same time due to
 constraints.
 In the following, we show how to compute invariants for removing false conflicts of
 types \emph{(i)} and \emph{(ii)}. This invariants combined with
-individual reachable states of components will represent our over-approximation.
+individual reachable states of components will represent our over-approximation of $Reach(S)$.
 \subsection{Linear Invariants}
 
-Linear invariants consists of linear constraints that allows to reason on complex properties.
+Linear invariants consist of linear constraints that allow to reason on complex properties.
 For instance, they can be used to \emph{count} how many processes are at a given state
-of a concurrent system. Such invariants have been widely used in different domain~\cite{,}.
-Particularly, we are interested in the so called linear state-invariants~\cite{} from the 
+of a concurrent system. Such invariants have been widely used in different domain.
+Particularly, we are interested in the so called linear state-invariants~\cite{petri,inv1,inv2} 
+from the 
 Petri net community. Linear state-invariants or (S-invariants) are determined to be 
 appropriate for proving non-coverage of subsets of individual locations, 
 which corresponds exactly to what needed to prove that two interactions 
-cannot be enabled from the same locations configuration.
-They consists of a linear combination of $\al{\loc}$ predicates that is 
+cannot be enabled from the same location configuration.
+Precisely, linear invariants consist of linear combinations of $\al{\loc}$ predicates that are
 equal to a constant. For instance $\al{\loc_0}+\al{\loc_1}+\al{\loc_2}=1$ is a linear constraint
 for the Petri net of Figure~\ref{fig:pn}.
 
@@ -100,7 +101,7 @@ Locations configurations reachable in a composition
 $S = \gamma(B_1,\dotsc,B_n)$ are necessary combinations 
 of reachable locations of individual components $B_i$.
 However, in general not all combinations are reachable in $S$ since components are not 
-fully independent as they synchronize through interactions in the composition.
+fully independent as they synchronize through interactions.
 A typical example of that is a shared resource used in mutual exclusion by a set of 
 components: any of them can potentially use it, but they should coordinate so that states in 
 which two (or more) components use the resource are not reachable.
@@ -117,7 +118,7 @@ excluded if we consider reachable locations of the composed system.
 \begin{definition}[Linear Invariant]
 \label{def:inv}
 Let $S = \gamma(B_1,\dotsc,B_n)$ be a timed system and $\Loc = \bigcup_{1 \leq i \leq n} \Loc_i$
-all components locations, $\Loc_i$ being  the locations of $B_i$.
+being all components locations, with $\Loc_i$ the set of locations of $B_i$.
 A \emph{linear invariant} of $S$ is a linear equality constraint 
 which holds in all reachable global state of S. It is of the form:
 $$ \sum_{\loc \in\Loc}u_{\loc}\cdot \al{\loc} = u_0, $$
@@ -126,13 +127,13 @@ $\loc \in \Loc$, are interpreted as $0$ for false and $1$ for true.
 \end{definition}
 
 To compute linear invariants for a timed system $S = \gamma(B_1,\dotsc,B_n)$, we consider its 
-version $\tilde{S}$ abstracting all data and timing aspects of $S$
+untimed version $\tilde{S}$ abstracting all data and timing aspects of $S$
 (i.e. obtained from $S$ by relaxing guards and location invariants of components).
-Note that linear invariants for $\tilde{S}$ are also a linear invariants for $S$, since 
+Note that linear invariants for $\tilde{S}$ are also linear invariants for $S$, since 
 reachable locations of $S$ are necessary included in reachable locations of $\tilde{S}$.
 Methods for calculating linear invariants are based on linear algebra, and more precisely
-on the \emph{characteristic system}~\cite{} (also known by the place-transition matrix in 
-the Petri nets community~\cite{}). It consists of a system of linear equations representing 
+on the \emph{characteristic system}~\cite{inv1} (also known by the place-transition matrix in 
+the Petri nets community). It consists of a system of linear equations representing 
 the interactions of a given system.
 \begin{definition}\label{def:chars}[Characteristic System]
   For a timed system $S=\gamma(B_1,\cdots,B_n)$ and $\Loc=\Loc_1\times\cdots\times\Loc_n$,
@@ -164,8 +165,8 @@ the interactions of a given system.
 
 \end{example}
 
-The common techniques for solving homogeneous systems $Ax=0$ are the Guass-Jordan elimination,
-Cholesky-, QR- or LU-factorization. These algorithm have low polynomial complexity and
+The common techniques for solving homogeneous systems $A.x=0$ are the Guass-Jordan elimination,
+Cholesky-, QR- or LU-factorization. These algorithms have low polynomial complexity and
 can be directly applied to solve the characteristic system $\mc{M}(S)$.
 In order to obtain the linear invariants of a given system, we use the algorithm 
 proposed in~\cite{inv-lin}. It is a variant of Gauss-Jordan elimination that exploits 
@@ -182,12 +183,12 @@ following formula is not satisfiable:
 where $Reach(B_i)$ denots the reachable states of component $B_i$.
 \begin{example}
 Let us reconsider the example of Figure~\ref{fig:tm}.
-Among the resulting linear invariants, we focus on following:
+Among the resulting linear invariants, we focus on the following:
 \begin{numcases}{}
 1\cdot\al{\loc_1^2} + 1\cdot\al{\loc_1^3} - 1\cdot\al{\loc_1^1} = 0 \label{eq:inv1} \\
 1\cdot\al{\loc_3^2} + 1\cdot\al{\loc_3^3} - 1\cdot\al{\loc_1^4} = 0 \label{eq:inv2}.
 \end{numcases}
-We deduce from Equation~(\ref{eq:inv1}) that $\al{\loc_1^2}$ and $\al{\loc_1^3}$
+We deduce from the invariant~(\ref{eq:inv1}) that $\al{\loc_1^2}$ and $\al{\loc_1^3}$
 cannot be true simultaneously, that is, components $T_1$ and $T_2$ cannot be simultaneously 
 at the corresponding locations. Consequently, we can directly infer that interactions 
 $\alpha_3$ and $\alpha_4$ are not conflicting, even though they are potentially conflicting.
@@ -197,22 +198,22 @@ Likewise, with~(\ref{eq:inv2}) we exclude the conflict between $\alpha_7$ and $\
 \subsection{History Clocks Inequalities}
 As they completely abstract time, linear invariants presented above are only partially 
 capturing system dynamics.
-For example, a global location may be not reachable because components locations have 
+For example, a global location may not be reachable because components locations have 
 disjoint clock constraints, or an interaction may not be enabled from a state because 
 of an empty timing constraint. Such properties require extra relationships relating clocks of 
 different components that are not available in $Reach(B_i)$ as it is is restricted to 
 clocks of a single component: a zone of one of its symbolic states is a conjunction of its 
 related clocks constraints, as explained in Section~\ref{sec:2.4}.
 
-We follow the approach of~\cite{} for reinforcing our approach with global invariants on clocks.
+We follow the approach of~\cite{hs} for reinforcing our approach with global invariants on clocks.
 They are induced by simultaneity of transitions when executing an 
 interaction and the synchrony of time progress. To compute such invariants, additional 
 \emph{history} clocks are first introduced in components. History clocks are associated to 
-actions of components and to interactions, and reset upon their execution.
+actions of components and to interactions, and reset upon their executions.
 They do not modify the behavior since they are not involved in timing constraints.
 They only reveal local timing of components, relevant to the interaction layer, which 
-allows to infer further properties referred as \emph{history clocks inequalities} 
-in~\cite{}, expressing the fact that history clock of an interaction are necessary 
+allows to infer further properties referred to as \emph{history clocks inequalities} 
+in~\cite{hs}, expressing the fact that history clock of an interaction is necessary 
 equal to history clocks of its actions after its execution and until the execution of another 
 interaction involving these actions.
 \input{Figures/hc.tex}
@@ -224,8 +225,8 @@ as follows:
   \alpha)\big]$$
 \end{definition}
 where $Act(\gamma\ominus\alpha)$ is the set of actions involved in the interactions
-$\gamma\ominus\alpha=\{\beta\setminus\alpha|\beta\in\gamma\wedge\beta\nsubseteq\alpha\}$
-and $\mc{HA}(S)=\true$.
+$\gamma\ominus\alpha=\{\beta\setminus\alpha \ | \ \beta\in\gamma\wedge\beta\nsubseteq\alpha\}$
+and $\mc{HA}(\emptyset)=\true$.
 The predicate $\mc{HA}(S)$ can be interpreted as follows. Assuming that $\alpha\in\gamma$
 is the last interaction executed in the system. Then, all history clocks of its involved
 actions are reset at the same time. Moreover, they are smaller than all the other history
@@ -241,9 +242,11 @@ Separation constraints are then formalized as follows:
 \begin{definition}[Separation Constraints]
 Given a timed system $S=\gamma(B_1,\cdots,B_n)$, the separation constraints are defined
 as follows:
-  $$HI(S)=\bigwedge{\substack{\alpha\neq\beta\in\gamma\\a\in\alpha\cap\beta}}
-  \bigwedge_{a\in\alpha} |h_{\alpha}-h_{\beta}|\ge k_a$$
-where $|h|$ denotes the absolute value of $h$ and $k_a$ is a constant computed locally
+  \begin{displaymath}
+  HI(S)=\bigwedge_{\substack{\alpha\neq\beta\in\gamma\\a\in\alpha\cap\beta}}
+  \bigwedge_{a\in\alpha} |h_{\alpha}-h_{\beta}|\ge k_a
+  \end{displaymath}
+    where $|h|$ denotes the absolute value of $h$ and $k_a$ is a constant computed locally
 on the component containing action $a$. It represents the minimum time lapse between
 two occurrences of $a$.
 \end{definition}
@@ -265,18 +268,18 @@ In the following, we prove that these interactions are actually not conflicting 
 history clocks inequalities.
 Since action $start_0$ of $C$ is synchronized with either $start_1$ of $T_1$ or $start_2$ of 
 $T_2$, and since history clocks $h_a$ of an action $a$ is reset whenever $a$ is executed, 
-by~\cite{souha:hs} the history clock inequalities for $start_0$ are:
+by~\cite{hs} the history clock inequalities for $start_0$ are:
 \begin{equation}\label{eq:histconst}
 \begin{split}
 ( h_{start_0} = h_{start_1} &\le h_{start_2} - 25 ) \\ 
   &\vee \\ ( h_{start_0} = h_{start_2} &\le h_{start_1} - 25 ).
 \end{split}
 \end{equation}
-Equation~(\ref{eq:histconst}) states that $h_{start_0}$ is equal to the history clock 
-corresponding to the last synchronization, i.e. either $h_{start_1}$ or $h_{start_2}$, and is 
+Equality~(\ref{eq:histconst}) states that $h_{start_0}$ is equal to the history clock 
+corresponding to the last synchronization, i.e., either $h_{start_1}$ or $h_{start_2}$, and is 
 lower than history clocks of previous synchronizations. Value $25$ in~(\ref{eq:histconst}) is 
 obtained considering \emph{separation constraints} computed from symbolic states of components 
-and interactions~\cite{}: two occurrences of $start_0$ are separated by at least $25$ 
+and interactions: two occurrences of $start_0$ are separated by at least $25$ 
 time units because of timing constraints of $C$, and so too occurrences of $start_1$ or 
 $start_2$ which can only execute jointly with $start_0$.
 To relate history clocks with components clocks, we simply include history clocks when 
@@ -293,7 +296,7 @@ This proves that $\alpha_5$ and $\alpha_6$ are not conflicting.
 \end{example}
 
 \section{Impact of Conflict Reduction on Send/Receive Models}
-As explained earlier, refining the conflicting interaction set enables to minimize the
+As explained earlier, refining the conflicting interactions set enables to minimize the
 exchange of messages between the scheduling layer and the conflict resolution layer
 of the corresponding Send/Receive model. More precisely, every false conflicting interaction
 is scheduled using 2 exchange of messages between components participating in that interaction

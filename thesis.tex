@@ -158,20 +158,20 @@
 \part{Preliminaries}
 {In this part, we give formal definitions and present results that will be used in subsequent
 chapters. Chapter~\ref{chap:2} provides formal definitions of timed transition systems,
-timed automata, their semantics and properties, as well as a variant of the latter.
+timed automata, their semantics and properties as well as a variant of the latter.
 It also discusses the verification technique used in this thesis. Chapter~\ref{chap:3}
-explains how an intermediate representation based on the timed automata formalism
+explains how an intermediate representation, based on the timed automata formalism,
 can be used to represent a realistic view of a distributed real-time systems. It also tackles
-two important constraints that an application can incur when being deployed in a distributed
-environment under real-time restriction.} 
+two important constraints that an application may incur when being deployed in a distributed
+environment under real-time restrictions.} 
 \include{Chapter2/chapter2}
 \include{Chapter3/chapter3}
 \part{Contribution}
-{This part includes our contributions to the field of modeling and validating
+{This part includes our contributions to the field of modeling and validation of
 distributed real-time systems. First, Chapter~\ref{chap:4} proposes a knowledge based
-optimization of the Send/Receive transformation. It aims at reducing the interaction between
+optimization of the Send/Receive transformation. It aims at reducing the interactions between
 the scheduling layer and the conflict resolution layer through a reduction of the potentially
-conflicting interactions set. Thereafter, Chapter~\ref{chap:5} and~\ref{chap:6} studies the 
+conflicting interactions set. Thereafter, Chapter~\ref{chap:5} and~\ref{chap:6} study the 
 behavior of a given model when subject to constraints inherent to the distributed context.
 Chapter~\ref{chap:5} tackles the problem of communication delays by proposing a strategy based
 on anticipating the execution of components beforehand. It provides sufficient conditions
@@ -179,8 +179,8 @@ that allow to check whether a given system is robust or not (in the sense not gu
 to communication delays. We also propose an alternative method based on real-time controller
 synthesis and explain how it differs from our approach. 
 In the same way, Chapter~\ref{chap:6} investigates the clock drift problem and proposes a 
-strategy that ensure that executions of the drifted system stay close enough from similar 
-executions of the latter with perfect clocks.
+strategy that ensures that executions of the drifted system stay close enough from 
+executions of the model with perfect clocks.
 }
 \include{Chapter4/chapter4}
 \include{Chapter5/chapter5}
