@@ -4,32 +4,32 @@
 
 In Chapter~\ref{chap:2}, we presented a timed automata model for representing timed systems
 with multiparty interactions. The semantics of such model is based on the notion of \emph{global
-states}, that is, interactions execution is based not only on the state of its participating
+states}, that is, interactions executions are based not only on the state of participating
 components but on the states of all components of the system.
 Conversely, a distributed system can be seen as a collection of loosely coupled
-components that communicate with a scheduling layer~\cite{sch11,bip-par} which, based on
-a partial view of the system, is responsible of taking decisions for interactions execution 
-and their effective execution date. 
+components that communicate with a scheduling layer which, based on
+a partial view of the system, is responsible of taking decisions for interactions executions
+and their effective execution dates. 
 Additionally, high-level coordination primitives, such as multiparty synchronizations 
 (interactions) are rarely built-in primitives of distributed platforms. 
-Hence, their implementation on a distributed platform requires synchronization 
-protocols responsible for realizing synchronizations using simpler primitives such as 
-point-to-point messages passing as explained in~\cite{bip-par}. 
+Hence, their implementation on a distributed platform requires 
+protocols responsible for realizing these synchronizations using simpler primitives such as 
+point-to-point messages passing.
 This is classically implemented using one or more additional 
-coordination component(s) observing the system state and deciding on interactions execution,
+coordination component(s) observing the system state and deciding on interactions executions,
 which adds on a communication overhead not reflected by the standard semantics presented in
 Chapter~\ref{chap:2}.
 
-This motivates the introduction of the \emph{\lpsb}. This semantics differs from
-the standard semantics of timed automata in two main aspect: \emph{(i)} interactions execution
-is based only on partial state of the system, that is, based only on the state of components
+This motivates the introduction of the \emph{\lpsb} (LPS). This semantics differs from
+the standard semantics of timed automata in two main aspect: \emph{(i)} interactions executions
+are based only on partial state of the system, that is, based only on the state of components
 participating in the considered interaction. Thus, it allows to decide locally without 
 monitoring the entire system. \emph{(ii)} it distinguishes between the 
 execution decision of an interaction (its \emph{planning}), and the execution itself.
 This distinction allows us to impose a delay between the planning of an interaction and 
 its execution. The latter is constrained by the (maximal) communication latency induced 
-by the execution platform, which is a parameter of the semantics.
-It is correct in the sense that it refines (it is included in) the standard semantics.
+by execution platforms, which is a parameter of the semantics.
+Trivially, this semantics is correct in the sense that it refines (it is included in) the standard semantics.
 However, being based on local states, planning decisions are too permissive and may 
 introduce deadlocks when they are not compatible with the global state of the system.
 
@@ -38,67 +38,69 @@ introduce deadlocks when they are not compatible with the global state of the sy
 \label{subsec:wp} 
 Let $S=\gamma(B_1,\cdots,B_n)$ be a composition of components $B_1$, \ldots, $B_n$ with
 disjoint set of locations, actions and clocks.
-We define the predicate $\plnIntxt{\alpha}{\delta}$ characterizing states $(\loc, \val)$
+We define the predicate $\plnIntxt{\alpha}{d}$ characterizing states $(\loc, \val)$
 from which an interaction $\alpha = \{ a_i \}_{i \in I} \in \gamma$ is enabled in 
-$\delta \in \realpoz$ units of time (if time progresses by $\delta$ units of time),
-that is, such that $\enabled{\alpha}$ evaluates to true on state $(\loc, \val + \delta)$.
+$d \in \realpoz$ units of time (if time progresses by $d$ units of time),
+that is, such that $\enabled{\alpha}$ evaluates to true on state $(\loc, \val + d)$.
 It is characterized by:
 \begin{equation}\label{eq:enf1}
-\plnIntxt{\alpha}{\delta} = \bigvee_{\substack{\loc\in\Loc\\\loc=(\loc_1,\cdots,\loc_n)}}
-  \al{\loc}\wedge\bigwedge_{\substack{i\in I\\a_i\in\alpha}}\big(\Phi(a_i,\loc_i) + \delta\big)
+\plnIntxt{\alpha}{d} = \bigvee_{\substack{\loc\in\Loc\\\loc=(\loc_1,\cdots,\loc_n)}}
+  \al{\loc}\wedge\bigwedge_{\substack{i\in I\\a_i\in\alpha}}\big(\Phi(a_i,\loc_i) + d\big)
 \end{equation}
-Notice that for an interaction $\alpha$ the predicate $\plnIntxt{\alpha}{\delta}$ depends only 
+Notice that for an interaction $\alpha$ the predicate $\plnIntxt{\alpha}{d}$ depends only 
 on states of components of $\p{\alpha}$, which motivates the following property.
 
 \begin{property}\label{pt:plnIn1}
 Let $(\loc,\val)$ be a state of the composition $S$. For any interactions $\alpha,\beta\in\gamma$
 such that, $(\loc,\val)\transit{\beta}_{\gamma}(\loc',\val')$ and $\p{\alpha}\cap\p{\beta}=
-\emptyset$, if $\plnIntxt{\alpha}{\delta}$ holds at state $(\loc,\val)$ then it still 
+\emptyset$, if $\plnIntxt{\alpha}{d}$ holds at state $(\loc,\val)$ then it still 
 holds at state $(\loc',\val')$.
 \end{property}
 This property derives directly from the fact that executing an interaction $\beta$ does 
 not change the states of components participating in an interaction $\alpha$, 
 provided that $\alpha$ and $\beta$ have disjoint sets of participating components, 
-and thus, $\plnIntxt{\alpha}{\delta}$ is not affected by the execution of $\beta$ in this case.
-In the following, we say that two interactions $\alpha$ and $\beta$ \emph{conflicts} when 
+and thus, $\plnIntxt{\alpha}{d}$ is not affected by the execution of $\beta$ in this case.
+In the following, we consider a slightly different definition of conflicts than the one
+presented in Chapter~\ref{chap:3} and Chapter~\ref{chap:4}. 
+We say that two interactions $\alpha$ and $\beta$ \emph{conflicts} when 
 they have common participating components, that is, when $\p{\alpha}\cap\p{\beta}\neq\emptyset$, 
 and we write $\alpha\#\beta$.
 We denote by $conf(\alpha)$ the set of interactions conflicting with $\alpha$, that is, 
 $conf(\alpha) = \{ \beta \in \gamma \ | \ \alpha\#\beta \}$.
 
 \begin{property}\label{pt:plnIn2}
-Let $(\loc,\val)$ and $(\loc,\val+\delta')$, with $\delta'\in\realpos$ be two states of 
-the composition $S$. For an interaction $\alpha\in\gamma$, if $\plnIntxt{\alpha}{\delta}$ 
-holds at state $(\loc,\val)$ then $\plnIntxt{\alpha}{\delta-\delta'}$ 
-also holds at any state $(\loc,\val+\delta')$ such that $\delta'\le\delta$.
+Let $(\loc,\val)$ and $(\loc,\val+d')$, with $d'\in\realpos$ be two states of 
+the composition $S$. For an interaction $\alpha\in\gamma$, if $\plnIntxt{\alpha}{d}$ 
+holds at state $(\loc,\val)$ then $\plnIntxt{\alpha}{d-d'}$ 
+also holds at any state $(\loc,\val+d')$ such that $d'\le d$.
 \end{property}
-This property can be found directly by writing Equation~\ref{eq:enf1} on state 
-$(\loc,\val+\delta')$.
+This property can be found directly by writing expression~\ref{eq:enf1} on state 
+$(\loc,\val+d')$.
 
-As previously explained, due to communication latencies induced by execution platforms 
-we assume that interactions cannot be planned in $\delta$ units of time if $\delta < \hmin$, 
-where $\hmin \in \integerpoz$ is a parameter representing the minimal \emph{planning horizon}, 
+As previously explained, due to communication latencies induced by execution platforms, 
+we assume that interactions cannot be planned in $d$ units of time if $d < \hmin$, 
+where $\hmin \in \integerpoz$ is a parameter representing the \emph{minimal planning horizon}, 
 which should represent the upper bound communication latencies.
 Notice that for the sake of simplicity, we consider a global parameter $\hmin$ but 
 we could also assume different parameters for each interaction.
-Additionally, we also consider upper bounds planning horizons 
+Additionally, we also consider upper bound planning horizons 
 $\hmax : \gamma \to \integerpoz\cup\{ +\infty \}$ 
 for each interaction such that for any $\alpha\in\gamma$ we have $\hmax(\alpha) \geq \hmin$.
 We denote by $\hmaxt$ the upper planning horizon assigning infinity to every $\hmax(\alpha)$.
 A direct consequence of introducing the planning horizons is that every interaction $\alpha$ 
-can be planned only using a horizon $\delta$ satisfying $\hmin \leq \delta \leq \hmax(\alpha)$,
+can be planned only using a horizon $d$ satisfying $\hmin \leq d \leq \hmax(\alpha)$,
 meaning that every component $B\in\p{\alpha}$ will be blocked for a duration between
 $[\hmin,\hmax(\alpha)]$. Observe that while $\hmin$ represents the worst case estimation of the 
 communication delays for a given platform, the parameters $\hmax(\alpha)$ will be used later 
 to find a strategy that avoids deadlocks by restricting the amount of time components 
 can be blocked for.
 
-For an interaction $\alpha$ we define the predicate $\plntxt{\alpha}$ 
+For an interaction $\alpha$, we define the predicate $\plntxt{\alpha}$ 
 characterizing states from which $\alpha$ can be planned in a delay respecting 
 the planning horizons $\hmin$ and $\hmax(\alpha)$, that is:
 \begin{displaymath}
-\plntxt{\alpha}\Leftrightarrow\exists\delta\in\realpoz\ .\ \hmin\leq\delta\leq\hmax(\alpha)\ 
-  \wedge\ \plnIntxt{\alpha}{\delta},
+\plntxt{\alpha}\Leftrightarrow\exists d\in\realpoz\ .\ \hmin\leq d\leq\hmax(\alpha)\ 
+  \wedge\ \plnIntxt{\alpha}{d},
 \end{displaymath}
 It can be written formally as follows:
 \begin{align}\label{eq:pln}
@@ -111,26 +113,26 @@ It can be written formally as follows:
 A plan $\pi$ is a function $\pi:\gamma \to\realpoz \cup \{ +\infty \}$ defining relative times
 for executing interactions, with the convention that an interaction $\alpha$ is planned to 
 execute in $\pi(\alpha)$ time units only if $\pi(\alpha) < +\infty$.
-Plans satisfy that for any two interactions $\alpha \neq \beta$ such that $\pi(\alpha) < +\infty$
-and $\pi(\beta) < +\infty$, then the interactions $\alpha$ and $\beta$ are not conflicting 
+Plans satisfy that for any two interactions $\alpha \neq \beta$, such that $\pi(\alpha) < +\infty$
+and $\pi(\beta) < +\infty$, the interactions $\alpha$ and $\beta$ are not conflicting 
 (i.e. $\neg(\alpha\#\beta)$).
 \end{definition}
 We denote by $\pi_0$ the plan assigning $+\infty$ to every interaction of $\gamma$, that is,
 $\forall\alpha\in\gamma,\pi_0(\alpha)=+\infty$. For a plan $\pi$, we consider its minimum value
 $\pmin=\min\ \{\pi(\alpha)|\alpha\in\gamma\}$. 
-We also denote by $\confl(\pi)$ the set of interactions conflicting with the plan $\pi$, i.e. 
+We also denote by $\confl(\pi)$ the set of interactions conflicting with the plan $\pi$, i.e., 
 $\confl(\pi) = \{ \alpha \ | \ \exists \beta \# \alpha.$ $ \pi (\beta) < +\infty \}$, 
 and $\p{\pi}$ the set of components participating in interactions planned by 
-$\pi$, i.e. $\p{\pi}=\{B_i\ |\ \exists\alpha\ . \ \pi(\alpha)<+\infty\wedge B_i\in\p{\alpha} \}$.
-Notice that since $\pi$ stores relative times, whenever time progresses by $\delta$, the value 
-$\pi(\alpha)$ assigned by $\pi$ to an interaction $\alpha$ should be decreased by $\delta$ 
+$\pi$, i.e., $\p{\pi}=\{B_i\ |\ \exists\alpha\ . \ \pi(\alpha)<+\infty\wedge B_i\in\p{\alpha} \}$.
+Notice that since $\pi$ stores relative times, whenever time progresses by $d$, the value 
+$\pi(\alpha)$ assigned by $\pi$ to an interaction $\alpha$ should be decreased by $d$ 
 until it reaches $0$, meaning that $\alpha$ has to execute.
-We write $\pi-\delta$ to describe the progress of time 
-over the plan, that is, $(\pi-\delta)(\alpha) = \pi(\alpha) - \delta$ for interactions $\alpha$ 
+We write $\pi-d$ to describe the progress of time 
+over the plan, that is, $(\pi-d)(\alpha) = \pi(\alpha) - d$ for interactions $\alpha$ 
 such that $\pi(\alpha) < +\infty$.
-Similarly, $\pi [ \alpha \mapsto \delta ]$ assigns relative time $\delta$ to $\alpha$, 
-$\alpha \notin conf(\pi)$, into existing plan $\pi$, i.e. $(\pi [ \alpha \mapsto \delta ])
-(\beta) = \delta$ for $\beta = \alpha$, $(\pi [ \alpha \mapsto \delta ])(\beta) = \pi(\beta)$ 
+Similarly, $\pi [ \alpha \mapsto d ]$ assigns relative time $d$ to $\alpha$, 
+$\alpha \notin conf(\pi)$, into existing plan $\pi$, i.e. $(\pi [ \alpha \mapsto d ])
+(\beta) = d$ for $\beta = \alpha$, $(\pi [ \alpha \mapsto d ])(\beta) = \pi(\beta)$ 
 otherwise.
 
 \begin{definition}[Local Planning Semantics]\label{def:pln_sem}
@@ -139,24 +141,24 @@ we define the \lps (LPS) of the composition $\gamma(B_1,\cdots,B_n)$,
 as the TTS $(\Q_p,q_{p_0},\gamma\cup\realpos\cup(\gamma\times\realpoz),\tranbp{}{3})$ where:
 \begin{itemize}
   \item $\Q_p=\Loc\times\mathcal{V}(\X)\times\Pi$, where $\Loc$ is the set of global locations,
-    $\mathcal{V}(\X)$ is the set of global clock valuation, and $\Pi$ is the set of plans.
+    $\mathcal{V}(\X)$ is the set of global clock valuations, and $\Pi$ is the set of plans.
   \item $(\gamma\times\realpoz)$ defines the action of planning interactions of $\gamma$ and 
     their relative times.
   \item $\tranbp{}{3}$ is the set of transitions defined by the rules:
     \begin{itemize}%[leftmargin=0em]
-      \item $(\loc,\val,\pi)\tranbp{(\alpha,\delta)}{4}(\loc,\val,\pi [ \alpha\mapsto\delta ])$ 
-        for $\alpha \in \gamma$, $\hmin\le\delta\le\hmax$ and $\delta\neq+\infty$ 
+      \item $(\loc,\val,\pi)\tranbp{(\alpha,d)}{4}(\loc,\val,\pi [ \alpha\mapsto d ])$ 
+        for $\alpha \in \gamma$, $\hmin\le d\le\hmx$ and $d\neq+\infty$ 
         if $\alpha \notin\confl(\pi)$ and 
-        $\plnIntxt{\alpha}{\delta}$ holds on $(\loc,\val,\pi)$.
+        $\plnIntxt{\alpha}{d}$ holds on $(\loc,\val,\pi)$.
 
       \item $(\loc,\val,\pi)\tranbp{\alpha}{3}(\loc',\val', \pi [ \alpha\mapsto+\infty ])$ 
         for $\alpha \in \gamma$ if $\pi(\alpha) = 0$ and $(\loc,\val)\transit{\alpha}_{\gamma}
         (\loc',\val')$.
 
-      \item $(\loc,\val,\pi)\tranbp{\delta}{3}(\loc,\val+\delta,\pi-\delta)$ for 
-        $\delta \le \pmin$, $\loc = (\loc_1, \ldots, \loc_n)$, if 
-        $(\val + \delta)\models\I(\loc_i)$ for components $B_i \in \p{\pi}$ and 
-        $(\val + \delta + \hmin)\models\I(\loc_i)$ for components $B_i \notin \p{\pi}$.
+      \item $(\loc,\val,\pi)\tranbp{d}{3}(\loc,\val+d,\pi-d)$ for 
+        $d \le \pmin$, $\loc = (\loc_1, \ldots, \loc_n)$, if 
+        $(\val + d)\models\I_i(\loc_i)$ for components $B_i \in \p{\pi}$ and 
+        $(\val + d + \hmin)\models\I_i(\loc_i)$ for components $B_i \notin \p{\pi}$.
   \end{itemize}
 \end{itemize}
 \end{definition}
@@ -170,16 +172,16 @@ States of the \lpsabrb do not include only locations and clock valuations,
 but also the relative execution times of the planned interactions stored by $\pi$.
 Initially, no interaction is planned, that is, initial states $(\loc_0,\val_0,\pi_0)$ 
 satisfy $\pi_0 = +\infty$.
-Planning an interaction $\alpha$ to be executed at a relative time $\hmin\le\delta\le\hmax
-(\alpha)$ corresponds to the operation $\pi [ \alpha\mapsto\delta ]$ on the plan, 
+Planning an interaction $\alpha$ to be executed at a relative time $\hmin\le d\le\hmax
+(\alpha)$ corresponds to the operation $\pi [ \alpha\mapsto d  ]$ on the plan, 
 which can only be done if $\alpha$ is not conflicting with the latter, and becomes enabled if 
-time progresses by $\delta$ (i.e. if $\plnIntxt{\alpha}{\delta}$).
+time progresses by d (i.e. if $\plnIntxt{\alpha}{d}$).
 On the other hand, time progress not only updates clock values but also the plan by 
 decreasing the relative execution times of the planned interactions.
 To force the execution of planned interactions when their relative execution times reach $0$, 
 time cannot progress more than the relative execution times of the interactions 
-(more than $\delta \le \pmin$).
-As for the standard semantics, time progress is limited by the location invariants conditions 
+(more than $d \le \pmin$).
+As for the standard semantics, time progress is limited by the location invariants 
 of the components, but with the following significant difference:
 Components $B_i \in \p{\pi}$ participating in planned interactions behave as in the standard 
 semantics, that is, time can progress until their invariants become urgent.
@@ -195,26 +197,24 @@ expire.
   \label{exp:dl}
   Let us consider the following execution sequence for example of Figure~\ref{fig:tm} under 
   the LPS with $\hmin = 2$ and $\hmax=\hmaxt$. 
-\begin{displaymath}
-    \begin{split}
-      &((\loc_0^1,\loc_0^2,\loc_0^3,\loc_0^4),(0,0,0),+\infty)\tranbp{(\alpha_1,26)}{6}
-      ((\loc_0^1,\loc_0^2,\loc_0^3,\loc_0^4),(0,0,0),\{\alpha_1\mapsto26\})\tranbp{26}{3}\\
-      &((\loc_0^1,\loc_0^2,\loc_0^3,\loc_0^4),(26,26,26),\{\alpha_1\mapsto0\})
-      \tranbp{\alpha_1}{3}((\loc_1^1,\loc_1^2,\loc_0^3,\loc_0^4),(26,26,26),+\infty)\\
-      &\tranbp{(\alpha_3,2)}{6}((\loc_1^1,\loc_1^2,\loc_0^3,\loc_0^4),(26,26,26),
-      \{\alpha_3\mapsto2\})\tranbp{2}{3}((\loc_1^1,\loc_1^2,\loc_0^3,\loc_0^4),(28,28,28),\\
-      &\{\alpha_3\mapsto0\})\tranbp{\alpha_3}{3}((\loc_0^1,\loc_2^2,\loc_0^3,\loc_0^4),
-      (0,28,0),+\infty)\tranbp{(\alpha_2,26)}{6}((\loc_0^1,\loc_2^2,\loc_0^3,\loc_0^4),\\
-      &(0,28,0),\{\alpha_2\mapsto26\})\tranbp{26}{3}((\loc_0^1,\loc_2^2,\loc_0^3,\loc_0^4),
-      (26,54,26),\{\alpha_2\mapsto0\})\tranbp{\alpha_2}{3}\\
-      &((\loc_1^1,\loc_2^2,\loc_1^3,\loc_0^4),(26,54,26),+\infty)\tranbp{(\alpha_4,2)}{6}
-      ((\loc_1^1,\loc_2^2,\loc_1^3,\loc_0^4),(26,54,26),\{\alpha_4\mapsto2\})\\
-      &\tranbp{2}{3}((\loc_1^1,\loc_2^2,\loc_1^3,\loc_0^4),(28,56,28),\{\alpha_4\mapsto0\})
-      \tranbp{\alpha_4}{3}((\loc_0^1,\loc_2^2,\loc_2^3,\loc_0^4),(28,0,0),+\infty)\\
-      &\tranbp{(\alpha_6,30)}{6}((\loc_0^1,\loc_2^2,\loc_2^3,\loc_0^4),(28,0,0),
-      \{\alpha_6\mapsto30\}) 
-    \end{split}
-  \end{displaymath}
+%\begin{displaymath}
+    \begin{align*}
+      &((\loc_0^1,\loc_0^2,\loc_0^3,\loc_0^4),(0,0,0),+\infty)&\tranbp{(\alpha_1,26)}{6} 
+      &((\loc_0^1,\loc_0^2,\loc_0^3,\loc_0^4),(0,0,0),\{\alpha_1\mapsto26\})\tranbp{26}{6}\\
+      &((\loc_0^1,\loc_0^2,\loc_0^3,\loc_0^4),(26,26,26),\{\alpha_1\mapsto0\})&\tranbp{\alpha_1}{6}  
+      &((\loc_1^1,\loc_1^2,\loc_0^3,\loc_0^4),(26,26,26),+\infty)\tranbp{(\alpha_3,2)}{6}\\
+      &((\loc_1^1,\loc_1^2,\loc_0^3,\loc_0^4),(26,26,26),\{\alpha_3\mapsto2\})&\tranbp{2}{6}  
+      &((\loc_1^1,\loc_1^2,\loc_0^3,\loc_0^4),(28,28,28),\{\alpha_3\mapsto0\})\tranbp{\alpha_3}{6}\\
+      &((\loc_0^1,\loc_2^2,\loc_0^3,\loc_0^4),(0,28,0),+\infty)&\tranbp{(\alpha_2,26)}{6} 
+      &((\loc_0^1,\loc_2^2,\loc_0^3,\loc_0^4),(0,28,0),\{\alpha_2\mapsto26\})\tranbp{26}{6}\\
+      &((\loc_0^1,\loc_2^2,\loc_0^3,\loc_0^4),(26,54,26),\{\alpha_2\mapsto0\})&\tranbp{\alpha_2}{6} 
+      &((\loc_1^1,\loc_2^2,\loc_1^3,\loc_0^4),(26,54,26),+\infty)\tranbp{(\alpha_4,2)}{6}\\
+      &((\loc_1^1,\loc_2^2,\loc_1^3,\loc_0^4),(26,54,26),\{\alpha_4\mapsto2\})&\tranbp{2}{6}  
+      &((\loc_1^1,\loc_2^2,\loc_1^3,\loc_0^4),(28,56,28),\{\alpha_4\mapsto0\})\tranbp{\alpha_4}{6}\\
+      &((\loc_0^1,\loc_2^2,\loc_2^3,\loc_0^4),(28,0,0),+\infty)&\tranbp{(\alpha_6,30)}{6}  
+      &((\loc_0^1,\loc_2^2,\loc_2^3,\loc_0^4),(28,0,0),\{\alpha_6\mapsto30\})
+    \end{align*}
+ % \end{displaymath}
 This execution sequence represents a path that alternates plan actions, time progress and 
 execution of some interactions, and leads to the action-time-lock state 
 $((\loc_0^1,\loc_2^2,\loc_2^3,\loc_0^4),(0,0,28),\{\alpha_6\mapsto30\})$. 
@@ -252,15 +252,15 @@ it can execute from $(\loc,\val)$ in the standard semantics, that is:
 Proposition~\ref{prop:r1} is a consequence of Lemma~\ref{lem:pi_pln}: an interaction $\alpha$ 
 can execute in the \lps only if $\pi(\alpha) = 0$ (see Definition~\ref{def:plan}).
 That is, a state $(\loc,\val,\pi)$ of the \lpsabrb from which $\alpha$ can execute satisfies 
-$\plnIntxt{\alpha}{0}$ or equivalently $\enabled(\alpha)$, which demonstrates that $\alpha$ 
+$\plnIntxt{\alpha}{0}$ or equivalently $\enabled{\alpha}$, which demonstrates that $\alpha$ 
 can execute from $(\loc,\val)$ in the standard semantics.
 
 \begin{proposition}\label{prop:r2}
-Time can progress by $\delta$ at a state $(\loc,\val,\pi)$ in the \lps only if time can 
-progress by $\delta$ at $(\loc,\val)$ in the standard semantics, that is:
+Time can progress by $d$ at a state $(\loc,\val,\pi)$ in the \lps only if time can 
+progress by $d$ at $(\loc,\val)$ in the standard semantics, that is:
 \begin{displaymath}
-      \forall\delta\in\realpos.(\loc,\val,\pi)\tranbp{\delta}{3}(\loc',\val',\pi')
-      \Rightarrow (\loc,\val)\transit{\delta}_{\gamma}(\loc',\val').
+      \forall d\in\realpos.(\loc,\val,\pi)\tranbp{d}{3}(\loc',\val',\pi')
+      \Rightarrow (\loc,\val)\transit{d}_{\gamma}(\loc',\val').
 \end{displaymath}
 \end{proposition}
 
@@ -273,13 +273,13 @@ If a state $(\loc,\val,\pi)$ is reachable in the \lpsb, then the state $(\loc,\v
 \end{corollary}
 
 Corollary~\ref{cr:reach} is obtained from Propositions~\ref{prop:r1} and~\ref{prop:r2} and the 
-fact that planning transitions (labeled by $(\alpha,\delta)$) affect only the plan $\pi$ in 
+fact that planning transitions (labeled by $(\alpha,d)$) affect only the plan $\pi$ in 
 states $(\loc,\val,\pi)$ of the \lpsabr.
 
 The definition of weak simulation (Definition~\ref{def:wsim})
 is based on the unobservability of $\beta-$transitions. 
 In our case, $\beta-$transitions corresponds to planning transitions.
-Let $\tts_g$ and $\tts_p$ be respectively the underlying timed transition system of the standard
+Let $\tts_g$ and $\tts_p$ be respectively the underlying timed transition systems of the standard
 semantics and the \lps respectively.
 \begin{corollary}\label{cr:sim}
   $\tts_p\simuw{R} \tts_g$ with $R=\{((\q,\pi);\q)\in\Q_p\times\Q_g\}$.
@@ -315,17 +315,17 @@ If every reachable state of $\tts_g$ is not a deadlock, then a reachable state o
   deadlock free (resp. action-time-lock-free).
   Let $(\loc,\val,\pi)$ be a reachable deadlock state of the \lpsabr. We have:
   \begin{displaymath}
-    \nexists\sigma\in\gamma\cup(\gamma\times\realpoz),\exists\delta.\ (\loc,\val,\pi)
+    \nexists\sigma\in\gamma\cup(\gamma\times\realpoz),\exists d.\ (\loc,\val,\pi)
     \tranbp{\sigma}{3}(\loc',\val',\pi')
-    \vee(\loc,\val,\pi)\tranbp{\delta}{3}(\loc,\val+\delta,\pi-\delta)\tranbp{\sigma}{3}
+    \vee(\loc,\val,\pi)\tranbp{d}{3}(\loc,\val+d,\pi-d)\tranbp{\sigma}{3}
     (\loc',\val',\pi')
   \end{displaymath}
 
   We denote by $wait(\loc,\val,\pi)$ the set of allowed waiting times at state $(\loc,\val,\pi)$,
   that is:
 \begin{displaymath}
-  wait(\loc,\val,\pi)=\{0\}\cup\{\delta\in\realpos|(\loc,\val,\pi)\tranbp{\delta}{3}
-  (\loc,\val+\delta,\pi-\delta)\}
+  wait(\loc,\val,\pi)=\{0\}\cup\{d\in\realpos|(\loc,\val,\pi)\tranbp{d}{3}
+  (\loc,\val+d,\pi-d)\}
 \end{displaymath}
 We also put $\max(wait(\loc,\val,\pi))$ to denote the maximal waiting time at state 
 $(\loc,\val,\pi)$. Notice that $\max(wait(\loc,\val,\pi))$ may not be defined in some cases.
@@ -345,7 +345,7 @@ bounded ($<+\infty$) or not.
 We distinguish 2 cases:
 \paragraph*{Case 1: no interaction is planned (i.e. $\pi =\pi_0$)}
 By definition of the \lpsabr, it is clear that for $\pi=\pi_0$, there is no interaction to 
-execute from $(\loc,\val,\pi)$ or any of its successor $(\loc,\val+\delta,\pi-\delta)$.
+execute from $(\loc,\val,\pi)$ or any of its successor $(\loc,\val+d,\pi-d)$.
 \begin{enumerate}
   \item $wait(\loc,\val,\pi)=\{0\}$:\\
     This means that time progress is not allowed at state $(\loc,\val,\pi)$. We also have
@@ -358,18 +358,18 @@ execute from $(\loc,\val,\pi)$ or any of its successor $(\loc,\val+\delta,\pi-\d
       \item $\max(wait(\loc,\val,\pi))=+\infty$:\\
         \begin{lemma}\label{lemma:deadlock}
         Let $(\loc,\val,\pi)$ be a reachable state of the \lps. 
-        If $ \ \forall\delta\in\realpos. \ (\loc,\val,\pi)\tranbp{\delta}{3}
-          (\loc,\val+\delta,\pi-\delta)\wedge\neg\plntxt{\alpha}$ at $(\loc,\val,\pi)$,
-        then we have $\neg\enabled(\alpha)$ at $(\loc,\val+\delta,\pi-\delta)$ with 
-          $\delta\ge h_{\min}$.
+        If $ \ \forall d\in\realpos. \ (\loc,\val,\pi)\tranbp{d}{3}
+          (\loc,\val+d,\pi-d)\wedge\neg\plntxt{\alpha}$ at $(\loc,\val,\pi)$,
+        then we have $\neg\enabled(\alpha)$ at $(\loc,\val+d,\pi-d)$ with 
+          $d\ge h_{\min}$.
       \end{lemma}
-      By~\ref{p1} of Lemma~\ref{lemma:wait} we can deduce that $\exists\delta\ge h_{\min}$ 
-      such that $(\loc,\val,\pi)\tranbp{\delta}{3}(\loc,\val+\delta,\pi-\delta)$. 
+      By~\ref{p1} of Lemma~\ref{lemma:wait} we can deduce that $\exists d\ge h_{\min}$ 
+      such that $(\loc,\val,\pi)\tranbp{d}{3}(\loc,\val+d,\pi-d)$. 
       We also have from the deadlock assumption and Lemma~\ref{lemma:deadlock}:
       $\bigwedge_{\alpha\in\gamma}\neg\enabled(\alpha)$. Finally, since the state 
-      $(\loc,\val+\delta,\pi-\delta)$ is reachable in the standard semantics, and by evaluating 
-      the deadlock characterization~\ref{eq:dl} on state $(\loc,\val+\delta,
-      \pi-\delta)$, we can conclude that the system under the standard semantics deadlocks, 
+      $(\loc,\val+d,\pi-d)$ is reachable in the standard semantics, and by evaluating 
+      the deadlock characterization~\ref{eq:dl} on state $(\loc,\val+d,
+      \pi-d)$, we can conclude that the system under the standard semantics deadlocks, 
       which contradicts the assumption of deadlock freedom of the system under the standard 
       semantics.
       \item $\max(wait(\loc,\val,\pi))<+\infty$:\\
@@ -406,15 +406,15 @@ from the reachable states.
 In what follows, we consider a composition of components $S = \gamma(B_1,\cdots,B_n)$ 
 such that it is deadlock-free in the standard semantics.
 
-\begin{corollary}[Sufficient Condition for Deadlock-freedom]
+\begin{corollary}[Sufficient Condition for Deadlock Freedom]
   \label{cr:suff}
   If a reachable state of the planning semantics is not an action-time-lock then it is not
-deadlock.
+a deadlock.
 \end{corollary}
 Corollary~\ref{cr:suff} is a direct consequence of Proposition~\ref{prop:deadlock-timelock}.
 It affirms that for systems that are initially deadlock-free under the standard semantics, 
-it is sufficient to prove action-time-lock-freedom of the \lpsabrb 
-to prove its deadlock-freedom.
+it is sufficient to prove action-time-lock freedom of the \lpsabrb 
+to prove its deadlock freedom.
 
 \begin{proposition}\label{prop:timelocks}
 A reachable state $(\loc,\val,\pi)$ of the \lps is an action-time-lock if and only if:
@@ -433,14 +433,14 @@ be incompatible with its timings constraints, and \emph{(ii)} conditions for pla
 interactions are too permissive as they only take into account timing constraints of 
 participating components whereas they may block additional components, namely the ones 
 participating in conflicting interactions.
-In the rest of the paper, we study how to generate planning strategies for preserving 
-deadlock-freedom by restricting the planning transitions of the \lpsabrb so that deadlock 
+In what follows, we study how to generate planning strategies for preserving 
+deadlock freedom by restricting the planning transitions of the \lpsabrb so that deadlock 
 states become unreachable.
 Such a strategy may not exist when timing constraints cannot accommodate with the 
 communication delays $\hmin$.
 
-From Corollary~\ref{cr:suff}, action-time-lock-freedom is a sufficient 
-condition for deadlock-freedom of the \lpsabr.
+From Corollary~\ref{cr:suff}, action-time-lock freedom is a sufficient 
+condition for deadlock freedom of the \lpsabr.
 By Proposition~\ref{prop:timelocks}, a state $(\loc,\val,\pi)$ is an action-time-lock in the 
 \lps if and only if no time progress is allowed nor planning or execution of interactions from 
 $(\loc,\val,\pi)$, that is:
@@ -528,8 +528,8 @@ As $\pi > 0$, and if we consider only reachable action-time-locks, we have $0 < 
 That is, $\beta$ satisfies  $\plntxt{\beta}$ in which the lower bound $\hmin$ is replaced by the
 strict lower bound 0, i.e.:
 \begin{displaymath}
-\overline{\plntxt{\beta}} \Leftrightarrow \exists \delta > 0\ . \ \delta \leq \hmax(\beta) \ 
-  \wedge \ \plnIntxt{\beta}{\delta}.
+\overline{\plntxt{\beta}} \Leftrightarrow \exists d > 0\ . \ d \leq \hmax(\beta) \ 
+  \wedge \ \plnIntxt{\beta}{d}.
 \end{displaymath}
 Then, the above expression becomes:
 \begin{equation}
