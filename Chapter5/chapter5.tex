@@ -2,25 +2,38 @@
 \minitoc
 \label{sec3}
 
-In Chapter~\ref{chap:2}, we presented a timed automata model for representing timed systems
-with multiparty interactions. The semantics of such model is based on the notion of \emph{global
-states}, that is, interactions executions are based not only on the state of participating
-components but on the states of all components of the system.
-Conversely, a distributed system can be seen as a collection of loosely coupled
-components that communicate with a scheduling layer which, based on
-a partial view of the system, is responsible of taking decisions for interactions executions
-and their effective execution dates. 
-Additionally, high-level coordination primitives, such as multiparty synchronizations 
-(interactions) are rarely built-in primitives of distributed platforms. 
-Hence, their implementation on a distributed platform requires 
-protocols responsible for realizing these synchronizations using simpler primitives such as 
-point-to-point messages passing.
-This is classically implemented using one or more additional 
-coordination component(s) observing the system state and deciding on interactions executions,
-which adds on a communication overhead not reflected by the standard semantics presented in
-Chapter~\ref{chap:2}.
+In Chapter~\ref{chap:3}, we presented a timed automata model for representing timed systems
+with multiparty interactions in a distributed setting. Such model provides details on how 
+an implementation of multiparty interactions can be derived based on a partial view of 
+the system. It also explicitly  expresses the ongoing communication mechanism using simpler 
+primitives such as exchange of messages. However, this type of model is constrained by the fact
+that the response time of the schedulers is fast enough to not impact the behavior of the 
+overall system.
 
-This motivates the introduction of the \emph{\lpsb} (LPS). This semantics differs from
+In~\cite{ahlem_these}, a solution based on an \emph{early decision making} approach was 
+presented to cope with this problem. The main idea of this method was to anticipate components
+executions ahead such that the latency induced by the scheduling mechanism does not affect
+the system. To achieve this, schedulers plan ahead the execution of interactions
+and notify the corresponding components in advance. 
+In this approach, it was suggested that schedulers are required to observe an additional 
+subset of components, called \emph{observed components}, not participating in the planned 
+interactions, in order to achieve global deadlines. 
+However, the characterization of the set of observed components is incomplete. In fact this set
+is greater than the presented characterization, and in many cases is it includes all the 
+components of the system. This is mainly due to the nature of the location invariants 
+(local constraints that propagate on the global level). 
+Moreover, the proposed approach does not provide any proof of correctness regarding deadlocks. 
+Intuitively, executions resulting from such method are included in the possible executions
+of the initial model. This means that the resulting behavior is a restriction of the initial 
+behavior which in some cases may introduce blocking situations. 
+ 
+This motivates the introduction of the \emph{\lpsb} (LPS). It is based on the same idea of 
+early decision making but with the difference that we do not reason on the Send/Receive model
+as in~\cite{ahlem_these}, but on a higher level of abstraction closer to the initial model.
+This choice was driven by two main points: \emph{(1)} facilitate the comparison with the 
+initial behavior of the standard semantics and the fact that \emph{(2)} it is much more suited 
+for verification. 
+The \lps differs from
 the standard semantics of timed automata in two main aspect: \emph{(i)} interactions executions
 are based only on partial state of the system, that is, based only on the state of components
 participating in the considered interaction. Thus, it allows to decide locally without 
@@ -29,7 +42,8 @@ execution decision of an interaction (its \emph{planning}), and the execution it
 This distinction allows us to impose a delay between the planning of an interaction and 
 its execution. The latter is constrained by the (maximal) communication latency induced 
 by execution platforms, which is a parameter of the semantics.
-Trivially, this semantics is correct in the sense that it refines (it is included in) the standard semantics.
+Trivially, this semantics is correct in the sense that it refines (it is included in) the 
+standard semantics.
 However, being based on local states, planning decisions are too permissive and may 
 introduce deadlocks when they are not compatible with the global state of the system.
 
@@ -40,15 +54,15 @@ Let $S=\gamma(B_1,\cdots,B_n)$ be a composition of components $B_1$, \ldots, $B_
 disjoint set of locations, actions and clocks.
 We define the predicate $\plnIntxt{\alpha}{d}$ characterizing states $(\loc, \val)$
 from which an interaction $\alpha = \{ a_i \}_{i \in I} \in \gamma$ is enabled in 
-$d \in \realpoz$ units of time (if time progresses by $d$ units of time),
-that is, such that $\enabled{\alpha}$ evaluates to true on state $(\loc, \val + d)$.
-It is characterized by:
+$d \in \realpoz$ units of time, that is, if time progresses by $d$ units of time.
+It is formalized as follows:
+%It is characterized by:
 \begin{equation}\label{eq:enf1}
-\plnIntxt{\alpha}{d} = \bigvee_{\substack{\loc\in\Loc\\\loc=(\loc_1,\cdots,\loc_n)}}
-  \al{\loc}\wedge\bigwedge_{\substack{i\in I\\a_i\in\alpha}}\big(\Phi(a_i,\loc_i) + d\big)
+  \plnIntxt{\alpha}{d}\text{ holds at }(\loc,\val)\Leftrightarrow\enabled{\alpha}\text{ holds at
+  }(\loc,\val+d)
 \end{equation}
-Notice that for an interaction $\alpha$ the predicate $\plnIntxt{\alpha}{d}$ depends only 
-on states of components of $\p{\alpha}$, which motivates the following property.
+%Notice that for an interaction $\alpha$ the predicate $\plnIntxt{\alpha}{d}$ depends only 
+%on states of components of $\p{\alpha}$, which motivates the following property.
 
 \begin{property}\label{pt:plnIn1}
 Let $(\loc,\val)$ be a state of the composition $S$. For any interactions $\alpha,\beta\in\gamma$
@@ -74,24 +88,27 @@ the composition $S$. For an interaction $\alpha\in\gamma$, if $\plnIntxt{\alpha}
 holds at state $(\loc,\val)$ then $\plnIntxt{\alpha}{d-d'}$ 
 also holds at any state $(\loc,\val+d')$ such that $d'\le d$.
 \end{property}
-This property can be found directly by writing expression~\ref{eq:enf1} on state 
+\noindent This property can be found directly by writing expression~\ref{eq:enf1} on state 
 $(\loc,\val+d')$.
 
 As previously explained, due to communication latencies induced by execution platforms, 
 we assume that interactions cannot be planned in $d$ units of time if $d < \hmin$, 
 where $\hmin \in \integerpoz$ is a parameter representing the \emph{minimal planning horizon}, 
-which should represent the upper bound communication latencies.
+which should represent the upper bound response time of schedulers when scheduling interactions.
+The latter is constrained by the communication latencies between schedulers and both components
+and the conflict resolution layer as well as the evaluation of interactions constraints. 
 Notice that for the sake of simplicity, we consider a global parameter $\hmin$ but 
 we could also assume different parameters for each interaction.
 Additionally, we also consider upper bound planning horizons 
 $\hmax : \gamma \to \integerpoz\cup\{ +\infty \}$ 
 for each interaction such that for any $\alpha\in\gamma$ we have $\hmax(\alpha) \geq \hmin$.
 We denote by $\hmaxt$ the upper planning horizon assigning infinity to every $\hmax(\alpha)$.
-A direct consequence of introducing the planning horizons is that every interaction $\alpha$ 
+These bounds restrict planning horizons of interactions such that every interaction $\alpha$ 
 can be planned only using a horizon $d$ satisfying $\hmin \leq d \leq \hmax(\alpha)$,
-meaning that every component $B\in\p{\alpha}$ will be blocked for a duration between
-$[\hmin,\hmax(\alpha)]$. Observe that while $\hmin$ represents the worst case estimation of the 
-communication delays for a given platform, the parameters $\hmax(\alpha)$ will be used later 
+meaning that every component $B\in\p{\alpha}$ will be blocked for a duration in
+$[\hmin,\hmax(\alpha)]$ each time $\alpha$ is planned. 
+Observe that while $\hmin$ represents the worst case estimation of the 
+scheduler response time, the parameters $\hmax(\alpha)$ will be used later 
 to find a strategy that avoids deadlocks by restricting the amount of time components 
 can be blocked for.
 
@@ -99,15 +116,13 @@ For an interaction $\alpha$, we define the predicate $\plntxt{\alpha}$
 characterizing states from which $\alpha$ can be planned in a delay respecting 
 the planning horizons $\hmin$ and $\hmax(\alpha)$, that is:
 \begin{displaymath}
-\plntxt{\alpha}\Leftrightarrow\exists d\in\realpoz\ .\ \hmin\leq d\leq\hmax(\alpha)\ 
-  \wedge\ \plnIntxt{\alpha}{d},
+  \plntxt{\alpha}\Leftrightarrow \bigvee_{d\in[\hmin,\hmax(\alpha)]} \plnIntxt{\alpha}{d},
 \end{displaymath}
-It can be written formally as follows:
-\begin{align}\label{eq:pln}
- \plntxt{\alpha}&=\bigvee_{\substack{\loc\in\Loc\\\loc=(\loc_1,\cdots,\loc_n)}}\al{\loc}\ \wedge\
-  \backwardp{\hmin}{\hmx} \Big(\bigwedge_{\substack{i\in I\\a_i\in\alpha}}\Phi(a_i,\loc_i)\Big)\\
-                &=\enabledbackwardb{\alpha}{\hmin}{\hmx}
-\end{align}
+Remark that the above corresponds exactly with the definition of $\enabledbackwardb{\alpha}{l}
+{u}$ given in Chapter~\ref{chap:2}. This allows to write:
+\begin{equation}\label{eq:pln}
+ \plntxt{\alpha}=\enabledbackwardb{\alpha}{\hmin}{\hmx}
+\end{equation}
 
 \begin{definition}[Plan]\label{def:plan}
 A plan $\pi$ is a function $\pi:\gamma \to\realpoz \cup \{ +\infty \}$ defining relative times
@@ -143,7 +158,8 @@ as the TTS $(\Q_p,q_{p_0},\gamma\cup\realpos\cup(\gamma\times\realpoz),\tranbp{}
   \item $\Q_p=\Loc\times\mathcal{V}(\X)\times\Pi$, where $\Loc$ is the set of global locations,
     $\mathcal{V}(\X)$ is the set of global clock valuations, and $\Pi$ is the set of plans.
   \item $(\gamma\times\realpoz)$ defines the action of planning interactions of $\gamma$ and 
-    their relative times.
+    their relative times. It represents the additional label besides the progress of time
+    $(\realpos)$ and the execution of interactions ($\gamma$) present in the standard semantics.
   \item $\tranbp{}{3}$ is the set of transitions defined by the rules:
     \begin{itemize}%[leftmargin=0em]
       \item $(\loc,\val,\pi)\tranbp{(\alpha,d)}{4}(\loc,\val,\pi [ \alpha\mapsto d ])$ 
@@ -157,7 +173,6 @@ as the TTS $(\Q_p,q_{p_0},\gamma\cup\realpos\cup(\gamma\times\realpoz),\tranbp{}
 
       \item $(\loc,\val,\pi)\tranbp{d}{3}(\loc,\val+d,\pi-d)$ for 
         $d \le \pmin$, $\loc = (\loc_1, \ldots, \loc_n)$, if 
-        $(\val + d)\models\I_i(\loc_i)$ for components $B_i \in \p{\pi}$ and 
         $(\val + d + \hmin)\models\I_i(\loc_i)$ for components $B_i \notin \p{\pi}$.
   \end{itemize}
 \end{itemize}
@@ -170,19 +185,19 @@ projection $(\loc,\val)$ of $(\loc,\val,\pi)$ on $\Q_g$.
 
 States of the \lpsabrb do not include only locations and clock valuations, 
 but also the relative execution times of the planned interactions stored by $\pi$.
-Initially, no interaction is planned, that is, initial states $(\loc_0,\val_0,\pi_0)$ 
-satisfy $\pi_0 = +\infty$.
+Initially, no interaction is planned, that is, initial states are of the form 
+$(\loc_0,\val_0,\pi_0)$.
 Planning an interaction $\alpha$ to be executed at a relative time $\hmin\le d\le\hmax
 (\alpha)$ corresponds to the operation $\pi [ \alpha\mapsto d  ]$ on the plan, 
 which can only be done if $\alpha$ is not conflicting with the latter, and becomes enabled if 
-time progresses by d (i.e. if $\plnIntxt{\alpha}{d}$).
-On the other hand, time progress not only updates clock values but also the plan by 
+time progresses by $d$ (i.e. if $\plnIntxt{\alpha}{d}$).
+Additionally, time progress not only updates clock values but also the plan by 
 decreasing the relative execution times of the planned interactions.
 To force the execution of planned interactions when their relative execution times reach $0$, 
 time cannot progress more than the relative execution times of the interactions 
 (more than $d \le \pmin$).
 As for the standard semantics, time progress is limited by the location invariants 
-of the components, but with the following significant difference:
+of the components, but with the following significant difference.
 Components $B_i \in \p{\pi}$ participating in planned interactions behave as in the standard 
 semantics, that is, time can progress until their invariants become urgent.
 For components $B_i \notin \p{\pi}$, i.e., that are not participating in planned interactions, 
@@ -227,8 +242,8 @@ it is deadlock-free in the standard semantics.
 \end{example}
 
 \subsection{Properties of the LPS}\label{subsec:planprop}
-We use weak simulation to compare models of
-the standard semantics and the local planning semantics
+We use weak simulation to compare models interpreted with
+the standard semantics and with the local planning semantics,
 by considering the planning transitions unobservable.
 As shown in Example~\ref{exp:dl}, the \lpsabrb does not preserve the deadlock freedom 
 property of our system.
@@ -250,7 +265,7 @@ it can execute from $(\loc,\val)$ in the standard semantics, that is:
 \end{proposition}
 
 Proposition~\ref{prop:r1} is a consequence of Lemma~\ref{lem:pi_pln}: an interaction $\alpha$ 
-can execute in the \lps only if $\pi(\alpha) = 0$ (see Definition~\ref{def:plan}).
+can execute in the \lps if and only if $\pi(\alpha) = 0$ (see Definition~\ref{def:plan}).
 That is, a state $(\loc,\val,\pi)$ of the \lpsabrb from which $\alpha$ can execute satisfies 
 $\plnIntxt{\alpha}{0}$ or equivalently $\enabled{\alpha}$, which demonstrates that $\alpha$ 
 can execute from $(\loc,\val)$ in the standard semantics.
@@ -291,7 +306,7 @@ In addition, if interactions are allowed to be planned with relative execution t
 (i.e. $\hmin = 0$) then timeless planning of interactions becomes possible. Thus, the planning 
 semantics simulates the standards semantics in that case.
 \begin{corollary}
-  $\tts_g\simuw{R'} \tts_p$ with $R'=\{(\q;(\q,\pi))\in\Q_g\times\Q_p\ | \ \hmin=0\}$.
+  $\tts_g\simuw{R} \tts_p$ with $R=\{(\q;(\q,\pi))\in\Q_g\times\Q_p\}$ for $\hmin=0$.
 \end{corollary}
 
 However, this is no longer true in general if  $\hmin > 0$ which means that not all execution 
@@ -300,29 +315,20 @@ sequences of the standard semantics are preserved by the \lpsb.
 \begin{corollary}\label{cr:zeno}
   If $\tts_g$ is zeno runs free then $\tts_p$ is too.
 \end{corollary}
-Corollary~\ref{cr:zeno} states that the $\lpsabr$ does not introduce any zenoness behavior if
+Corollary~\ref{cr:zeno} states that the $\lpsabr$ does not introduce any zeno run if
 the standard semantics is free from the latter. It is a direct consequence of 
 Corollary~\ref{cr:sim} and the fact that it is not possible to have infinite sequences of 
 planning transitions without interaction execution ($\gamma$ is finite and planning times are
 bounded).
 \begin{proposition}\label{prop:deadlock-timelock}
-If every reachable state of $\tts_g$ is not a deadlock, then a reachable state of $\tts_p$ is not
-  deadlock if and only if it is not an action-time-lock.
+If $\tts_g$ is deadlock free, then $\tts_p$ is deadlock free if it is action-timelock-free.
+  
 \end{proposition}
-\begin{proof}[Proof of Propostion~\ref{prop:deadlock-timelock}]
-  We prove Proposition~\ref{prop:deadlock-timelock} by contradiction.
-  Let us assume that the system under the standard (resp. local planning) semantics is
-  deadlock free (resp. action-time-lock-free).
-  Let $(\loc,\val,\pi)$ be a reachable deadlock state of the \lpsabr. We have:
-  \begin{displaymath}
-    \nexists\sigma\in\gamma\cup(\gamma\times\realpoz),\exists d.\ (\loc,\val,\pi)
-    \tranbp{\sigma}{3}(\loc',\val',\pi')
-    \vee(\loc,\val,\pi)\tranbp{d}{3}(\loc,\val+d,\pi-d)\tranbp{\sigma}{3}
-    (\loc',\val',\pi')
-  \end{displaymath}
 
-  We denote by $wait(\loc,\val,\pi)$ the set of allowed waiting times at state $(\loc,\val,\pi)$,
-  that is:
+Before proving the above proposition, we need the following two lemmas that allows to reason
+on some properties of interest on states of the local planning semantics.
+We denote by $wait(\loc,\val,\pi)$ the set of allowed waiting times at state $(\loc,\val,\pi)$,
+that is:
 \begin{displaymath}
   wait(\loc,\val,\pi)=\{0\}\cup\{d\in\realpos|(\loc,\val,\pi)\tranbp{d}{3}
   (\loc,\val+d,\pi-d)\}
@@ -339,8 +345,30 @@ bounded ($<+\infty$) or not.
       (\loc,\val+k,\pi-k)\wedge wait(\loc,\val+k,\pi-k)=\{0\}$
     \item[\namedlabel{p2}{P2}] If $\pi\neq\pi_0$ then $k\le\pmin$
   \end{description}
- 
 \end{lemma}
+The above lemma is direct consequence of Definition~\ref{def:pln_sem}. 
+\begin{lemma}\label{lemma:deadlock}
+        Let $(\loc,\val,\pi)$ be a reachable state of the \lps. 
+        If $ \ \forall d\in\realpos. \ (\loc,\val,\pi)\tranbp{d}{3}
+          (\loc,\val+d,\pi-d)\wedge\neg\plntxt{\alpha}$ at $(\loc,\val,\pi)$,
+          then we have $\neg\enabled{\alpha}$ at $(\loc,\val+d,\pi-d)$ with 
+          $\hmin\le d\le\hmx$.
+\end{lemma}
+Lemma~\ref{lemma:deadlock} results trivially from the definition of the predicate
+$\plntxt{\alpha}$.
+
+\begin{proof}[Proof of Propostion~\ref{prop:deadlock-timelock}]
+  We prove Proposition~\ref{prop:deadlock-timelock} by contradiction.
+  Let us assume that the system under the standard (resp. local planning) semantics is
+  deadlock free (resp. action-time-lock-free).
+  Let $(\loc,\val,\pi)$ be a reachable deadlock state of the \lpsabr. We have:
+  \begin{displaymath}
+    \nexists\sigma\in\gamma\cup(\gamma\times\realpoz),\exists d.\ (\loc,\val,\pi)
+    \tranbp{\sigma}{3}(\loc',\val',\pi')
+    \vee(\loc,\val,\pi)\tranbp{d}{3}(\loc,\val+d,\pi-d)\tranbp{\sigma}{3}
+    (\loc',\val',\pi')
+  \end{displaymath}
+
 
 We distinguish 2 cases:
 \paragraph*{Case 1: no interaction is planned (i.e. $\pi =\pi_0$)}
@@ -356,13 +384,6 @@ execute from $(\loc,\val,\pi)$ or any of its successor $(\loc,\val+d,\pi-d)$.
   \item $wait(\loc,\val,\pi)\neq\{0\}$:
     \begin{enumerate}
       \item $\max(wait(\loc,\val,\pi))=+\infty$:\\
-        \begin{lemma}\label{lemma:deadlock}
-        Let $(\loc,\val,\pi)$ be a reachable state of the \lps. 
-        If $ \ \forall d\in\realpos. \ (\loc,\val,\pi)\tranbp{d}{3}
-          (\loc,\val+d,\pi-d)\wedge\neg\plntxt{\alpha}$ at $(\loc,\val,\pi)$,
-        then we have $\neg\enabled(\alpha)$ at $(\loc,\val+d,\pi-d)$ with 
-          $d\ge h_{\min}$.
-      \end{lemma}
       By~\ref{p1} of Lemma~\ref{lemma:wait} we can deduce that $\exists d\ge h_{\min}$ 
       such that $(\loc,\val,\pi)\tranbp{d}{3}(\loc,\val+d,\pi-d)$. 
       We also have from the deadlock assumption and Lemma~\ref{lemma:deadlock}:
@@ -398,23 +419,24 @@ which contradicts the assumption that the system under the \lpsabrb is action-ti
 As explained in previous section, the \lps is based on local conditions for planning interactions
 and may exhibit deadlocks even when the system is deadlock-free with the standard semantics.
 Such deadlocks are partly due to the fact that planning an interaction may block, in addition to 
-the participating components, extra components whose timing constraints are not considered by 
-these local conditions. In this section, we investigate simple execution strategies that only 
+the participating components, extra components whose timing constraints are not considered in
+the preconditions of the local planning semantics. 
+In this section, we investigate simple execution strategies that only 
 restrict the horizon used for planning interactions with upper bounds.
 By reducing the period of time during which components are blocked, they tend to remove deadlocks
 from the reachable states. 
 In what follows, we consider a composition of components $S = \gamma(B_1,\cdots,B_n)$ 
-such that it is deadlock-free in the standard semantics.
+such that it is deadlock free in the standard semantics.
 
-\begin{corollary}[Sufficient Condition for Deadlock Freedom]
-  \label{cr:suff}
-  If a reachable state of the planning semantics is not an action-time-lock then it is not
-a deadlock.
-\end{corollary}
-Corollary~\ref{cr:suff} is a direct consequence of Proposition~\ref{prop:deadlock-timelock}.
-It affirms that for systems that are initially deadlock-free under the standard semantics, 
-it is sufficient to prove action-time-lock freedom of the \lpsabrb 
-to prove its deadlock freedom.
+%\begin{corollary}[Sufficient Condition for Deadlock Freedom]
+%  \label{cr:suff}
+%  If a reachable state of the planning semantics is not an action-time-lock then it is not
+%a deadlock.
+%\end{corollary}
+%Corollary~\ref{cr:suff} is a direct consequence of Proposition~\ref{prop:deadlock-timelock}.
+%It affirms that for systems that are initially deadlock-free under the standard semantics, 
+%it is sufficient to prove action-time-lock freedom of the \lpsabrb 
+%to prove its deadlock freedom.
 
 \begin{proposition}\label{prop:timelocks}
 A reachable state $(\loc,\val,\pi)$ of the \lps is an action-time-lock if and only if:
@@ -427,7 +449,7 @@ A reachable state $(\loc,\val,\pi)$ of the \lps is an action-time-lock if and on
 The above proposition derives directly from the definition of action-time-locks on a state 
 of the \lpsb. 
 As shown in Example~\ref{exp:dl}, the \lps may introduce deadlocks.
-The source of deadlocks is twofold: \emph{(i)} due to communication delays, 
+The source of deadlocks is twofold: \emph{(i)} due to the scheduling response time, 
 consecutive execution in a component are separated by at least $\hmin$ units of time which may 
 be incompatible with its timings constraints, and \emph{(ii)} conditions for planning 
 interactions are too permissive as they only take into account timing constraints of 
@@ -437,13 +459,12 @@ In what follows, we study how to generate planning strategies for preserving
 deadlock freedom by restricting the planning transitions of the \lpsabrb so that deadlock 
 states become unreachable.
 Such a strategy may not exist when timing constraints cannot accommodate with the 
-communication delays $\hmin$.
+response time $\hmin$.
 
-From Corollary~\ref{cr:suff}, action-time-lock freedom is a sufficient 
+From Propostion~\ref{prop:deadlock-timelock}, action-time-lock freedom is a sufficient 
 condition for deadlock freedom of the \lpsabr.
 By Proposition~\ref{prop:timelocks}, a state $(\loc,\val,\pi)$ is an action-time-lock in the 
-\lps if and only if no time progress is allowed nor planning or execution of interactions from 
-$(\loc,\val,\pi)$, that is:
+\lps if and only if:
 \begin{displaymath}
   \pi>0 \ \wedge \ \bigwedge_{\alpha \in \gamma \setminus conf(\pi)} \hspace*{-2ex} \neg
   \plntxt{\alpha} \ \wedge
@@ -472,7 +493,7 @@ action-time-lock states of the \lpsabrb.
   \bigvee_{1\le i\le n}\Big[\bigvee_{\loc_i \in \Loc_i}\al{\loc_i}\ \wedge(\urg(\loc_i)+\hmin) \ 
   \wedge\bigwedge_{\alpha \in \gamma(B_i)}\hspace*{-1ex}\Big(  \neg\plntxt{\alpha} \
   \vee\hspace*{-2ex}\bigvee_{\substack{\beta\in\confl(\alpha)\\B_i\notin\p{\beta}}}\hspace*{-1ex}
-  \overline{\plntxt{\beta}} \Big)\Big].
+  \stacktxt{\plntxt{\beta}} \Big)\Big].
 \end{displaymath}
 We prove that a reachable action-time-lock state $(\loc,\val,\pi)$ satisfies $\phi$.
 \end{theorem}
@@ -528,7 +549,7 @@ As $\pi > 0$, and if we consider only reachable action-time-locks, we have $0 < 
 That is, $\beta$ satisfies  $\plntxt{\beta}$ in which the lower bound $\hmin$ is replaced by the
 strict lower bound 0, i.e.:
 \begin{displaymath}
-\overline{\plntxt{\beta}} \Leftrightarrow \exists d > 0\ . \ d \leq \hmax(\beta) \ 
+\stacktxt{\plntxt{\beta}} \Leftrightarrow \exists d > 0\ . \ d \leq \hmax(\beta) \ 
   \wedge \ \plnIntxt{\beta}{d}.
 \end{displaymath}
 Then, the above expression becomes:
@@ -537,7 +558,7 @@ Then, the above expression becomes:
   \bigvee_{1\le i\le n}\Big[\bigvee_{\loc_i \in \Loc_i}\al{\loc_i}\ \wedge(\urg(\loc_i)+\hmin) \
   \wedge\bigwedge_{\alpha \in \gamma(B_i)}\hspace*{-1ex}\Big(  \neg\plntxt{\alpha} \
   \vee\hspace*{-2ex}\bigvee_{\substack{\beta\in\confl(\alpha)\\B_i\notin\p{\beta}}}\hspace*{-1ex}
-  \overline{\plntxt{\beta}} \Big)\Big].
+  \stacktxt{\plntxt{\beta}} \Big)\Big].
 \end{equation}
 
 By remarking that Expression~\ref{eq:case1} implies Expression~\ref{eq:case2}, 
@@ -546,7 +567,7 @@ we can conclude that an action-time-lock of the \lps satisfies:
   \bigvee_{1\le i\le n}\Big[\bigvee_{\loc_i \in \Loc_i}\al{\loc_i}\ \wedge(\urg(\loc_i)+\hmin) \ 
   \wedge\bigwedge_{\alpha \in \gamma(B_i)}\hspace*{-1ex}\Big(  \neg\plntxt{\alpha} \
   \vee\hspace*{-2ex}\bigvee_{\substack{\beta\in\confl(\alpha)\\B_i\notin\p{\beta}}}\hspace*{-1ex}
-  \overline{\plntxt{\beta}} \Big)\Big].
+  \stacktxt{\plntxt{\beta}} \Big)\Big].
 \end{displaymath}
 \end{proof}
 
@@ -557,36 +578,35 @@ Notice that due to the monotony of $\phi$ on upper bound horizons, we obtain the
   then it is action-time-lock free for any upper bound horizon function $\hmax'\le\hmax$.
 \end{lemma}
 
-In order to attest that planning interactions does not introduce deadlocks,
-we use an SMT solver to check the satisfiability of $\phi$.
-As explained earlier, a given system is deadlock-free under
+As explained earlier, a given system is deadlock free under
 the restricted \lpsabrb if $Reach(\tts_p)\wedge\phi$ is unsatisfiable. Since
 $Reach(\tts_p)\subseteq Reach(\tts_g)$ (Corollary~\ref{cr:sim}), we can verify the above on 
 $Reach(\tts_g)$.
 Effectively, we do not compute $Reach(\tts_g)$ to avoid the combinatorial explosion problem,
 inherent to composition of timed automata. In fact, we rather build an over-approximation,
-$\overline{Reach(\tts_g)}$, of the latter, and use it during our verification.
-Finding a strategy granting action-time-lock-freedom is based on the idea of restricting
+$\stacktxt{Reach(\tts_g)}$, of the latter, and use it during our verification.
+Finding a strategy granting action-time-lock freedom is based on the idea of restricting
 the upper bound horizon function $\hmax$. In fact, since $\hmin$ is a parameter that is 
 dependent of the communication latency of a given execution platform, it cannot be tuned.
-Instead, initially for each interaction $\alpha\in\gamma$, $\hmax(\alpha)=+\infty$. Thereafter,
+Instead, initially for each interaction $\alpha\in\gamma$, we put $\hmax(\alpha)=+\infty$. 
+Thereafter,
 due to the monotony of $\phi$ (Lemma~\ref{lemma:mon}) on upper horizons, this parameter will be 
 refined, that is, its maximum will be decreased until finding a function $\hmax$ for which
-$\reacha\wedge\phi$ is unsatisfiable or until reaching the upper horizon function
+$\reacha{\tts_g}\wedge\phi$ is unsatisfiable or until reaching the upper horizon function
 $\hmaxm$ for which $\hmax(\alpha)=\hmin$ for every $\alpha\in\gamma$ and such that
-$\reacha\wedge\phi$ is satisfiable. 
+$\reacha{\tts_g}\wedge\phi$ is satisfiable. 
 
 
 \section{Planning Semantics as Real-Time Controller Synthesis}
 \label{sec5}
 
 In Section~\ref{sec5}, we presented a method that provides execution strategies
-by restricting the upper bounds planning horizon for each interaction. This strategy aims
-to preserve the deadlock-freedom property of a given system under the local planning semantics 
+by restricting the upper bound planning horizons for each interaction. This strategy aims
+to preserve the deadlock freedom property of a given system under the local planning semantics 
 without imposing further scheduling constraints.
-This approach relies on the verification of a given expression on over-approximations of the
+This approach relies on the verification of a given expression on over-approximation of the
 reachable states of the initial semantics. Thus, it may give false-positive results due to
-\emph{(i)} the nature of expression to check (sufficient condition) and \emph{(ii)} the
+\emph{(i)} the nature of the expression to check (sufficient condition) and \emph{(ii)} the
 over-approximation of the reachable states of the $\lpsabrb$ using over-approximations of 
 the reachable states of the standard semantics (Corollary~\ref{cr:sim}). 
 
@@ -612,9 +632,17 @@ the planning semantics avoiding the set of bad states, that is, deadlock states.
 Expressing the planning problem as a real-time controller synthesis problem is not 
 an easy task. Hereinafter, we discuss the different issues met during the formalization 
 process and provide suggestions for solving them.
-\subsection{Planning Zones}
 
-From Equation~\ref{eq:pln}, we can see that the clocks values for planning an interaction 
+\subsection{Encoding the Planning Semantics}
+
+In order to encode the planning semantics, we rely on the idea of splitting each transition of 
+the initial model into two transitions:
+\emph{(1)} a planning transition, followed by \emph{(2)} an execution transition
+after the plan transition being performed. 
+
+\subsubsection{Planning Zones}
+
+From~\ref{eq:pln}, we can see that the clocks values for planning an interaction 
 $\alpha$ are calculated at a global level, that is, by applying the 
 $\backwardp{\hmin}{\hmx}$ on the conjunction of its participating actions timing constraints.
 Notice that for a timing constraint $g=g_1\wedge g_2$, we have:
@@ -623,7 +651,7 @@ Notice that for a timing constraint $g=g_1\wedge g_2$, we have:
   g_1\wedge\backwardp{\hmin}{\hmx} g_2
 \end{equation}
 
-The above equation bears out the fact that planning states must be encoded on the composition
+The above formula bears out the fact that planning states must be encoded on the composition
 of the system model and not on individual components. Particularly, equation~\ref{eq:plz}
 points out the fact that encoding the planning on transitions of individual components
 will induce additional behavior ($\backwardp{\hmin}{\hmx}(g_1\wedge g_2) \implies
@@ -632,15 +660,15 @@ drawback of
 this method since building the composition may be tedious especially for big scale systems.
 Therefore, a simple solution to avoid computing the composition is to consider
 models with interactions having timing constraints on up to one of their participating
-actions, that is, given an interaction $\alpha=\{a_i\}_{i\in I}\in\gamma$, we have
-$g_{\alpha}=\true$ or $g_{\alpha}=g_{a_i}$, with $g_{a_j}=\true$ for $j\in I, j\neq i$.
-In fact, considering interactions including up to one action with timing constraints, 
+actions and that involves a single clock, that is, given an interaction 
+$\alpha=\{a_i\}_{i\in I}\in\gamma$, we have $g_{\alpha}=\true$ or $g_{\alpha}=g_{a_i}$, with 
+$g_{a_i}$ involving a single clock and $g_{a_j}=\true$ for $j\in I, j\neq i$.
+In fact, considering interactions including up to one action with timing constraints involving 
+a single clock, 
 will allow to encode the planning on individual components that, additionally to the defined 
 synchronizations (interactions), will also synchronize their planning actions. 
 
-The idea is to split each transition of the initial model into two transitions:
-\emph{(1)} a planning transition, followed by \emph{(2)} an execution transition
-after the plan transition being performed. For an interaction $\alpha\in\gamma$, the choice
+For an interaction $\alpha\in\gamma$, the choice
 of the planning horizon, that is, the duration for which components participating in $\alpha$ 
 will be blocked for until their execution, will be encoded on the execution transition of 
 the component whose action $a_i\in\alpha$ and $g_{\alpha}=g_{a_i}$. Otherwise,
@@ -648,15 +676,16 @@ if $g_{\alpha}=\true$ this choice is made arbitrarily. Consequently, this compon
 equipped with a clock $x_p$ that will be used to track the planning dates. 
 Finally, location invariants must also be translated to enforce planning
 at the latest $\hmin$ units of time before their expiry.
-Figure~\ref{fig:enc} depicts an overview of such transformation for $\delta=\hmin$ horizon: 
+Figure~\ref{fig:enc} depicts an overview of such transformation for 
+$\delta=2\times\hmin$ horizon: 
 \input{./Figures/planEncode.tex}
 
-\subsection{Infinite Planning Transitions} 
+\subsubsection{Infinite Planning Transitions} 
 
 Effectively, in order to encode the planning in timed automata, horizons values must
 be integer. Moreover, due to the dense time nature of the planning intervals (relative 
-planning date for each interaction$\alpha$ are in $[\hmin,\hmax(\alpha)]$), we end up with 
-an infinity of plan transitions, especially when not restricted upper bound planning horizons, 
+planning date for each interaction $\alpha$ are in $[\hmin,\hmax(\alpha)]$), we end up with 
+an infinity of plan transitions, especially when not restricting upper bound planning horizons, 
 i.e., $\hmax=\hmaxt$.
 Consequently, the first thing to do is to restrict for each interaction $\alpha\in\gamma$ the
 upper bound planning horizon $\hmax(\alpha)$.Thereafter, we propose to discretize the 
@@ -667,9 +696,11 @@ $\mathcal{D}\subset\integerpos$.
 
 \input{./Figures/infinitPlan.tex}
 
+\subsection{Planning Timed Automaton}
+
 \begin{definition}[Planning Timed Automaton]
   \label{def:plan_aut}
-  Given n timed components $\tcal{B}_i=(\Loc_i,\loc_0^i,\A_i,\T_i,\X_i,\I_i)$ synchronizing 
+  Given $n$ timed components $\tcal{B}_i=(\Loc_i,\loc_0^i,\A_i,\T_i,\X_i,\I_i)$ synchronizing 
   through the interaction set  $\gamma$ such that, for each interaction $\alpha\in\gamma$, 
   the guard of $\alpha$ is equal to the guard of one of its included actions.   
   We define the corresponding planning model as the composition of the n timed automata 
@@ -878,7 +909,8 @@ restricts its scope to discretized horizon values which results in having less c
 over the planning dates of interactions, and leads in case of a high number of discretized 
 values, to an explosion in the number of planning transitions. Unfortunately, we do not 
 have an immediate solution for this problem. In fact, it is user dependent since one user may 
-just want to have a ASAP execution for a given interaction, for instance because the components
+just want to block components for the least amount of time possible for a given interaction, 
+for instance because the components
 involved in this interaction are often requested, and in that case the practice will be to 
 always plan with $\hmin$. In other cases, the user may want to plan an interaction with 
 flexible amount time.
@@ -889,9 +921,9 @@ space explosion problem. Nevertheless, this approach differs form the usual sche
 synthesis approach since it is not performed on the regular semantics of timed automata. 
 Particularly, here we are interested in avoiding bad states of the planning semantics 
 (states that verify the expression of Theorem~\ref{thm:dla}). Consequently, unless finding an 
-automatic general method for generating such complex expression in the query language accepted 
+automatic general method for generating such complex expressions in the query language accepted 
 by such tools, and without ignoring that finding a strategy avoiding those states 
-may be hard in term of computational complexity, our real-time controller synthesis approach 
+may be hard in terms of computational complexity, our real-time controller synthesis approach 
 seems more straightforward and much simpler but it comes with some feasibility restriction.
 
 

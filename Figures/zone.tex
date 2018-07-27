@@ -1,74 +1,93 @@
 \begin{figure}[H]
 \center
-\begin{tikzpicture}
+  \begin{tikzpicture}%[remember picture,overlay]
 
 
-\draw[->]  (-2,0) -- (8,0) node[below left] {time};
+\draw[->]  (-2,6) -- (8,6) node[below left] {time};
 
-\draw[very thick,-]   (2,0) |- (4,0.75) -- (4,0);
+\draw[very thick,-]   (2,6) |- (4,6.75) -- (4,6);
 
 
 \draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
-    (2,-0.2) -- node[fill=white,below] {$g_{a}$}  (4,-0.2);
+    (2,5.8) -- node[fill=white,below] {$g_{a}$}  (4,5.8);
 
 
-\end{tikzpicture}
-\begin{tikzpicture}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\draw[->]  (-2,0) -- (8,0) node[below left] {time};
+\draw[->]  (-2,4) -- (8,4) node[below left] {time};
 
 
 \draw[draw=white,fill=red!30,very thick,semitransparent,-]  % <--- changed  
-                (-2,0) |- (4,0.75) -- (4,0); 
+                (-2,4) |- (4,4.75) -- (4,4); 
 \draw[draw=red,very thick,semitransparent,-]  % <--- changed  
-                (-2,0.75) -| (4,0); 
+                (-2,4.75) -| (4,4); 
 
 
 
 \draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
-    (-2,-0.2) -- node[fill=white,below] {$\backward g_a$}  (4,-0.2);
+    (-2,3.8) -- node[fill=white,below] {$\backward g_a$}  (4,3.8);
 
 
 
-\end{tikzpicture}
-\begin{tikzpicture}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\draw[->]  (-2,0) -- (8,0) node[below left,yshift=-2mm] {time};
+\draw[->]  (-2,1.5) -- (8,1.5) node[below left] {time};
+
+\draw[draw=dgreen,fill=dgreen!30,very thick,-]   (0,1.5) |- (3,2.25) -- (3,1.5);
+
+
+\draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
+    (0,1.3) -- node[fill=white,below] {$\backwardp{l}{u} g_{a}$}  (3,1.3);
+
+\draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
+    (3,1.3) -- node[fill=white,below] {$l$}  (4,1.3);
+\draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
+    (0,2.5) -- node[fill=white,above] {$u$}  (2,2.5);
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\draw[->]  (-2,-0.5) -- (8,-0.5) node[below left,yshift=-2mm] {time};
 
 
 \draw[draw=white,fill=blue!30,very thick,semitransparent,-]  % <--- changed  
-                (2,0) |- (8,0.75) -- (8,0); 
+                (2,-.5) |- (8,0.25) -- (8,-.5); 
 \draw[draw=blue,very thick,semitransparent,-]  % <--- changed  
-                (2,0) |- (8,0.75); 
+                (2,-.50) |- (8,0.25); 
 
 
 
 \draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
-    (2,-0.2) -- node[fill=white,below] {$\forward g_a$}  (8,-0.2);
+    (2,-0.7) -- node[fill=white,below] {$\forward g_a$}  (8,-0.7);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-\end{tikzpicture}
-\begin{tikzpicture}
+\draw[->]  (-2,-3) -- (8,-3) node[below left] {time};
 
-
-\draw[->]  (-2,0) -- (8,0) node[below left] {time};
-
-\draw[draw=dgreen,fill=dgreen!30,very thick,-]   (0,0) |- (3,0.75) -- (3,0);
+\draw[draw=orange,fill=orange!30,very thick,-]   (3,-3) |- (6,-2.25) -- (6,-3);
 
 
 \draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
-    (0,-0.2) -- node[fill=white,below] {$\backwardp{l}{u} g_{a}$}  (3,-0.2);
+    (3,-3.2) -- node[fill=white,below] {$\forwardp{l}{u} g_{a}$}  (6,-3.2);
 
 \draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
-    (3,-0.2) -- node[fill=white,below] {$l$}  (4,-0.2);
+    (2,-3.2) -- node[fill=white,below] {$l$}  (3,-3.2);
 \draw[{Bar[width=4mm].Straight Barb[]}-{Straight Barb[].Bar[width=4mm]}]
-    (0,1) -- node[fill=white,above] {$u$}  (2,1);
+    (4,-2) -- node[fill=white,above] {$u$}  (6,-2);
 
-
-
+\coordinate (a1) at (2,7);
+\coordinate (a2) at (4,7);
+\coordinate (a3) at (2,-3.5);
+\coordinate (a4) at (4,-3.5);
+\draw[dashed,-] (a1)--(a3);
+\draw[dashed,-] (a2)--(a4);
 
 \end{tikzpicture}
 \caption{Backward and Forward Operators on a Guard}\label{fig:zones}

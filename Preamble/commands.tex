@@ -103,7 +103,9 @@ urlcolor=black
 \newcommand{\ttsb}[1]{\texttt{T}_{#1}}
 \newcommand{\TTS}{\tts=(\Q,q_0,\Sigma\cup\mb{K},\to)}
 \newcommand{\TTSg}{\tts_g=(\Q_g,q_{0_g},\gamma\cup\realpos,\to_{\gamma})}
+\newcommand{\TTSbb}[1]{\tts_{#1}=(Q_{#1},q_{0_{#1}},\Sigma\cup\mb{K},\to_{#1})}
 \newcommand{\TTSb}[1]{\tts_{#1}=(Q_{#1},q_{0_{#1}},\Sigma\cup\mb{K},\to_{#1})}
+\newcommand{\TTSc}[1]{\tts_{#1}=(Q_{#1},q_{0_{#1}},\Sigma\cup\realpoz,\to_{#1})}
 \newcommand{\TTSs}{\tts=(\Q,q_0,\A\cup\realpos,\to)}
 
 \newcommand{\TTSbw}[1]{\tts_{#1}=(\Q_{#1},q_{0_{#1}},\Sigma
@@ -118,6 +120,7 @@ urlcolor=black
 \newcommand{\naturals}{\mb{N}}
 \newcommand{\integerpoz}{\mb{Z}_{\ge 0}}
 \newcommand{\integerpos}{\mb{Z}_{> 0}}
+\newcommand{\real}{\mb{R}^{|\X^{dt}|}}
 \newcommand{\realpoz}{\mb{R}_{\ge 0}}
 \newcommand{\realpos}{\mb{R}_{> 0}}
 \newcommand{\simu}[1]{\sqsubseteq_{#1}}
@@ -131,7 +134,9 @@ urlcolor=black
 \newcommand{\backward}{\raisebox{2pt}{$\swarrow$}}
 \newcommand{\backwardp}[2]{\backward^{#2}_{\hspace{-2mm}#1}}
 \newcommand{\forward}{\raisebox{2pt}{$\nearrow$}}
+\newcommand{\forwardp}[2]{\forward^{#2}_{\hspace{-2mm}#1}}
 \newcommand{\enabledforward}[1]{Enabled\hspace{-0.8pt}\forward\hspace{-1mm}(#1)}
+\newcommand{\enabledforwardb}[3]{Enabled\hspace{-0.8pt}\forwardp{#2}{#3}\hspace{-1mm}(#1)}
 \newcommand{\enabledbackward}[1]{Enabled\hspace{-0.8pt}\backward\hspace{-1mm}(#1)}
 \newcommand{\enabledbackwardb}[3]{Enabled\hspace{-0.8pt}\backwardp{#2}{#3}\hspace{-1mm}(#1)}
 \newcommand{\Loc}{\mc{L}}
@@ -153,8 +158,9 @@ urlcolor=black
 \newcommand{\guard}{\textsf{guard}}
 \newcommand{\reset}{\textsf{reset}}
 %\newcommand{\hmn}{h_{\min}}
-\newcommand{\reacha}[1]{\overline{Reach(#1)}}
-%\newcommand{\stacktxt}[1]{\mathit{\stackon[0pt]{#1}{\hstretch{7.0}{\sim}}}}
+\newcommand{\stacktxt}[1]{\mathit{\stackon[0pt]{#1}{\hstretch{7.0}{\sim}}}}
+\newcommand{\reacha}[1]{\stacktxt{Reach(#1)}}
+\newcommand{\dte}{dt^{\epsilon}}
 \newcommand{\lpsabrb}{LPS }
 \newcommand{\lpsabr}{LPS}
 \newcommand{\lps}{local planning semantics }
@@ -164,7 +170,8 @@ urlcolor=black
 \scalebox{1.5}{$\BODY$}
 \end{displaymath}
 }
-
+\newcommand*\circlled[1]{\tikz[baseline=(char.base)]{
+     \node[shape=circle,draw,inner sep=.5pt] (char) {#1};}}
 
 %%%%%%%%%%%%%%%%%%PLANNING%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\squig}{{\scriptstyle\sim\mkern-3.9mu}}
