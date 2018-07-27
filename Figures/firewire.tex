@@ -1,0 +1,42 @@
+\begin{figure}[!h]
+ \centering
+\begin{tikzpicture}[->,node distance=1.3cm,>=stealth',bend angle=20,auto,
+  place/.style={circle,thick,draw=blue!75,fill=blue!20,minimum size=10mm},
+  red place/.style={place,draw=red!75,fill=red!20}
+  every label/.style={red},
+  every node/.style={scale=.6},
+  dots/.style={fill=black,circle,inner sep=2pt},
+  initial text={}]
+
+  \node [accepting, place,label=above:\textcolor{red}{$x\le 4$}] (l0)  {$\loc_0$};
+  \node [place,below=1cm of l0,xshift=3cm,label=left:\textcolor{red}{$x\le 167$}] (l1) {$\loc_1$};
+  \node [place,below=1cm of l0,xshift=-3cm,label=right:\textcolor{red}{$x\le 85$}] (l2) {$\loc_2$};
+  \node [place,below=2.5cm of l0] (l3) {$\loc_3$};
+  \node [place,below=1cm of l3, xshift=-3cm,label=below:\textcolor{red}{$x\le 4$}] (l4) {$\loc_4$};
+  \node [place,below=1cm of l3,xshift=3cm] (l5) {$\loc_5$};
+  \node [place,right=4cm of l3] (l6) {$\loc_6$};
+  \node [place,left=4cm of l3] (l7) {$\loc_7$};
+  
+  
+  \path (l0) edge node[sloped,midway,above]{$slow$} node[sloped,midway,below]{$x:=0$} (l1)
+        (l0) edge node[sloped,midway,above]{$fast$}node[sloped,midway,below]{$x:=0$} (l2)
+        (l1) edge node[sloped,midway,above]{$wait$}node[sloped,midway,below]{$159\le x\le167$} (l3)
+        (l2) edge node[sloped,midway,above]{$wait$}node[sloped,midway,below]{$76\le x\le85$} (l3)
+        (l2) edge [bend right] node[left,align=center]{$rcv\_req$\\$x:=0$} (l4)
+        (l3) edge node[sloped,above, midway,align=center]{$rcv\_req$\\$x:=0$} (l4)
+        (l3) edge node[sloped,above,midway,align=center]{$snd\_req$\\$x<=4$} (l5)
+        (l5) edge[bend right=30] node[sloped,below,midway,align=center]{$rcv\_ack$} (l6)
+        (l4) edge[bend left=30]node[sloped,below,midway]{$snd\_ack$} (l7);
+        
+        
+  \draw[->] (l5) to[in=0,out=20,bend angle=30]node[sloped,above,midway]{$contention$} node[sloped,midway,below]{$x:=0$} (l0);
+  \draw[->] (l6) to[in=10,out=90]node[sloped,above,midway]{$slave$}node[sloped,midway,below]{$x:=0$}  (l0);
+  \draw[->] (l7) to[in=170,out=90]node[sloped,above,midway]{$leader$}node[sloped,midway,below]{$x:=0$}  (l0);
+  \draw[->] (l1) to[bend left=25] node[sloped,above,midway,xshift=-1.2cm,yshift=2mm]{$rcv\_req$}node[sloped,midway,below,xshift=-1.2cm]{$x:=0$} (l4);
+\end{tikzpicture}
+  \caption{Timed Automaton for a Node}
+ \label{fig:node}
+\end{figure}  
+
+
+
