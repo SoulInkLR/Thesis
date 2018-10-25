@@ -1,3 +1,149 @@
 \chapter{Conclusion and Perspectives}
 \label{chap:9}
-\minitoc
+In this chapter, we conclude this thesis by summarizing the achievements and pointing out
+interesting future working directions.  
+
+\section{Achievements}
+\subsection*{Knowledge Based Optimization Approach}
+In this thesis, we presented an intermediate distributed representation (Send/Receive model) for 
+distributed ream-time systems. This representation proposes an implementation method for
+systems with multiparty interactions through simpler primitives such as
+messages passing. It also provides a scheduling mechanism, more appropriate to distributed
+real-time systems, since it is based on partial information of a given system.
+
+Our first contribution was to propose an optimization methods for such intermediate 
+representation. We presented a methods that relies on invariants in order to refine the
+set of conflicting interactions, required for building the Send/Receive model.
+Based on the original model, an approximation of the set of reachable states of a timed system
+is derived on the form of invariants. The latter are used later on for checking the 
+simultaneous enabledness of two potentially conflicting interactions. 
+Based on the obtained results, either the potential conflict between two interactions is cleared 
+out meaning that both interactions are never enabled at the same time, or the real conflict 
+cannot be attested which in this case a counter-example is proposed.
+This optimization aims particularly at reducing the effort of scheduling interactions
+by removing any unnecessary exchange of messages or evaluation computations. 
+
+\subsection*{Modeling Communication Delays}
+The Send/Receive model presented in Chapter~\ref{chap:3} assumes that the communication 
+mechanisms are fast enough to not impact the behavior of the overall system. Effectively, this
+is due to the zero delay between the decision of executing interactions in schedulers and
+the concrete execution of the corresponding actions in the participating components.
+The resulting model was proven to be observationally equivalent to the initial model.
+To reduce the impact of communication delays on the system behavior,~\cite{ahlem_these} proposed
+an approach based on the idea of \emph{early decision making}. In this solution, schedulers
+plan ahead the execution of interactions and notify the corresponding components in advance.
+Moreover, it was suggested that schedulers are required to observe an additional subset of
+components called \emph{observed components}, not participating in the planned interactions, 
+in order to achieve global deadlines.
+However, besides the fact that this method is restricted to systems where components have non 
+decreasing deadlines, the characterization of the set of observed components is incomplete. In 
+fact this set is greater than the presented characterization, and in many cases is equal to 
+all the component of the system. This is mainly due to the nature of the location invariants:
+Local constraints that propagate on the global level.
+
+Our second contribution was to propose a method, based on the same idea of early decision making,
+but that differs from the approach of~\cite{ahlem_these} in the following points:
+\begin{itemize}
+  \item No restriction on components constraints was made
+  \item No restriction on the form of timing constraints (In ~\cite{ahlem_these} timing 
+    constraints are restricted to constraints of the form $x\le k$ or $x\ge k$)
+  \item Our method works on the semantics level conversely to the aforementioned method that
+    relies directly on transformations and model construction. Effectively, we introduced 
+    the local planning semantics that plan the execution of interactions based only on 
+    the set of its participating components. The planning operations are constrained by 
+    the worst estimation of communication delays as well as the planned interactions. This
+    semantics is suited for distributed real-time systems since it is based on local (partial)
+    information. We also provided a proof for weak simulation, and a strategy based on 
+    sufficient conditions guaranteeing the preservation of the system behavior from deadlocks. 
+    Finally, we presented an alternative method based on real-time controller synthesis 
+    paradigm and discussed its convenience with respect to our method. 
+\end{itemize}
+
+\subsection*{Robustness to Clock Imperfections}
+We studied in Chapter~\ref{chap:6} the effect of clock imperfections (clock drift) on the 
+behavior of a timed system. We considered a perturbation model where clock rates are not 
+perfect (not equal and may change during the execution) but under the assumption that clocks 
+are resynchronized which induces that their difference of clock values will stay within a certain
+threshold. 
+Our robustness analysis approach was based on the characterization of potential bad states
+that invalidates the $\epsilon$-simulation between the initial model and the perturbated model.
+We proposed a solution for verifying the robustness of a given timed system based on 
+shrinkability analysis and suggested the \texttt{Shrinktech} tool for achieving such analysis
+which is basically based on parameter synthesis.
+
+
+\section{Future Works}
+\subsection*{Partitioning and Mapping}
+
+In this thesis, we presented the partitioning of interactions as being an important parameter
+of the Send/Receive transformation. Interaction partitioning is of importance since the 
+set of conflicting interactions is calculated based on the latter. The immediate question is
+whether a given partitioning is better than an other. In other terms, how can we evaluate 
+if a given partition of interaction is good or bad. Instinctively, the choice of partitioning
+interactions is based on two main factors, namely the degree of parallelism and the effort
+for solving conflicts (in terms of messages and computational evaluation).
+This choice is generally guided by the choice of a specific target platform: how expensive
+is the communication? This introduce necessarily the problem of mapping an application
+on a given target platform~\cite{map}. This question is of great importance since its answer
+will define how each application process will be mapped to the platform interconnected 
+processing nodes. Consequently, it decides on workload of each processing nodes and 
+the communication volume induced by such mapping.
+Thus an optimal partition would be a partition that takes into account the target platform
+and proposes a partitioning that optimize all the above points. This can be done either
+by computing directly the optimal solution or by tuning a proposed partition by merging or 
+splitting some processes of the application.
+
+\subsection*{Invariants for Distributed Real-Time Systems}
+
+In Chapter~\ref{chap:5} and Chapter~\ref{chap:6}, we presented different semantics reflecting
+the behavior of a real-time system in a distributed setting (under communication delays or 
+with clock drift). 
+
+In Chapter~\ref{chap:5}, we relied on the invariants of the initial model
+to verify the sufficient conditions for deadlock freedom of the local planning semantics.
+This usage is due to the fact that invariants of the system under the standard semantics 
+are proven to be invariants of the system under the local planning semantics.
+An interesting direction is to try to derive invariants characterizing specifically the reachable
+states of the planning semantics. This will help directly in the verification process in term of 
+results precision.
+
+In Chapter~\ref{chap:6}, we proposed the \texttt{Shrinktech} tool for the robustness analysis.
+However, such tool relies on the computation of the region graph of a timed automaton, which
+in term of complexity suffers from the state explosion problem when the increasing the number of
+clocks. A solution to reduce this cost is to compute a parametric invariant of the system
+with drifting clocks. The latter represents a cheap over-approximations may in some cases 
+allow to avoid overly eager and expensive computations of the precise parametric images of 
+the set of reachable states. 
+
+\subsection*{Modeling vs Semantics}
+
+Model-based development is one promising approach in building real-time systems today.
+This paradigm relies on models with well defined semantics when building systems all the way
+form the design phase until reaching a concrete implementation.
+This approach is really important when working with large scale heterogeneous systems since
+it reduces both the engineering efforts and the development costs and time.
+Nevertheless, a model represents only an abstraction of the reality and is often based
+on idealized assumptions, which will not hold at a given stage of the model-based workflow, 
+precisely when reaching the implementation point.
+In this thesis, we tried to bridge this gap by introducing new semantics to tackle the different
+issues inherent to the distributed context.
+An interesting working direction would be to answer the following question: 
+Can similar results be obtained without introducing new semantics, but using modeling
+instead? 
+This question is of a big interest since it can indicate which direction efforts need to be made.
+For instance, the introduction of a new semantics can be in some case complicated and 
+errors-prone whereas modeling is known to be more general, much easier and trivial to understand.
+Also, modeling has also the benefit of being modular in the sense that if we change 
+the target execution platform on will have just to replace the corresponding model.
+
+\subsection*{Scheduling Distributed Real-Time Systems}
+In this thesis, we often mentioned the words \say{schedulers or scheduling} but without 
+referring to any scheduling scheme or policy. An interesting working direction is to refine 
+the behavior of given system by imposing some scheduling constraints. In fact, since we presented
+methods based on over-approximations and sufficient conditions, the results of our analysis may
+in some cases yield counter-examples that are either false-positives or real counter-examples.
+The idea is to identify scheduling schemes that could identify the needs, based on a given set
+of properties, in order to achieve a correct behavior.
+
+
+

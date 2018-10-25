@@ -5,11 +5,12 @@
 
 As explained in Subsection~\ref{sub:conf}, two interactions $\alpha_1$ and $\alpha_2$ 
 sharing a subset of components cannot execute concurrently.
-Particularly, if these interactions are enabled from the same state they are conflicting, meaning
+In fact, if these interactions are enabled from the same state they are conflicting, meaning
 that they are competing on the same resources (shared components) and only one interaction will
 be granted the execution and not the other.
 Particularly, given a timed system $\gamma(B_1,\cdots,B_n)$ and an interaction partition
-$\{\gamma_j\}_{j=1}^m$, if such interactions are part of two different class of the interaction
+$\{\gamma_j\}_{j=1}^m$ (Definition~\ref{def:inter_part} of Chapter~\ref{chap:3}), 
+if such interactions are part of two different classes of the interaction
 partition (externally conflicting interactions), then the resulting Send/Receive model requires 
 the intervention of the conflict resolution layer to resolve the conflict situation. 
 The computation of the conflicting interactions set is based on syntactic pre-checks
@@ -32,7 +33,7 @@ which both $\alpha_1$ and $\alpha_2$ are enabled, i.e., a state satisfying:
 \begin{equation}\label{eq:conf1}
   Conflict(S,\alpha,\beta)=Reach(S) \wedge \enabled{\alpha_1} \wedge \enabled{\alpha_2}
 \end{equation}
-  where $Rreach(S)$ is the set of reachable states of the S.
+  where $Reach(S)$ is the set of reachable states of the S.
 \end{definition}
 
 The above definition of conflicts characterizes the exact set of conflicting interactions.
@@ -49,13 +50,14 @@ over approximation of the reachable states of the system on the form of invarian
 
 Knowledge as referred to it here can be interpreted as any information that gives 
 a characterization of a given system. We distinguish two types of knowledge:
-Local knowledge that captures partial information of a system on components level, and
-a global knowledge that relates these local knowledge and link them together.
+local knowledge that captures partial information of a system at components level, and
+a global knowledge that builds upon local knowledge and takes into account components 
+synchronizations.
 Our approach includes two main steps: the first step \emph{(i)} consists of constructing the set
 of potentially conflicting interactions based on Definition~\ref{def:pconf}. 
 This step aims mainly to distinguish non conflicting interactions from those that can
-potentially conflict in order to ease and avoid unnecessary checks during the second step.
-Then, the second step \emph{(ii)} calculates then combines local and global knowledge 
+potentially conflict in order to avoid unnecessary checks during the second step.
+Then, the second step \emph{(ii)} computes then combines local and global knowledge 
 of the system on the form of invariants. The latter will represents an over-approximation 
 of the reachable state of the system. 
 After that, by replacing $Reach(S)$ by its over-approximation $\reacha{S}$ in
@@ -63,15 +65,14 @@ Expression~\ref{eq:conf1}, potentially conflicting interactions are reduced by
 checking the following precondition:
 
 \begin{equation}\label{eq:conf2}
-  \overline{Conflict(S,\alpha_1,\alpha_2)}=\ \reacha{S} \wedge \enabled{\alpha_1} \wedge 
+  \stacktxt{Conflict(S,\alpha_1,\alpha_2)}=\ \reacha{S} \wedge \enabled{\alpha_1} \wedge 
   \enabled{\alpha_2}
 \end{equation}
 
 Notice that since $Reach(S)\Rightarrow\reacha{S}$, we obtain that 
-$Conflict(S,\alpha_1,\alpha_2) \Rightarrow$\\$\overline{Conflict(S,\alpha_1,\alpha_2)}$.
+$Conflict(S,\alpha_1,\alpha_2) \Rightarrow$\\$\stacktxt{Conflict(S,\alpha_1,\alpha_2)}$.
 Thus, if two interactions are established to be conflicting  
-according to Expression~\ref{eq:conf2}, then they are conflicting according to 
-Expression~\ref{eq:conf1}.
+according to~\ref{eq:conf2}, then they are conflicting according to~\ref{eq:conf1}.
 Hereinafter, \emph{false} conflicts refers to potential conflicts as defined in
 Definition~\ref{def:pconf} but that are not conflicts with respect to Definition~\ref{def:conf}.
 
@@ -80,7 +81,7 @@ because the system cannot reach a global location configuration enabling both in
 or \emph{(ii)} because both interactions are not enabled at the same time due to timing 
 constraints.
 In the following, we show how to compute invariants for removing false conflicts of
-types \emph{(i)} and \emph{(ii)}. This invariants combined with
+types \emph{(i)} and \emph{(ii)}. These invariants combined with
 individual reachable states of components will represent our over-approximation of $Reach(S)$.
 \subsection{Linear Invariants}
 
@@ -91,11 +92,13 @@ Particularly, we are interested in the so called linear state-invariants~\cite{p
 from the 
 Petri net community. Linear state-invariants or (S-invariants) are determined to be 
 appropriate for proving non-coverage of subsets of individual locations, 
-which corresponds exactly to what needed to prove that two interactions 
+which corresponds exactly to what is needed to prove that two interactions 
 cannot be enabled from the same location configuration.
-Precisely, linear invariants consist of linear combinations of $\al{\loc}$ predicates that are
-equal to a constant. For instance $\al{\loc_0}+\al{\loc_1}+\al{\loc_2}=1$ is a linear constraint
-for the Petri net of Figure~\ref{fig:pn}.
+Precisely, linear invariants consist of linear equations of predicates $\al{\loc}$ interpreted
+as integer values using the convention 1 for $\true$ and 0 for $\false$.
+For instance $\al{\loc_0}+\al{\loc_1}+\al{\loc_2}=1$ is a linear constraint
+for the Petri net of Figure~\ref{fig:pn} expressing the presence of on token circulating
+between places $\loc_0$, $\loc_1$ and $\loc_2$.
 
 Locations configurations reachable in a composition 
 $S = \gamma(B_1,\dotsc,B_n)$ are necessary combinations 
@@ -135,12 +138,13 @@ Methods for calculating linear invariants are based on linear algebra, and more 
 on the \emph{characteristic system}~\cite{inv1} (also known by the place-transition matrix in 
 the Petri nets community). It consists of a system of linear equations representing 
 the interactions of a given system.
-\begin{definition}\label{def:chars}[Characteristic System]
+\begin{definition}[Characteristic System]\label{def:chars}
   For a timed system $S=\gamma(B_1,\cdots,B_n)$ and $\Loc=\Loc_1\times\cdots\times\Loc_n$,
   the set of all global location configuration. The characteristic system is defined as 
   follows:
-  $$\mc{M}(S)=\bigwedge_{\alpha\in\gamma}\bigwedge_{\loc\in\Loc_{\alpha}}
-\Big(\sum_{\loc_i\in\alpha^{\bullet}}x_{\loc_i}-\sum_{\loc_j\in{^\bullet}\alpha}x_{\loc_j}\Big)$$
+  $$\mc{M}(S)\equiv\bigwedge_{\alpha\in\gamma}\bigwedge_{\loc\in\Loc_{\alpha}}
+\Big(\sum_{\loc_i\in\alpha^{\bullet}}x_{\loc_i}-\sum_{\loc_j\in{^\bullet}\alpha}x_{\loc_j}
+  \Big)=0$$
   where $\Loc_{\alpha}$ is the subset of locations configurations from which $\alpha$ is 
   possible, and $\alpha^{\bullet}$, ${^\bullet}\alpha$ denotes respectively the destinations and 
   sources locations of components actions involved in $\alpha$.
@@ -173,7 +177,7 @@ proposed in~\cite{inv-lin}. It is a variant of Gauss-Jordan elimination that exp
 the locality of unknowns as well as the particular form of the characteristic system equations. 
 Equations are processed iteratively, one by one, while producing an equivalent left-bound system.
 
-Let $LI(S)$ be the linear invariants characterizing a given system S.
+Let $LI(S)$ be the linear invariants characterizing a given system $S$.
 A potential conflict between interactions $\alpha_1$ and $\alpha_2$ is a false conflict if the 
 following formula is not satisfiable:
 
@@ -200,12 +204,13 @@ As they completely abstract time, linear invariants presented above are only par
 capturing system dynamics.
 For example, a global location may not be reachable because components locations have 
 disjoint clock constraints, or an interaction may not be enabled from a state because 
-of an empty timing constraint. Such properties require extra relationships relating clocks of 
+of its empty timing constraint. Such properties require extra relationships relating clocks of 
 different components that are not available in $Reach(B_i)$ as it is is restricted to 
 clocks of a single component: a zone of one of its symbolic states is a conjunction of its 
 related clocks constraints, as explained in Section~\ref{sec:2.4}.
 
-We follow the approach of~\cite{hs} for reinforcing our approach with global invariants on clocks.
+We follow the approach of~\cite{hs} for reinforcing our approach with global invariants on 
+clocks.
 They are induced by simultaneity of transitions when executing an 
 interaction and the synchrony of time progress. To compute such invariants, additional 
 \emph{history} clocks are first introduced in components. History clocks are associated to 
@@ -217,14 +222,14 @@ in~\cite{hs}, expressing the fact that history clock of an interaction is necess
 equal to history clocks of its actions after its execution and until the execution of another 
 interaction involving these actions.
 \input{Figures/hc.tex}
-\begin{definition}[History Clocks for Actions]
-Given a timed system $S=\gamma(B_1,\cdots,B_n)$, the history clocks for actions are defined
-as follows:
+\begin{definition}[History Clocks Inequalities for Actions]
+Given a timed system $S=\gamma(B_1,\cdots,B_n)$, the history clocks inequalities for actions 
+  are defined as follows:
   $$\mc{HA}(S)=\bigvee_{\alpha\in\gamma}\big[\big(\bigwedge_{\substack{a_i,a_j\in\alpha\\
   a_k\in Act(\gamma\ominus\alpha)}}h_{a_i}=h_{a_j}\le h_{a_k}\big)\wedge(\mc{HA}(\gamma\ominus
   \alpha)\big]$$
 \end{definition}
-where $Act(\gamma\ominus\alpha)$ is the set of actions involved in the interactions
+\noindent where $Act(\gamma\ominus\alpha)$ is the set of actions involved in the interactions
 $\gamma\ominus\alpha=\{\beta\setminus\alpha \ | \ \beta\in\gamma\wedge\beta\nsubseteq\alpha\}$
 and $\mc{HA}(\emptyset)=\true$.
 The predicate $\mc{HA}(S)$ can be interpreted as follows. Assuming that $\alpha\in\gamma$
@@ -271,8 +276,8 @@ $T_2$, and since history clocks $h_a$ of an action $a$ is reset whenever $a$ is 
 by~\cite{hs} the history clock inequalities for $start_0$ are:
 \begin{equation}\label{eq:histconst}
 \begin{split}
-( h_{start_0} = h_{start_1} &\le h_{start_2} - 25 ) \\ 
-  &\vee \\ ( h_{start_0} = h_{start_2} &\le h_{start_1} - 25 ).
+( h_{start_0} = h_{start_1} &\le h_{start_2} - 25 ) \vee 
+  ( h_{start_0} = h_{start_2} \le h_{start_1} - 25 )
 \end{split}
 \end{equation}
 Equality~(\ref{eq:histconst}) states that $h_{start_0}$ is equal to the history clock 
@@ -290,8 +295,8 @@ That is, with~(\ref{eq:histconst}) we obtain $x \le y - 25$ or $y \le x - 25$.
   By definition of $Enabled$ we have $\enabled{\alpha_5} = \al{\loc_2^2} \wedge 
 (10 \leq x \leq 30) $. 
   Similarly, $\enabled{\alpha_6} = \al{\loc_2^3} \wedge (10\le y \leq 30)$.
-  We obtain then: $\enabled{\alpha_5}\wedge\al{\loc_2^3}\Rightarrow y\le5 \
-  \wedge\enabled{\alpha_6}\wedge\al{\loc_2^2}\Rightarrow x\le5$.
+  We obtain then: \Big($\enabled{\alpha_5}\wedge\al{\loc_2^3}\Big)\Rightarrow\Big(y\le5 \
+  \wedge\enabled{\alpha_6}\wedge\al{\loc_2^2}\Big)\Rightarrow x\le5$.
 This proves that $\alpha_5$ and $\alpha_6$ are not conflicting. 
 \end{example}
 

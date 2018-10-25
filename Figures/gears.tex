@@ -1,0 +1,53 @@
+\begin{figure}[!h]
+ \centering
+\begin{tikzpicture}[
+    dots/.style={fill=black,circle,inner sep=1pt},
+  initial text={}]
+
+\node (gc) [rectangle, draw=black, rounded corners, minimum width=30mm, minimum height=10mm] {Gear Controller};
+\node (gb) [rectangle, draw=black, rounded corners, minimum width=30mm, minimum height=10mm,below=7.5mm of gc] {Gear Box};
+\node (inf) [rectangle, draw=black, rounded corners, minimum width=30mm, minimum height=10mm,above=7.5mm of gc] {Interface};
+\node (c) [rectangle, draw=black, rounded corners, minimum width=30mm, minimum height=10mm,below=7.5mm of gc, xshift=3.2cm] {Clutch};
+\node (e) [rectangle, draw=black, rounded corners, minimum width=30mm, minimum height=10mm,below=7.5mm of gc, xshift=-3.2cm] {Engine};
+
+  \node (i1) at ($(gc.north west)!0.7!(gc.north east)$) {};
+  \node (i2) at ($(gc.north west)!0.3!(gc.north east)$) {};
+
+  \node (i3) at ($(inf.south west)!0.7!(inf.south east)$) {};
+  \node (i4) at ($(inf.south west)!0.3!(inf.south east)$) {};
+  
+  \draw[->] (i1.center) -- (i3.center);
+  \draw[->] (i4.center) -- (i2.center);
+
+  \node (i1) at ($(gb.north west)!0.7!(gb.north east)$) {};
+  \node (i2) at ($(gb.north west)!0.3!(gb.north east)$) {};
+
+  \node (i3) at ($(gc.south west)!0.7!(gc.south east)$) {};
+  \node (i4) at ($(gc.south west)!0.3!(gc.south east)$) {};
+  
+  \draw[->] (i1.center) -- (i3.center);
+  \draw[->] (i4.center) -- (i2.center);
+
+  \node (i1) at ($(gc.north west)!0.7!(gc.south west)$) {};
+  \node (i2) at ($(gc.north west)!0.3!(gc.south west)$) {};
+
+  \node (i3) at ($(e.north west)!0.7!(e.north east)$) {};
+  \node (i4) at ($(e.north west)!0.3!(e.north east)$) {};
+  
+  \draw[->] (i1.center) -| (i3.center);
+  \draw[->] (i4.center) |- (i2.center);
+  
+  \node (i1) at ($(gc.north east)!0.7!(gc.south east)$) {};
+  \node (i2) at ($(gc.north east)!0.3!(gc.south east)$) {};
+
+  \node (i3) at ($(c.north west)!0.3!(c.north east)$) {};
+  \node (i4) at ($(c.north west)!0.7!(c.north east)$) {};
+  
+  \draw[->] (i1.center) -| (i3.center);
+  \draw[->] (i4.center) |- (i2.center);
+\end{tikzpicture}
+  \caption{Gear Controller System}
+ \label{fig:gear}
+\end{figure}  
+
+

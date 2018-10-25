@@ -18,10 +18,10 @@ baseline]
   initial text={},
 baseline]
     \node [place,initial, initial where=above,label={[shift={(-1.2,-0.5)},scale=0.8]$x\le k-h_{\min}$}] (t1)  {$\loc_1$};
-    \node [place,below=10mm of t1,align=center,label={[shift={(-1.5,-0.6)},scale=0.8]$x_p\le h_{\min}\wedge x\le k$},scale=0.9] (t2) {$\loc_{1}^{a}$};
+    \node [place,below=10mm of t1,align=center,label={[shift={(-2,-0.6)},scale=0.8]$x_p\le 2h_{\min}\wedge x\le k$},scale=0.9] (t2) {$\loc_{1}^{a}$};
     \node [place,below=7mm of t2] (t2b) {$\loc_2$};
-    \path (t1) edge node[xshift=2mm,right,align=center,xshift=-2mm,scale=0.8]{$plan_a$\\$\backwardp{\hmin}{\hmin} g_a$\\$x_p:=0$} (t2)
-      (t2) edge node[xshift=1mm,right,align=center,scale=0.8]{$a$\\$x_p=h_{\min}$\\$r_a$} (t2b);
+    \path (t1) edge node[xshift=2mm,right,align=center,xshift=-2mm,scale=0.8]{$plan_a$\\$\backwardp{2\hmin}{2\hmin} g_a$\\$x_p:=0$} (t2)
+      (t2) edge node[xshift=1mm,right,align=center,scale=0.8]{$a$\\$x_p=2h_{\min}$\\$r_a$} (t2b);
   \end{tikzpicture}}
   \caption{Planning as a Timed Automaton}\label{fig:enc}
 \end{figure}

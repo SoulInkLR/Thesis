@@ -86,7 +86,9 @@ perspectives:
                          systems where all communication and processing activities are initiated
                          whenever a significant event (rather than the regular clock tick) 
                          occurs. Oppositely, in time-triggered systems all activities are 
-                         initiated by the progress of real-time.\vspace{1mm}} \\ \cline{2-3} 
+                         initiated by the progress of real-time, which help 
+                         to predict the behavior of a system since clock ticks are well
+                         known and defined moments. \vspace{1mm}} \\ \cline{2-3} 
     \hline
   \end{tabular}
   \caption{Classification Of Real-Time Systems}
@@ -102,7 +104,7 @@ referred to as the concepts of \emph{temporal control} and \emph{logical control
 Temporal control is related to the progression of \emph{real-time}. It is of concern when it 
 comes to determining the instants in the domain of real time for the accomplishment of 
 computations, that is, when computations must be activated.
-Such instants are derived from the dynamic of the application. 
+Such instants are derived from the dynamics of the application. 
 
 Logical control is related to the control flow \emph{within} a given task, meaning that it 
 is based on the given task structure and the particular input data. For instance, the execution
@@ -166,8 +168,8 @@ standardize their work into a formal discipline with proper methods, especially 
 like information theory, operational research and computer science in general.
 
 System design~\cite{intro:sys_design} differs radically from pure software design in the sense
-that it does not focus only on functional requirements. It also accounts for nonfunctional 
-properties such as timing, energy consumption, or even fault tolerance. Meeting such 
+that it does not focus only on functional requirements but also accounts for nonfunctional 
+properties, such as timing energy consumption or even fault tolerance. Meeting such 
 extra functionalities is essential and requires evaluation of how design choices affect 
 the overall system behavior. 
 
@@ -192,11 +194,12 @@ may combine several design styles.
 \subsubsection{Model-Based Design}
 Model-based design~\cite{intro:mb,intro:mb2} is one promising approach in building 
 real-time systems. It relies on mathematical modeling for the design, analysis 
-and validation of systems. This approach captures not only what the dynamic and the 
+and validation of systems. This approach captures not only what the dynamics and the 
 expected properties of the system are, but also what is assumed about the system's environment.
-Thus, It enables developers to verify the logic of their
+Thus, it enables developers to verify the logic of their
 application, assumptions about its environment and end-to-end behavior at early stages of the
 design cycles.
+The model-based design workflow is usually as follows. 
 First, an application model expressing the behavior and dynamic of the considered system is 
 built. It represents an abstraction that is platform independent, meaning that it does not 
 consider any hardware specification such as communication delays or CPU(s) speed, which allows 
@@ -243,7 +246,7 @@ high-quality code, by addressing the aforementioned problems.
 Giotto~\cite{intro:giotto} is a programming approach for representing embedded systems
 at the architecture level using a timed-triggered programming language. It separates the
 platform-independent functionalities and timing aspects from platform-dependent scheduling 
-and communication issues. It allows thus, an intermediate abstraction that enables the 
+and communication issues. It allows thus an intermediate abstraction that enables the 
 design engineers to annotate the functional programming modules with temporal attributes that 
 are derived from the high-level stability analysis of control loops. 
 Figure~\ref{fig:giotto} depicts the workflow of Giotto. A platform-abstract Giotto program
@@ -276,7 +279,7 @@ Oasis~\cite{intro:oasis1,intro:oasis2} is a framework that provides methods for 
 and implementation of safety-critical real-time systems. It includes a complete set of 
 development tools (code generation, validation, simulation and execution) that eases the design 
 and verification stages
-while complying with general standards. The Oasis approach relies on the time-triggered concept
+while complying with general standards. The Oasis approach relies on the time-triggered paradigm
 to build systems that are fully deterministic, predictable, and reproducible in both the logical
 and temporal domains, even in case of failure.
 An Oasis application consists of a static set of communicating agents, i.e., autonomous execution
@@ -328,6 +331,8 @@ deadlines can be met for a given set of inputs.
 
 
 \subsection{Lustre}
+
+
 Lustre~\cite{intro:lustre} is a synchronous dataflow language used for the development of 
 reactive systems, that is, systems that continuously interact with their environment.
 The behavior of a Lustre program is a sequence of reactions consisting in reading the current 
@@ -402,7 +407,7 @@ applications using the BIP Framework. BIP~\cite{intro:bip} (Behavior, Interactio
 is a model-based and component-based framework where systems consist of components
 represented as timed automata that may synchronize on particular actions to coordinate
 their activities.
-Particularly, we investigate timed automata based models, with well defined semantics, in order 
+Particularly, we investigate timed automata based models in order 
 to study the behavior of a given system with some imposed timing constraints when deployed 
 in a distributed environment. 
 

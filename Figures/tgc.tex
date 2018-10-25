@@ -1,0 +1,68 @@
+\begin{figure}[!h]
+ \centering
+\begin{tikzpicture}[->,node distance=1.3cm,>=stealth',bend angle=20,auto,
+  place/.style={circle,thick,draw=blue!75,fill=blue!20,minimum size=10mm},
+  red place/.style={place,draw=red!75,fill=red!20}
+  every label/.style={red},
+  every node/.style={scale=.6},
+  dots/.style={fill=black,circle,inner sep=2pt},
+  initial text={}]
+
+  \node [accepting, place] (c0)  {$\loc_0^1$};
+  \node [place] (c1) [right=1.5cm of c0,label=above:\textcolor{red}{$z\le 10$}]{$\loc_1^1$};
+  \node [place] (c2) [below=1.5cm of c1]   {$\loc_2^1$};
+  \node [place] (c3) [left=1.5cm of c2,label=below:\textcolor{red}{$z\le 10$}] {$\loc_3^1$};
+  
+  \path (c0) edge node[align=center,above]{$approach_0$} node[align=center,below]{$z:=0$} (c1)
+        (c1) edge node[align=center,right]{$lower_0$\\$z=10$} (c2)
+        (c2) edge node[align=center,below]{$exit_0$} node[align=center,above]{$z:=0$} (c3)
+        (c3) edge node[align=center,left]{$raise_0$\\$z=10$} (c0);
+
+  \node [accepting, place,right=4cm of c0] (g0) {$\loc_0^2$};
+  \node [place] (g1) [right=1.5cm of g0,label=above:\textcolor{red}{$y\le 5$}]{$\loc_1^2$};
+  \node [place] (g2) [below=1.5cm of g1]   {$\loc_2^2$};
+  \node [place] (g3) [left=1.5cm of g2,label=below:\textcolor{red}{$y\le 5$}] {$\loc_3^2$};
+
+  \path (g0) edge node[align=center,above]{$lower_1$} node[align=center,below]{$y:=0$} (g1)
+        (g1) edge node[align=center,right]{$down$\\$y<=5$} (g2)
+        (g2) edge node[align=center,below]{$raise_1$} node[align=center,above]{$y:=0$} (g3)
+        (g3) edge node[align=center,left]{$up$\\$y<=5$} (g0);
+  
+  \node [accepting, place,left=4cm of c0] (t0) {$\loc_0^3$};
+  \node [place] (t1) [right=1.5cm of t0,label=above:\textcolor{red}{$x\le 40$}]{$\loc_1^3$};
+  \node [place] (t2) [below=1.5cm of t1, xshift=-1.75cm,label=below:\textcolor{red}{$x\le 50$}]   {$\loc_2^3$};
+  
+  \path (t0) edge node[align=center,above]{$approach_1$} node[align=center,below]{$x:=0$} (t1)
+        (t1) edge node[align=center,right]{$enter$\\$30\le x\le40$} (t2)
+        (t2) edge node[align=center,left]{$exit_1$\\$ x\le 50$} (t0);
+  
+  \node [inner xsep=2cm,inner ysep=2cm,draw, fit=(c0)(c1)(c2)(c3)] (rec1) {};
+  \node [inner xsep=2cm,inner ysep=2cm,draw, fit=(g0)(g1)(g2)(g3)] (rec2) {};
+  \node [inner xsep=2cm,inner ysep=2cm,draw, fit=(t0)(t1)(t2)] (rec3) {};
+  
+  
+  \node [dots,label=-180:\rotatebox{90}{$lower_0$}] (l1) at ($(rec1.south east)!0.7!(rec1.north east)$) {};
+  \node [dots,label=-180:\rotatebox{90}{$raise_0$}] (r1) at ($(rec1.south east)!0.3!(rec1.north east)$) {};
+  \node [dots,label=0:\rotatebox{90}{$approach_0$}] (a1) at ($(rec1.south west)!0.7!(rec1.north west)$) {};
+  \node [dots,label=0:\rotatebox{90}{$exit_0$}] (e1) at ($(rec1.south west)!0.3!(rec1.north west)$) {};
+  
+  \node [dots,label=0:\rotatebox{90}{$lower_1$}] (l2) at ($(rec2.south west)!0.7!(rec2.north west)$) {};
+  \node [dots,label=0:\rotatebox{90}{$raise_1$}] (r2) at ($(rec2.south west)!0.3!(rec2.north west)$) {};
+
+  \node [dots,label=-180:\rotatebox{90}{$approach_1$}] (a2) at ($(rec3.south east)!0.7!(rec3.north east)$) {};
+  \node [dots,label=-180:\rotatebox{90}{$exit_1$}] (e2) at ($(rec3.south east)!0.3!(rec3.north east)$) {};
+
+  \draw[-] (l1) -- node[above]{$\alpha_3$}(l2);
+  \draw[-] (a1) --node[above]{$\alpha_1$} (a2);
+  \draw[-] (r1) -- node[above]{$\alpha_4$} (r2);
+  \draw[-] (e1) -- node[above]{$\alpha_2$} (e2);
+  \node (train) [below=3mm of rec3] {\LARGE Train}; 
+  \node (gate) [below=3mm of rec2] {\LARGE Gate}; 
+  \node (controller) [below=3mm of rec1] {\LARGE Controller}; 
+\end{tikzpicture}
+  \caption{Train Gate Controller}
+ \label{fig:tgc}
+\end{figure}  
+
+
+

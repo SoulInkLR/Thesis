@@ -4,7 +4,7 @@
 Transition systems provide a general and convenient method for modeling 
 systems and have been used frequently to model the behavior of 
 software and hardware systems. They define graphs where nodes
-represent the possible \emph{states} of the system, and edges model 
+represent the possible \emph{states} (potentially infinite) of the system, and edges model 
 \emph{transitions}, that is, state changes. A state encodes all the relevant 
 information at a certain instant, whereas a transition describes how the system
 evolves between two states. 
@@ -54,7 +54,7 @@ reachable states of $\tts$.
 In this thesis, we use the concept of (bi)simulation~\cite{bsim} 
 in order to attest the similarity of timed transition systems.
 \begin{definition}[Simulation]\label{def:sim}
-  Given two TTS $\TTSb{1}$ and $\TTSb{2}$, a simulation relation from 
+  Given two TTS $\TTSbb{1}$ and $\TTSbb{2}$, a simulation relation from 
   $\ttsb{1}$ to $\ttsb{2}$ is a binary relation $\mc{R}\subseteq\mc{Q}_1
   \times\mc{Q}_2$ such that:
   \begin{itemize}
@@ -121,7 +121,7 @@ often. In the physical world however, no matter how fast a system can
 evolve, it cannot be infinitely fast. This induces the following constraints
 on the progress of time:
 \begin{enumerate}
-  \item Only a finite number of actions can happen in a certain amount of time
+  \item Only a finite number of actions can happen in a finite amount of time
   \item Only a bounded number of actions can happen in zero time
 \end{enumerate}
 
@@ -150,12 +150,12 @@ their absence.
 \section{Timed Systems Syntax and Semantics}\label{sec:2.2}
 \subsection*{Clocks}
 In order to represent and measure the dense time domain, we rely on positive 
-real valued variables, the \emph{clocks}. Clocks are 
+real valued variables, also known as \emph{clocks}. Clocks are 
 positive real variables increasing synchronously (with the same rate) in a 
-given system. They are used to express the progress of time and impose 
-a certain dynamic on the execution of a timed system.
+given system. They are used to express timing constraints to impose 
+a certain dynamics on the execution of a timed system.
 
-Given a finite set of clocks $\mc{X}$, we define the valuation function
+Given a finite set of clocks $\mc{X}$, we define the \emph{valuation} function
 $\val:\mc{X}\to\realpoz$ assigning to each clock $x$ a positive real value 
 $\val(x)$. We put $\Val$ to denote the set of all valuations.
 For a valuation $\val\in\Val$ and $d\in\realpoz$, $\val+d$ is the valuation
@@ -180,29 +180,31 @@ for the set of clock constraints over $\mc{X}$.
 Given a clock constraint $c$ and a valuation $\val$, we say that $\val$
 satisfies $c$, denoted $\val\models c$, if all constraints are satisfied
 when each $x\in\mc{X}$ is replaced by $\val(x)$. 
-We also consider for a clock constraint $c$ the classical \emph{backward} 
+We also consider the classical \emph{backward} 
 and \emph{forward} operators on
 clock constraints:
 \begin{align*}
-  &\text{ \bf Backward } &:& \val\models\backward c\Leftrightarrow 
-  \exists d\in\realpoz.\ \val+d\models c\\ 
-  &\text{ \bf Forward } &:& \val\models\forward c\Leftrightarrow 
-  \exists d\in\realpoz.\ \val-d\models c\\ 
+  &\text{ \bf Backward } :& \val\models\backward c \ \Leftrightarrow \ 
+  \exists d\in\realpoz.\ (\val+d)\models c\\ 
+  &\text{ \bf Forward } \hspace{3.25mm}:& \val\models\forward c \ \Leftrightarrow \
+  \exists d\in\realpoz.\ (\val-d)\models c\\ 
 \end{align*}
 
-Additionally, we also use another variant of the backward operator considering
+Additionally, we also use another variant of the backward and forward operators considering
 lower bounds $l\in\integerpoz$ and upper bounds $u\in\integerpoz\cup
 \{+\infty\}$:
 
-\begin{displaymath}
-  \val\models\backwardp{l}{u} c\Leftrightarrow 
-  \exists d\in\realpoz, l\le d\le u. \ \val+d\models c\\ 
-\end{displaymath}
+\begin{align*}
+  \val\models\backwardp{l}{u} c \ \Leftrightarrow \
+  \exists d\in\realpoz, l\le d\le u. \ (\val+d)\models c\\ 
+  \val\models\forwardp{l}{u} c \ \Leftrightarrow \
+  \exists d\in\realpoz, l\le d\le u. \ (\val-d)\models c\\ 
+\end{align*}
 
 \subsection{Timed Components Syntax and Semantics}
 In this thesis, components are timed automata and systems are compositions of timed automata
 with respect to multiparty interactions. The timed automata we use are essentially the ones from
-~\cite{AlurD94}, however, slightly adapted to embrace a uniform notation the dissertation.
+~\cite{AlurD94}, however, slightly adapted to embrace a uniform notation throughout the dissertation.
 \begin{definition}[Timed Component]\label{def:tc}
   A component is a tuple $B=(\Loc,\loc_0,\X,\A,\E,\I)$, where:
   \begin{itemize}
@@ -275,7 +277,7 @@ The semantics of a timed component $B=(\Loc,\loc_0,\X,\A,\E,\I)$ is given by the
   \end{itemize}
   \end{itemize}
 \end{definition}
-Notice that since the invariants are restricted to conjunction of upper bound
+Notice that since the invariants are restricted to conjunctions of upper bound
 atomic constraints, the time step can be simplified to:
 \begin{displaymath}
   (\loc,\val)\transit{d}(\loc,\val+d)\text{ if }\val+d\models \Inv{\loc} 
@@ -284,17 +286,11 @@ atomic constraints, the time step can be simplified to:
 In this thesis, we always assume components with $\emph{well formed}$
 guards, that is, for a transition $\loc\transit{a,g,r}\loc'$,
 $\big(\val\models g\big)\Rightarrow\big(\val\models\Inv{\loc}\wedge\val[r]\models
-\Inv{\loc'}\big)$ for any $\val\in\Val$. This ensures that the reachable states
-always satisfy the location invariants. The rule on action step becomes then:
+\Inv{\loc'}\big)$ for any $\val\in\Val$. The rule on action step becomes then:
 \begin{displaymath}
   (\loc,\val)\transit{a}(\loc',\val[r])\text{ if } \loc\transit{a,g,r}
       \loc'\text{ and } \val\models g 
 \end{displaymath}
-\begin{remark}
-  When used in predicate definition, clock constraints are straightforwardly 
-  applied to clock valuations of states and thus interpreted as $\true$
-  or $\false$.
-\end{remark}
 We define the predicate $\enabled{a}$ characterizing states $(\loc,\val)$
 from which an action $a$ is enabled, that is, such that $(\loc,\val)
 \transit{a}(\loc',\val')$. It is formalized as follows:
@@ -303,18 +299,20 @@ from which an action $a$ is enabled, that is, such that $(\loc,\val)
 \end{displaymath}
 where $\al{\loc}$ is $\true$ on states whose location is $\loc$.
 In the same way, we define the predicates $\enabledbackward{a}$,
-$\enabledbackwardb{a}{l}{u}$ and $\enabledforward{a}$ describing, respectively,
-states from which an action $a$ can be executed after some time step,
-some bounded time step or states that are time successors of states satisfying $\enabled{\alpha}$
-(see Figure~\ref{fig:zones}). These predicates can be formally written 
-as follows:
+$\enabledbackwardb{a}{l}{u}$, $\enabledforward{a}$ and $\enabledforwardb{a}{l}{u}$ 
+describing, respectively, states from which an action $a$ can be executed after some time step,
+some bounded time step, states that are time successors or bounded time sucessors of states 
+satisfying $\enabled{a}$ (see Figure~\ref{fig:zones}). 
+These predicates can be formally written as follows:
 \begin{align*}
   &\enabledbackward{a}\hspace{1.8mm}=\bigvee_{\loc\in\Loc}\al{\loc}\wedge
   \backward\Phi(a,\loc)  \\
   &\enabledbackwardb{a}{l}{u}=\bigvee_{\loc\in\Loc}\al{\loc}\wedge
   \backwardp{l}{u}\Phi(a,\loc)\\
   &\enabledforward{a}\hspace{1.9mm}=\bigvee_{\loc\in\Loc}\al{\loc}\wedge
-  \forward\Phi(a,\loc)
+  \forward\Phi(a,\loc)\\
+  &\enabledforwardb{a}{l}{u}\hspace{1.9mm}=\bigvee_{\loc\in\Loc}\al{\loc}\wedge
+  \forwardp{l}{u}\Phi(a,\loc)
 \end{align*}
 \input{Figures/zone.tex}
 A state $(\loc,\val)$ is said \emph{urgent} if time cannot progress from
@@ -327,20 +325,27 @@ where $urg(\loc)$ is a clock constraint characterizing the valuations from
 which time cannot progress with respect to the location invariant 
 $\Inv{\loc}$, that is, assuming that 
 $\Inv{\loc}=\bigwedge_{i=1}^m x_i\le k_i$ then 
-$urg(\loc)=\bigwedge_{i=1}^m x_i\ge k_i$. Notice that due to well formed
+$urg(\loc)=\bigvee_{i=1}^m x_i\ge k_i$. Notice that due to well formed
 guards, an urgent reachable state satisfies also Expression~\ref{eq:urg} if inequalities
 $x_i\ge k_i$ on clocks are replaced by equalities $x_i=k_i$ in the expression
 of $urg(\loc)$.
 
+\begin{remark}
+  When used in predicate definition, clock constraints are straightforwardly 
+  applied to clock valuations of states and thus interpreted as $\true$
+  or $\false$.
+\end{remark}
+
 \begin{definition}[Strongly Non-Zeno Timed Component]\label{def:snz}
   Given a timed component $B$, a \emph{structural loop} of $B$ is a sequence 
   of distinct transition $e_1\cdots e_m$ such that $\forall i\in\{1,\cdots,m
-  \},\target(e_i)= \source(e_{i+1})$. $B$ is called \emph{strongly non-zeno} 
-  if for every structural loop there exists a clock $x$ and some $0\le i,j
+  \},\target(e_i)= \source(e_{i+1})$ (the addition $i+1$ is modulo $m$). 
+  $B$ is called \emph{strongly non-zeno} 
+  if for every structural loop there exists a clock $x$ and some $0\le (i,j)
   \le m$ such that:
   \begin{itemize}
     \item $x$ is reset in step $i$, that is, $x\in\reset(e_i)$
-    \item $x$ is bounded from below in step j, that is, $(x<1)\wedge\guard(e_j)
+    \item $x$ is bounded from below in step $j$, that is, $(x<1)\wedge\guard(e_j)
       =\false$
   \end{itemize}
 \end{definition}
@@ -429,7 +434,7 @@ in $\alpha$, that is, $\p{\alpha}=\{B_i\}_{i\in{I}}$.
             \text{ for } \alpha=\{a_i\}_{i\in{I}}\in\gamma}\Big\lvert
         \substack{\loc=(\loc_1,\cdots,\loc_n)\in\Loc, \  
         \loc'=(\loc_1',\cdots,\loc_n')\in\Loc \\
-        \text{ if } i\not\in{I},\ \loc_i'=\loc_i,\text{ and for }i\in{I},\
+        \text{ for } i\not\in{I},\ \loc_i'=\loc_i,\text{ and for }i\in{I},\
         \loc_i\transit{a_i,g_i,r_i}\loc_i'\text{ and } \\ 
         g=\bigwedge_{i\in{I}}g_i,\  r=\cup_{i\in{I}}r_i} \right\} 
       \end{myequation}
@@ -499,21 +504,22 @@ an interaction $\alpha=\{a_i\}_{i\in{I}}\in\gamma$ can be executed, as:
                   &=\bigwedge_{i\in{I}}\bigvee_{\loc_i\in\Loc_i}\al{\loc_i}\wedge
                   \Phi(a_i,\loc_i),\label{eq:en_1}\\
                   &=\bigwedge_{\substack{\loc\in\Loc\\ 
-                  \loc=(\loc_1,\cdots,\loc_n)}}\al{\loc}\wedge
-                  \bigwedge_{\substack{i\in I\\ a_i\in\alpha }}\Phi(a_i,\loc_i)\label{eq:en_2}
+                  \loc=(\loc_1,\cdots,\loc_n)}}\hspace{-3mm}\Big(\al{\loc}\wedge
+                  \bigwedge_{\substack{i\in I\\ a_i\in\alpha }}\Phi(a_i,\loc_i)\Big)
+                  \label{eq:en_2}
 \end{align}
 Expression~\ref{eq:en_1} expresses the predicate $\enabled{\alpha}$ using location of individual
 components whereas Expression~\ref{eq:en_2} formalizes it on global location configurations.
 Notice that the above formulation of $\enabled{\alpha}$ corresponds to locations 
-enumeration of all components participating in interaction $\alpha$. In practice,
+enumeration of all components  of the system. In practice,
 we rather consider only a subset of locations $\Loc_{\alpha}\subseteq\Loc$, from
 which the execution of $\alpha$ is possible. This corresponds to $\Pi_{i\in{I}}
 |\Loc_{a_i}|$ possible configuration, where $\Loc_{a_i}\subseteq\Loc_i$ is a subset
-of locations from which there exists a transition labeled by action $a_i\in\alpha$,
-and $|\Loc_{a_i}|$ denotes the cardinality of $\Loc_{a_i}$, which is reasonably
-small in practical examples but can be (at the worst case) equal to $\Pi_{i\in{I}}
-|\Loc|$. The predicates $\enabledbackward{\alpha}$, 
-$\enabledbackwardb{\alpha}{l}{u}$ and $\enabledforward{\alpha}$ becomes:
+of locations of $B_i$ from which there exists a transition labeled by action $a_i\in\alpha$,
+and $|\Loc_{a_i}|$ denotes the cardinality of $\Loc_{a_i}$. The set $\Loc_{\alpha}$ is 
+reasonably small in practice but can contain (at the worst case) $\Pi_{i\in{I}}|\Loc|$ elements.
+The predicates $\enabledbackward{\alpha}$, $\enabledbackwardb{\alpha}{l}{u}$, 
+$\enabledforward{\alpha}$ and $\enabledforwardb{\alpha}{l}{u}$ are given by:
 
 \begin{align*}
   &\enabledbackward{\alpha}\hspace{1.8mm}=\bigvee_{\substack{\loc\in\Loc\\
@@ -525,9 +531,14 @@ $\enabledbackwardb{\alpha}{l}{u}$ and $\enabledforward{\alpha}$ becomes:
   &\enabledforward{\alpha}\hspace{1.9mm}=\bigvee_{\substack{\loc\in\Loc\\
   \loc=(\loc_1,\cdots,\loc_n)}}\al{\loc}\wedge \forward\big(\bigwedge_{\substack{
     i\in{I}\\a_i\in\alpha}}\Phi(a_i,\loc_i)\big) \\
+  &\enabledforwardb{\alpha}{l}{u}=\bigvee_{\substack{\loc\in\Loc\\
+  \loc=(\loc_1,\cdots,\loc_n)}}\al{\loc}\wedge \forwardp{l}{u}\big(\bigwedge_{\substack{
+    i\in{I}\\a_i\in\alpha}}\Phi(a_i,\loc_i)\big) \\
 \end{align*}
 
-Notice that for a clock constraint $c=c_1\wedge c_2$, we have:
+Note that in general forward and backward operators do not distribute over conjunction, which
+prevent us from further expanding the above predicates, that is,for a clock constraint 
+$c=c_1\wedge c_2$, we have:
 \begin{displaymath}
   \diamond c = \diamond (c_1\wedge c_2) \neq \diamond c_1\wedge \diamond c_2
 \end{displaymath}
@@ -586,10 +597,10 @@ $(\val(x),\val(y),\val(z))$:
 
 \section{Timed Systems with Data}
 Timed models introduced in the previous section focuses on the timing behavior of a given system.
-In order to achieve a higher degree of expressiveness, we extend these models with data variables.
-Data allows additional representations of complex behavior. Similarly to clock variables, they may
-appear in the guards of transitions as additional conditions and may be updated when transitions
-fire.
+In order to achieve a higher degree of expressiveness, we extend these models with data 
+variables. Data allows additional representations of complex behavior. Similarly to clock 
+variables, they may appear in the guards of transitions as additional conditions and may be 
+updated when transitions fire.
 
 \begin{definition}[Guards on clocks and Data]\label{def:guard}
   Let $\mc{X}$ be a set of clock variables and $\mc{D}$ be a set of
@@ -616,7 +627,8 @@ We extend the notion of valuation to data variables in the following manner:
 We use transfer functions to express update operations on data variables of $\D$. A transfer 
 function $f:\V(\D)\to\V(\D)$ assigns to each variable $d\in\D$ a new value $f(v)$ based on the
 current values of variables of $\D$. Additionally, given a set $\D'\supseteq\D$, applying $f$
-on $\D'$ does not change the values of variables in $\D'\setminus\D$.
+on $\D'$ updates variable in $\D$  but does not change the values of variables in 
+$\D'\setminus\D$.
 
 \begin{definition}[Timed Component with Data]\label{def:tce}
   A timed component with data is a tuple 
@@ -649,7 +661,7 @@ on $\D'$ does not change the values of variables in $\D'\setminus\D$.
 
 \begin{definition}[Timed System with Data]\label{def:tce_sem}
   Given $n$ components $B_{d_i}=(\Loc_i,\loc_{0_i},\X_i,\D_i,\A_i,$\\$
-  \E_i,\{f_e\}_{e\in\E_i},\I_i)$ and an interaction set $\gamma$,
+  \E_i,\{f_e\}_{e\in\E_i},\I_i)$ with disjoint set of data and an interaction set $\gamma$,
   the composition $S_d=\gamma(B_{d_1},\cdots,B_{d_n})$ with respect to 
   the interaction set $\gamma$ is defined by the timed component 
   $(\Loc,\loc_0,\X,\D,\gamma,\E_{\gamma},\{f_e\}_{e\in\gamma},\I)$ where:
@@ -665,6 +677,9 @@ The semantics of timed system with data extends the semantics of Property~\ref{p
 in the sense that an interaction takes place if the guards on data variables also evaluates
 to $\true$. Also, interactions executions apply the underlying transfer functions of the
 corresponding components transitions.
+Also, data variables are initialized based on their types. For instance, integer and real 
+variables are initialized to 0. For other data types, one needs to define their initial 
+valuation.
 
 In what follows, when referring to timed component or timed system we imply by that 
 extended timed component or extend timed systems, unless explicitly stated. 
@@ -687,7 +702,8 @@ timed component B (system) can be put on the form:
 \end{displaymath}
 
 Given a timed component with data $B_d$ and its abstraction of data $B$, we have
-$Reach(B_d)\subseteq Reach(B)$. This means that $Reach(B)$ can be used as an over-approximation
+$Reach(B_d)\subseteq Reach(B)$ when considering the projection of states on locations and clocks 
+only. This means that $Reach(B)$ can be used as an over-approximation
 of the reachable state of the timed component with data $B_d$.
 \subsection{Compositional Verification}
 
@@ -707,7 +723,7 @@ deductive verification
 ~\cite{deductive}, etc.  
 In this thesis, we choose to use a deductive compositional verification 
 method that exploits compositionality for analysis of timed systems 
-using \emph{invariants}. Invariants are symbolic approximations of the set 
+using \emph{invariants}. Invariants are over-approximations of the set 
 of reachable states of the system as opposed to the exact 
 reachability analysis in model-checking. The key principle of this 
 approach is the computation of a global invariant as the conjunction of

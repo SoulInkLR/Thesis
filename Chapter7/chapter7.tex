@@ -12,7 +12,7 @@ priorities as shown in Figure~\ref{fig:bip_layers}:
     transition system. Atomic components are defined as timed automata with well defined 
     interface (ports).
   \item Interactions: The interaction layer specifies how components interact together and
-    coordinate their action using n-ary synchronization. It restricts thus the global behavior 
+    coordinate their action using n-ary synchronizations. It restricts thus the global behavior 
     of components together using these synchronizations.
   \item Priorities: Priorities are used to favor the execution of a subset of enabled 
     interactions called \emph{maximal} interactions. They can be used to resolve conflicts or to
@@ -20,7 +20,7 @@ priorities as shown in Figure~\ref{fig:bip_layers}:
 \end{itemize}
 
 The Real-Time BIP language~\cite{rtbip} extends the BIP language through clocks used to express
-timing constraints on transitions and locations (locations invariant). 
+timing constraints on transitions and locations (location invariants). 
 It also supports urgency types on transitions~\cite{urg} that provide additional means to 
 constrain the progress of time in a given system.
 In this thesis, we do not consider priorities or urgency types. However, given a timed system
@@ -30,7 +30,7 @@ transition system representing its abstraction $S^*$ from the latter, that is,
 $\tts_S\subseteq\tts_{S^*}$. This means that all the results of this thesis, if they apply
 on $S^*$, then they apply on $S$.
 
-The BIP language defines system as a composition of components using a set of syntactic
+The BIP language defines systems as a composition of components using a set of syntactic
 constructs that specify components behavior and interface as well as the ongoing 
 synchronizations (interactions) and priorities. They consist of the following:
 
@@ -60,8 +60,8 @@ Figure~\ref{lst:bip} illustrates the syntax of BIP and presents different elemen
   ports of type \emph{Port}, atomic components \emph{Controller} and \emph{Worker}.
   The atomic component \emph{Controller} consists of a clock $x$, an internal port \emph{init}
   and two exported port, $a$ and $c$, defining its interface. The statement 
-  \texttt{place lc0, lc1, lc2} defines the places of the timed automaton describing its behavior,
-  where \texttt{lc0} is the initial place. Lines 20 to 24 represent the declaration of 
+  \texttt{place lc0, lc1, lc2} defines the places (locations) of the timed automaton describing its behavior,
+  where \texttt{lc0} is the initial place. Lines 19 to 22 represent the declaration of 
   a transition. It consists of the following elements:
   \begin{enumerate}
     \item The port labeling the transition: \texttt{\textbf{on} init}
@@ -74,8 +74,8 @@ Figure~\ref{lst:bip} illustrates the syntax of BIP and presents different elemen
   \end{enumerate} 
 
 As explained earlier, components are composed using connectors. The Compound Type \emph{System}
-defines a system composed of two Workers and one Controller. It also defines the interaction 
-between the \emph{controller} component an each \emph{Worker} component ($worker_1$ and 
+defines a system composed of two Workers and one Controller. It also defines the interactions 
+between the \emph{controller} component and each \emph{Worker} component ($worker_1$ and 
 $worker_2$) through connectors $ab1$, $cd1$, $ab2$, and $cd2$.
 \end{example}
 \begin{figure}[H]
@@ -112,6 +112,12 @@ backgroundcolor=\color{gray!20}]
     |\textbf{reset}| y
     |\textbf{do}| {}
 |\textbf{end}|
+|\textbf{atom type}| Controller()
+  |\textbf{clock}| x 
+  |\textbf{export port}|  Port a()
+  |\textbf{export port}|  Port c()
+  |\textbf{port}| Port init()
+
 
 \end{lstlisting}
 \end{figure}
@@ -123,15 +129,9 @@ escapeinside={||},
 mathescape=true,
 numbers=left,
 backgroundcolor=\color{gray!20},
-firstnumber=29]
-|\textbf{atom type}| Controller()
-  |\textbf{clock}| x 
-  |\textbf{export port}|  Port a()
-  |\textbf{export port}|  Port c()
-  |\textbf{port}| Port init()
-
+firstnumber=37]
   |\textbf{place}| lc0, lc1, lc2
-
+  
   |\textbf{initial to}| lc0
     |\textbf{do}| {}
   
@@ -178,22 +178,22 @@ systems. The BIP toolbox is structured in different categories as shown by Figur
 \input{Figures/toolbox.tex}
 
 \subsection*{(1) Language Factory}
-This category includes \emph{translation of various language or modeling paradigm} 
+This category includes \emph{translation of various languages or modeling paradigms} 
 in addition to the BIP language. It includes translation of synchronous 
 languages~\cite{imp:lustre,imp:sim} as well as languages combining software applications
-and hardware architecture~\cite{imp:aadl,imp:tinyos,imp:dol}, allowing thus automatic generation 
+and hardware architectures~\cite{imp:aadl,imp:tinyos,imp:dol}, allowing thus automatic generation 
 of BIP models through several translation steps. 
 First, the functional modules of the considered application, along
-with the necessary data structures and applications functions, are translated into 
+with the necessary data structures and application functions, are translated into 
 BIP components.  Thereafter, connectors representing the interactions between the application
 modules are added. Finally, priorities may be added to refine the behavior of the obtained
 BIP model with respect to the expected behavior.
 
-     Additionally, in association with the RTD-Finder tool 
-    it provides analyses allowing performance evaluation~\cite{apsec17} as well as the actual
-    analyses for the approach presented in Section~\ref{sec4}.
-    Note that the identity filter is the default filter that given a BIP model return the same
-    BIP model.
+%Additionally, in association with the RTD-Finder~\cite{rtdf} tool 
+%it provides analyses allowing performance evaluation~\cite{apsec17} as well as the actual
+%analyses for the approach presented in Section~\ref{sec4}.
+%Note that the identity filter is the default filter that given a BIP model return the same
+%BIP model.
 
 \subsection*{(2) The BIP Compiler}
 The BIP compiler consists of three parts:
@@ -201,14 +201,14 @@ The BIP compiler consists of three parts:
   \item The front-end : it interacts with the user of the compiler. It reads user input and 
     transforms it in a form suitable for the following process (ie. internal representation).
   \item The middle-end : applies operations on the internal representation 
-    (eg. optimizations, architectural transformations,etc.). Such operations are contained 
+    (eg. optimizations, architectural transformations, etc.). Such operations are contained 
     into small blocks of the middle-end that we will call filter later on. 
     An example of filters that can be found in the middle-end of the BIP compiler are:
     \begin{itemize}
       \item The identity filter is the default filter that given a BIP model return the
         same BIP model.
       \item The flattening filter transforms a hierarchical system into flattened 
-        atomic components synchronized through flattened interaction.
+        atomic components synchronized through flattened interactions.
       \item The distributed real-time filter includes the transformation of BIP models
         to Send/Receive models as described in Chapter~\ref{chap:3}. It also includes
         our implementation of the methods presented in Chapter~\ref{chap:4} and
@@ -216,7 +216,7 @@ The BIP compiler consists of three parts:
     \end{itemize}
     The BIP middle-end can be also associated with the RTD-Finder tool for validation
     and optimization purposes. 
-  \item The back-end : It consists of a code generator that produces the final result from the 
+  \item The back-end : It consists of code generators that produce the final result from the 
     internal representation. Usually, the final output is in the form of a source code in a 
     programming language (eg. C++). We distinguish two types of code generators, namely,
     a self contained distributed code generator and an engine-based generator. 
@@ -275,32 +275,223 @@ following modules:
   \item \textbf{Analyser}: The Analyser creates internal abstractions of the input BIP
     model. Particularly, it includes:
     \begin{enumerate}
-      \item Component Info: It encompasses atomic component information such as a map
+      \item Component Info: It encompasses atomic components information such as a map
         indicating for each port a list of source and destination locations matching transitions
         labeled by this port, with the corresponding timing constraints. 
         It also includes urgency predicate for each component.
       \item Interaction Info: This unit builds for each interaction the set of its participating
-        components, the involved port for each components, as well as all the possible 
-        combinations (locations configurations and timing constraints) based on component info.
+        components, the involved port for each component, as well as all the possible 
+        combinations (location configurations and timing constraints) based on component info.
         It also includes for each interaction $\alpha$ all the predicates $\enabled{\alpha}$,
         $\enabledbackward{\alpha}$ and $\enabledbackwardb{\alpha}{l}{u}$. The latter is 
-        constructed based on the \emph{Planning Horizons} files provided as input.
+        constructed based on the \emph{Planning Horizons} file provided as input.
       \item Compound Info: The \emph{Compound Info} unit combines the aforementioned info in
         order to build a given system abstraction. In addition to components and interactions 
-        info, it construct the set of potential conflicts based on the \emph{Interaction 
-        Partition} file and all the necessary elements required for building Send/Receive
-        models of Chapter~\ref{chap:3}, and for the generation of expressions presented in 
+        info, it constructs the set of potential conflicts based on the \emph{Interaction 
+        Partition} file and all the necessary elements required for building the Send/Receive
+        model of Chapter~\ref{chap:3}, and for the generation of expressions presented in 
         Chapter~\ref{chap:4} and Chapter~\ref{chap:5}. 
     \end{enumerate}
   \item \textbf{Property Generator}: The \emph{Property Generator} module builds all the 
-    necessary expressions for the optimization of conflicts detection and the deadlock freedom
+    necessary expressions for the optimization of conflict detection and the deadlock freedom
     verification of the local planning semantics.
     It interacts with the RTD-Finder tool in order to achieve these tasks. 
   \item \textbf{Send/Receive Transformation}: Using the system abstraction provided by 
-    the \emph{Analyser} and based on the result of the verification results obtained
+    the \emph{Analyser}, and based on the result of the verification results obtained
     from the RTD-Finder tool, the \emph{Send/Receive Transformation} module applies the 
     transformations presented in Chapter~\ref{chap:3}. 
 \end{itemize}
 \input{Figures/drtf.tex}
 
 \section{Experimentation}
+In this section, we present the experimental results for the methods presented in 
+Chapter~\ref{chap:4} and Chapter~\ref{chap:5}. The approaches have been validated on different
+case studies in combination with the RTD-Finder tool.   
+
+\subsection{Case Studies}
+\subsubsection{Train Gate Controller System}
+
+The train gate controller~\cite{AlurD94} is a system composed of: a controller, a gate and a 
+train. Figure~\ref{fig:tgc} gives an overview of the system and its interactions: 
+The train informs the controller about his position (w.r.t. to the crossing) through the 
+interactions $\alpha_1$ (approach) and $\alpha_2$ (exit). On the other hand, the controller 
+lowers ($\alpha_3$) and raises ($\alpha_4$) the gate whenever the train enters,
+respectively exits. Notice that actions \{enter\} of the train, and \{up, down\} of the gates are
+considered as singleton interactions.
+\input{Figures/tgc.tex}
+
+\subsubsection{FireWire - IEEE 1394} 
+
+FireWire is a high-performance serial communication bus dedicated for hot plug-and-play 
+multimedia devices. Devices can be organized in arbitrary topologies, where each pair of nodes 
+is connected by two unidirectional channels. The internal representation of topologies is a 
+tree where the root (leader) arbitrates the access to the bus. The designation of the leader is 
+performed through a leader election protocol, namely, the tree identification protocol. 
+Whenever the topology changes, i.e., a device joins/leaves, a reset occurs, and a new election 
+is triggered.
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.2]{Figures/firewireg}
+\caption{FireWire Topologies with 2, 3 and 5 nodes}
+\label{fig:fwg}
+\end{figure}
+The tree identification protocol is initiated by the leaf nodes of the topology. They send 
+requests asking their neighbors to become their parents. A parent request sending mode is 
+non deterministically chosen to be \emph{fast} or \emph{slow}. It determines the amount of time 
+to wait before sending. Internal nodes of the topology keep on listening to parent requests 
+until they receive exactly $n-1$ requests, $n$ being the number of neighbors. 
+Then, they send a parent request
+to their remaining neighbor. When receiving a parent request, a node either sends an 
+acknowledgment, or detects a contention in the case it has also sent a parent request and it
+is still waiting for an acknowledgment. Intuitively, a contention means that two neighbors are 
+mutually asking to be leader. This situation is resolved by forcing both nodes to send new 
+requests after a random waiting time.
+We implemented a FireWire model inspired from the case-study in~\cite{firewire}, where the 
+considered topology is made of two devices. 
+Figure~\ref{fig:node} depicts the model for the node component.
+\input{Figures/firewire.tex}
+
+\subsubsection{Gear Controller System}
+
+The gear controller system (Figure~\ref{fig:gear}) describes the control system responsible 
+for the gear change inside a
+vehicle. The used model encompasses formal models of the gear controller and its environment.
+The whole system includes five components: an interface, a controller, a clutch, an engine a
+gear-box and two global variables. In order to change the gear, the interface sends a signal to 
+the controller. Consequently, the controller interacts with the engine, the clutch and the 
+gear-box to achieve the gear change. The engine is responsible of either regulating the torque 
+or synchronizing the speed. On the other hand, the gear-box sets the gear between some fixed 
+bounds, whereas, the clutch is used whenever the engine is not able to function properly 
+(under difficult driving conditions, for instance). 
+The case study was initially designed in UPPAAL~\cite{gear} and has been translated to BIP.
+\input{Figures/gears.tex}
+The complete model (taken form~\cite{gear}) can be found in Appendix~\ref{ap1}.
+\begin{remark}
+Note that since the gear controller system contains to global variables, we had to tweak the 
+generated invariants of the RTD-Finder tool as well as some of the predicates in order to 
+restrict the set of reachable states of the system.
+\end{remark}
+
+\subsection{Results}
+The experiments have been conducted on a HP machine with Ubuntu 16.04, an 
+Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark}i5-4300U
+processor of frequency 1.90GHz×4, and 7.7GiB memory.
+\subsubsection{Conflict Detection Optimization}
+
+\begin{table}[H]
+  \caption{Experimental results}
+    \label{tab:res}
+  \begin{center}
+\begin{tabular}{| l || c | c | c | c | c | c | c |}
+    \hline
+    Model                              & $n$                      & $i$                    & $c$          & $p$   & $f$   & $g$    & $t$   \\ \hline \hline                                  
+    \multirow{14}{*}{Task Manager}     & 4                        & 8                      & 2            & 4     & 3     &  75\%  & 60.55ms \\ \cline{2-7}
+                                       & \multirow{3}{*}{12}      & \multirow{3}{*}{40}    & 2            & 40    & 30    &  75\%  & 367.19ms \\ \cline{4-7}
+                                       &                          &                        & 5            & 64    & 48    &  75\%  & 521.45ms \\ \cline{4-7}
+                                       &                          &                        & 10           & 68    & 51    &  75\%  & 545.34ms \\ \cline{2-7}
+                                       & \multirow{3}{*}{22}      & \multirow{3}{*}{80}    & 2            & 80    & 60    &  75\%  & 2.14s \\ \cline{4-7}
+                                       &                          &                        & 10           & 144   & 108   &  75\%  & 3.41s \\ \cline{4-7}
+                                       &                          &                        & 20           & 148   & 111   &  75\%  & 3.69s \\ \cline{2-7}
+                                       & 32                       & 120                    & 30           & 228   & 171   &  75\%  & 8.41s \\ \cline{2-7}
+                                       & 42                       & 160                    & 40           & 308   & 231   &  75\%  & 20.72s \\ \cline{2-7}
+                                       & \multirow{6}{*}{52}      & \multirow{6}{*}{200}   & 2            & 200   & 150   &  75\%  & 22.56s \\ \cline{4-7}
+                                       &                          &                        & 5            & 320   & 240   &  75\%  & 34.78s \\ \cline{4-7}
+                                       &                          &                        & 10           & 360   & 270   &  75\%  & 37.72s \\ \cline{4-7}
+                                       &                          &                        & 25           & 384   & 288   &  75\%  & 41.69s \\ \cline{4-7}
+                                       &                          &                        & 50           & 388   & 291   &  75\%  & 45.35s \\ \cline{4-7}\hline
+    \makecell{Train Gate\\Controller}  & 22                       & 45                     & 20           & 74    & 37    &  50\%  & 813,62ms \\ \hline
+    \makecell{Gear \\Controller}       & 5                        & 32                     & 4            & 8     & 3     &  37.5\%  & 5,94s \\ \hline
+
+  \end{tabular}
+\end{center}
+\end{table}
+Table~\ref{tab:res} summarizes for each experiment the number of components ($n$), 
+interactions ($i$),
+partition classes ($c$), potential conflicts ($p$), false conflicts ($f$), the gain of the 
+conflict detection 
+and gives also the total verification time of our methods combined.
+The above results give an indication on how much conflict resolution will be needed during 
+execution. 
+
+We first performed several experiments on different variants of the Task Manager example 
+(with 2, 10, 20, 30, 40 and 50 Tasks). Each variant was tested with different partitioning of
+interaction (different number of classes). Note that each time we chose the interaction
+partition such that it yield the maximum number of potential conflicts. 
+We can notice from the Task Manger experiments that increasing the number of interaction 
+partition classes will increase the number of potential conflicts, that is,
+the more distributed the system is the more conflicts it contains. 
+Remark  that the percentage of gain remains the same meaning that our detection method
+is not affected by the partitioning but rather bu the overall structure and dynamics of 
+a given system.
+
+We performed other experiments on real-life case studies such as the Train Gate Controller 
+and the Gear Controller Systems which also yield interesting results in term of conflict 
+detection ratio and execution time.
+
+\subsubsection{Action-Time-Lock Detection for the \lpsabr}
+
+Table~\ref{t:1} depicts the values $h_{\max}$ for each interaction of the Task Manager example, 
+obtained while fixing $h_{\min}$.
+Notice that the symmetry of the system implies the same $h_{\max}$ for interactions 
+$\alpha_i,\alpha_{i+1},i\in\{1,3,5,7\}$. 
+By remarking that location $\loc_3^2$ (resp. $\loc_3^3$) has a time progress condition 
+$x\le4$ (resp. $y\le4$), and by observing that the clock $x$ is reset on the transition 
+leading to this location, we can conclude that planning
+the system with $h_{\min}>4$ will lead to an action-time-lock.
+Particularly, in Example~\ref{exp:dl}, for $h_{\min}=2$ interaction $\alpha_6$ was planned 
+with a horizon $\delta=8$, and consequently, leads to a action-time-lock state. Our method 
+detects such cases and thus, finds that the maximum horizon for this interaction is 7. 
+Likewise, the $h_{\max}$ for interactions $\alpha_2, \alpha_4\text{ and }\alpha_8$ 
+(resp. $\alpha_1, \alpha_3\text{ and }\alpha_7$)
+is found to be unbounded ($+\infty$).
+
+\begin{table}[H]
+  \caption{Detailed Results of the Task Manager Experiments}\label{t:1}
+  \centering
+  %  \vspace*{3mm}
+  \begin{tabular}{| c || c | c | c | c |}
+    \hline
+    $h_{\min}$ & $\hmxb{\alpha_1}$, $\hmxb{\alpha_2}$ & $\hmxb{\alpha_3}$, $\hmxb{\alpha_4}$ & $\hmxb{\alpha_5}$, $\hmxb{\alpha_6}$  & $\hmxb{\alpha_7}$, $\hmxb{\alpha_8}$\\ \hline
+        4      &                $+\infty$                    &                 $+\infty$                   &                9                     &               $+\infty$                 \\\hline
+        3      &                $+\infty$                    &                 $+\infty$                   &                8                     &               $+\infty$                 \\\hline
+        2      &                $+\infty$                    &                 $+\infty$                   &                7                     &               $+\infty$                 \\\hline
+        1      &                $+\infty$                    &                 $+\infty$                   &                6                     &               $+\infty$                 \\\hline
+  \end{tabular}
+\end{table}
+
+Table~\ref{t:2} summarizes the experiments obtained on the benchmarks stated above, where $n$ is
+the number of components, $nb_{\I}$ the number of time progress conditions that will be 
+verified
+against action-time-lock freedom and
+$\max h_{\min}$ the maximum value of $h_{\min}$ for which the system is action-time-lock-free in 
+the planning semantics.
+Additionally, the column $h_{\max}$ indicates whether a restriction on the upper horizons is 
+required to avoid
+deadlocks. Finally, $t_{exec}$ gives an overview of the execution time including both the 
+invariants generation and the verification time.
+
+\begin{table}[H]
+  \caption{Experiments Results}\label{t:2}
+ %   \vspace*{3mm}
+  \centering
+  \begin{tabular}{| c || c| c | c | c | c | c |}
+  \hline
+    Model                              & $n$ & $nb_{\I}$&  $\max h_{\min}$ &   $h_{\max}$ & $t_{exec}(s)$ \\\hline 
+    Task Manager                       & 4  & 4  & 4            &  B         & 0.11 \\\hline 
+    Train Gate Controller              & 3  & 6  & 4            &  $+\infty$        & 0.16   \\\hline 
+    Firewire                           & 4  & 10 & 5            &  $+\infty$        & 3.03   \\\hline 
+    Gear Controller                     & 5  & 19 & 130          &  $+\infty$        & 4.65    \\\hline 
+  \end{tabular}
+\end{table}
+
+As shown in table~\ref{t:1}, the task manager model has a maximal $\hmin$ value of 4 TU 
+and requires a restriction
+on the upper horizons for interactions $\alpha_5$ and $\alpha_6$.
+In the same way, we found that the train gate controller, the firewire and the train gate 
+controller models have respectively maximal $\hmin$ value 
+of 4 TU, 5 TU and 130 TU. However, they do not require any restriction on the upper 
+horizons values of their interactions.
+
+
+
+

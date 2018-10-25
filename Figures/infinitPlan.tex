@@ -1,6 +1,6 @@
 \begin{figure*}[!h]
   \centering
-  \begin{tikzpicture}
+  \begin{tikzpicture}[-]
   \begin{axis}[
    axis y line=none,
    y=0.3cm,
@@ -30,7 +30,7 @@
 17.5 c
 18 c
 };\addlegendentry{$g_{\alpha}$}
-\addplot table [y expr=1,meta index=1, header=false] {
+    \addplot table [y expr=1,meta index=1, header=false] {
 15 c
 16.5 c
 };\addlegendentry{$\backwardp{\hmin}{\hmx} g_{\alpha}$}
@@ -51,7 +51,7 @@
 \end{tikzpicture}
 %  \caption{}
   %\captionsetup{justification=centering}
-  \begin{tikzpicture}
+  \begin{tikzpicture}[-]
   \begin{axis}[
    axis y line=none,
    y=0.3cm,
